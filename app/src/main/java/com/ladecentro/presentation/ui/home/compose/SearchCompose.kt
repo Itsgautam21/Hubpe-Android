@@ -1,5 +1,6 @@
 package com.ladecentro.presentation.ui.home.compose
 
+import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -22,7 +23,9 @@ import androidx.compose.material.icons.Icons.Outlined
 import androidx.compose.material.icons.outlined.KeyboardArrowRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -45,17 +49,27 @@ import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_gray
 import com.ladecentro.presentation.theme.light_text
 import com.ladecentro.presentation.theme.secondary
+import com.ladecentro.presentation.ui.search.SearchActivity
+
 
 @Composable
-@Preview
+@Preview(showBackground = true)
+@OptIn(ExperimentalMaterial3Api::class)
 fun SearchCompose() {
 
+    val context = LocalContext.current
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(44.dp).padding(horizontal = 16.dp), colors = CardDefaults.cardColors(
+            .height(44.dp)
+            .padding(end = 14.dp),
+        colors = CardDefaults.cardColors(
             contentColor = Color.Black, containerColor = Color.White
-        ), elevation = CardDefaults.cardElevation(4.dp)
+        ),
+        elevation = CardDefaults.cardElevation(4.dp),
+        onClick = {
+            context.startActivity(Intent(context, SearchActivity::class.java))
+        }
     ) {
 
         Row(
@@ -80,13 +94,13 @@ fun SearchCompose() {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun YourFavourite() {
 
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(0.dp))
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
@@ -228,7 +242,7 @@ fun YourFavourite() {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun Spotlight() {
 
@@ -327,12 +341,12 @@ fun Spotlight() {
 fun ShopCategory() {
 
     Column {
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(30.dp))
         Text(
             text = "WHAT'S ON YOUR MIND?",
             fontSize = 17.sp,
             color = dark_gray,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.SemiBold,
             fontFamily = fontFamilyHind,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
@@ -340,32 +354,43 @@ fun ShopCategory() {
         Spacer(modifier = Modifier.height(20.dp))
         LazyHorizontalGrid(
             rows = Fixed(2),
-            modifier = Modifier.height(200.dp),
-            horizontalArrangement = Arrangement.spacedBy(0.dp),
+            modifier = Modifier.height(290.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = PaddingValues(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(40.dp)
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             items(list) {
-                Image(
-                    painter = painterResource(id = it),
-                    contentDescription = "category",
-                    modifier = Modifier
-                        .height(100.dp)
-                        .width(100.dp)
-                )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Image(
+                        painter = painterResource(id = it.image),
+                        contentDescription = "category",
+                        modifier = Modifier
+                            .height(90.dp)
+                            .width(90.dp)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = it.name,
+                        fontSize = 14.sp,
+                        fontFamily = fontFamilyHind,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
         }
-        Spacer(modifier = Modifier.height(100.dp))
     }
 }
 
 val list = listOf(
-    drawable.category1,
-    drawable.category2,
-    drawable.category3,
-    drawable.category4,
-    drawable.category4,
-    drawable.category5,
-    drawable.category6,
-    drawable.category7
+    Category(drawable.category1, "Beauty"),
+    Category(drawable.category2, "Electronics"),
+    Category(drawable.category3, "Home & Decor"),
+    Category(drawable.category4, "Pharma"),
+    Category(drawable.category4, "Pharma"),
+    Category(drawable.category5, "Food"),
+    Category(drawable.category6, "Grocery"),
+    Category(drawable.category7, "Fashion"),
 )
+
+data class Category(val image: Int, val name: String)

@@ -13,6 +13,6 @@ val provider = GoogleFont.Provider(
 val fontFamilyHind = FontFamily(Font(googleFont = GoogleFont("Hind Madurai"), fontProvider = provider))
 val fontFamilyAverSans = FontFamily(Font(googleFont = GoogleFont("Averia Sans Libre"), fontProvider = provider))
 val fontFamilyFredoka = FontFamily(Font(googleFont = GoogleFont("Fredoka"), fontProvider = provider))
-val Signika = FontFamily(Font(googleFont = GoogleFont("Quasimoda"), fontProvider = provider))
+val signika = FontFamily(Font(googleFont = GoogleFont("Quasimoda"), fontProvider = provider))
 val hammersmith = FontFamily(Font(googleFont = GoogleFont("Hammersmith One"), fontProvider = provider))
 val doppio_one = FontFamily(Font(googleFont = GoogleFont("Doppio One"), fontProvider = provider))

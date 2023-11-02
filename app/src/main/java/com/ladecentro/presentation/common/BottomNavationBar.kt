@@ -28,6 +28,7 @@ fun BottomNavigationBar() {
         mutableIntStateOf(0)
     }
     Card(elevation = CardDefaults.cardElevation(24.dp), colors = CardDefaults.cardColors(containerColor = Color.White)) {
+        // TODO Add graphics layer to Bottom Navigation Bar
         NavigationBar(
             containerColor = Color.White, modifier = Modifier
                 .height(64.dp)

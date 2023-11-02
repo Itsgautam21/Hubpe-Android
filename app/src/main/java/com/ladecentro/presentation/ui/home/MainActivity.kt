@@ -6,8 +6,10 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -33,7 +35,7 @@ import androidx.core.view.WindowCompat
 import com.ladecentro.presentation.theme.LadecentroTheme
 import com.ladecentro.presentation.theme.darkBlue
 import com.ladecentro.presentation.ui.home.compose.DrawerContent
-import com.ladecentro.presentation.ui.home.compose.SearchCompose
+import com.ladecentro.presentation.ui.home.compose.FooterCompose
 import com.ladecentro.presentation.ui.home.compose.ShopCategory
 import com.ladecentro.presentation.ui.home.compose.Spotlight
 import com.ladecentro.presentation.ui.home.compose.TopAppBarHome
@@ -48,8 +50,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             LadecentroTheme {
+
                 val drawerState = rememberDrawerState(initialValue = Closed)
-                Status(drawerState = drawerState, mainActivity = this)
+
+                ChangeStatusBar(drawerState = drawerState, mainActivity = this)
                 ModalNavigationDrawer(
                     drawerContent = {
                         ModalDrawerSheet(
@@ -59,17 +63,24 @@ class MainActivity : ComponentActivity() {
                         ) {
                             DrawerContent(drawerState = drawerState)
                         }
-                    }, drawerState = drawerState
+                    },
+                    drawerState = drawerState
                 ) {
                     Surface(
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        val scrollBehaviour = TopAppBarDefaults.enterAlwaysScrollBehavior()
+                        val scrollBehaviour = TopAppBarDefaults.pinnedScrollBehavior()
+                        val scrollBehaviourTop =
+                            TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
                         Scaffold(modifier = Modifier
                             .fillMaxSize()
-                            .nestedScroll(scrollBehaviour.nestedScrollConnection), topBar = {
-                            TopAppBarHome(scrollBehaviour, drawerState)
-                        }) {
+                            .nestedScroll(scrollBehaviour.nestedScrollConnection)
+                            .nestedScroll(scrollBehaviourTop.nestedScrollConnection),
+                            topBar = {
+                                TopAppBarHome(scrollBehaviour, scrollBehaviourTop, drawerState)
+                            }
+                        ) {
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -78,10 +89,11 @@ class MainActivity : ComponentActivity() {
                                     .verticalScroll(rememberScrollState())
                             ) {
                                 Column(modifier = Modifier.padding(vertical = 20.dp)) {
-                                    SearchCompose()
                                     YourFavourite()
                                     Spotlight()
                                     ShopCategory()
+                                    FooterCompose()
+                                    Spacer(modifier = Modifier.height(100.dp))
                                 }
                             }
                         }
@@ -94,7 +106,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun Status(drawerState: DrawerState, mainActivity: MainActivity) {
+fun ChangeStatusBar(drawerState: DrawerState, mainActivity: MainActivity) {
 
     val localView = LocalView.current
     if (drawerState.isOpen) {

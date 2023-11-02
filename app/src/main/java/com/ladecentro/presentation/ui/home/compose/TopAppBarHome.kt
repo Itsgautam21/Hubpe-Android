@@ -2,6 +2,7 @@ package com.ladecentro.presentation.ui.home.compose
 
 import android.content.Intent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -38,75 +39,96 @@ import kotlinx.coroutines.launch
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun TopAppBarHome(scrollBehaviour: TopAppBarScrollBehavior, drawerState: DrawerState) {
-
+fun TopAppBarHome(
+    scrollBehaviour: TopAppBarScrollBehavior,
+    scrollBehaviourTop: TopAppBarScrollBehavior,
+    drawerState: DrawerState
+) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    Surface(shadowElevation = 4.dp, color = Color.White) {
-        TopAppBar(
-            colors = TopAppBarDefaults.mediumTopAppBarColors(
-                containerColor = Companion.White,
-                scrolledContainerColor = Companion.White
-            ),
-            title = {
-                Column(modifier = Modifier.padding(horizontal = 4.dp)) {
+    Surface(shadowElevation = 0.dp, color = Color.White) {
+        Column {
+            TopAppBar(
+                colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = Companion.White,
+                    scrolledContainerColor = Companion.White
+                ),
+                title = {
+                    Column(modifier = Modifier.padding(horizontal = 4.dp)) {
 
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = "Home",
+                                fontFamily = doppio_one,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = darkBlue
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Icon(
+                                painter = painterResource(id = drawable.down_arrow),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .height(18.dp)
+                                    .width(18.dp)
+                                    .padding(top = 2.dp),
+                                tint = darkBlue
+                            )
+
+                        }
+                        Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "Home",
-                            fontFamily = doppio_one,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = darkBlue
+                            text = "DN Block, Ring Road, Sector V...",
+                            fontFamily = fontFamilyHind,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Thin,
+                            color = light_gray
                         )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Icon(
-                            painter = painterResource(id = drawable.down_arrow),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .height(18.dp)
-                                .width(18.dp)
-                                .padding(top = 2.dp),
-                            tint = darkBlue
-                        )
-
                     }
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(
-                        text = "DN Block, Ring Road, Sector V...",
-                        fontFamily = fontFamilyHind,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Thin,
-                        color = light_gray
-                    )
-                }
 
-            },
-            scrollBehavior = scrollBehaviour,
-            actions = {
-                IconButton(onClick = {
-                    context.startActivity(
-                        Intent(
-                            context,
-                            CartActivity::class.java
+                },
+                scrollBehavior = scrollBehaviourTop,
+                actions = {
+                    IconButton(onClick = {
+                        context.startActivity(
+                            Intent(
+                                context,
+                                CartActivity::class.java
+                            )
                         )
-                    )
-                }, modifier = Modifier.padding(end = 8.dp)) {
-                    Image(
-                        painter = painterResource(id = drawable.bag),
-                        contentDescription = "Bag",
-                    )
-                }
-            },
-            navigationIcon = {
-                IconButton(onClick = { scope.launch {
-                    drawerState.open()
-                } }, modifier = Modifier.padding(start = 8.dp)) {
-                    Image(
-                        painter = painterResource(id = drawable.menu),
-                        contentDescription = "Menu"
-                    )
-                }
-            })
+                    }, modifier = Modifier.padding(end = 8.dp)) {
+                        Image(
+                            painter = painterResource(id = drawable.bag),
+                            contentDescription = "Bag",
+                        )
+                    }
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        scope.launch {
+                            drawerState.open()
+                        }
+                    }, modifier = Modifier.padding(start = 8.dp)) {
+                        Image(
+                            painter = painterResource(id = drawable.menu),
+                            contentDescription = "Menu"
+                        )
+                    }
+                })
+            TopAppBar(
+                colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = Companion.White,
+                    scrolledContainerColor = Companion.White
+                ),
+                title = {
+                    Column {
+                        Spacer(modifier = Modifier.height(20.dp))
+                        SearchCompose()
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
+                },
+                scrollBehavior = scrollBehaviour
+            )
+        }
     }
 }
