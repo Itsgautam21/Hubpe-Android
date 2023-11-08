@@ -2,6 +2,7 @@ package com.ladecentro.di
 
 import com.google.gson.GsonBuilder
 import com.ladecentro.common.Constants
+import com.ladecentro.data.remote.api.AuthAPI
 import com.ladecentro.data.remote.api.UserAPI
 import dagger.Module
 import dagger.Provides
@@ -26,7 +27,13 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideAuthAPI(retrofit: Retrofit): UserAPI {
+    fun provideUserAPI(retrofit: Retrofit): UserAPI {
         return retrofit.create(UserAPI::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthAPI(retrofit: Retrofit): AuthAPI {
+        return retrofit.create(AuthAPI::class.java)
     }
 }

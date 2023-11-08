@@ -3,6 +3,7 @@ package com.ladecentro.presentation.ui.home.compose
 import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,7 +51,7 @@ import com.ladecentro.presentation.theme.light_gray
 import com.ladecentro.presentation.theme.light_text
 import com.ladecentro.presentation.theme.secondary
 import com.ladecentro.presentation.ui.search.SearchActivity
-
+import com.ladecentro.presentation.ui.stores.StoresActivity
 
 @Composable
 @Preview(showBackground = true)
@@ -340,6 +341,7 @@ fun Spotlight() {
 @Composable
 fun ShopCategory() {
 
+    val context = LocalContext.current
     Column {
         Spacer(modifier = Modifier.height(30.dp))
         Text(
@@ -367,6 +369,9 @@ fun ShopCategory() {
                         modifier = Modifier
                             .height(90.dp)
                             .width(90.dp)
+                            .clickable {
+                                context.startActivity(Intent(context, StoresActivity::class.java))
+                            }
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(

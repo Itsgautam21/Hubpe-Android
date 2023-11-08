@@ -26,7 +26,6 @@ import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ladecentro.R
@@ -44,7 +43,7 @@ fun FooterCompose() {
         Column(modifier = Modifier.padding(horizontal = 20.dp)) {
 
             Text(
-                text = "Hubse is free for everyone",
+                text = "Hubpe is free for everyone",
                 fontSize = 18.sp,
                 fontFamily = fontFamilyHind,
                 fontWeight = FontWeight.SemiBold,
@@ -85,12 +84,11 @@ fun FooterCompose() {
                 .height(54.dp)
                 .fillMaxWidth()
                 .clip(shape = RoundedCornerShape(10.dp))
-                .background(color = primary_orange)
-            ,
+                .background(color = primary_orange),
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Start Selling on Hubse",
+                text = "Start Selling on Hubpe",
                 fontSize = 16.sp,
                 fontFamily = fontFamilyHind,
                 fontWeight = FontWeight.SemiBold,
@@ -103,8 +101,7 @@ fun FooterCompose() {
                 .height(32.dp)
                 .fillMaxWidth()
                 .clip(shape = RoundedCornerShape(bottomStart = 10.dp, bottomEnd = 10.dp))
-                .background(color = darkBlue)
-            ,
+                .background(color = darkBlue),
             contentAlignment = Alignment.Center
         ) {
             Text(

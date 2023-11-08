@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.ladecentro.common.Resource.Error
 import com.ladecentro.common.Resource.Loading
 import com.ladecentro.common.Resource.Success
-import com.ladecentro.domain.use_case.get_users.GetUsersUseCase
+import com.ladecentro.domain.use_case.GetUsersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

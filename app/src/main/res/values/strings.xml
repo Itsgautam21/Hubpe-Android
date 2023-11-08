@@ -2,4 +2,10 @@
     <string name="app_name">Ladecentro</string>
     <string name="title_activity_cart">CartActivity</string>
     <string name="title_activity_search">SearchActivity</string>
+    <string name="title_activity_my_orders">MyOrdersActivity</string>
+    <string name="title_activity_stores">StoresActivity</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_verify">VerifyActivity</string>
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="title_activity_profile">ProfileActivity</string>
 </resources>

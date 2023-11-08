@@ -59,7 +59,7 @@ fun TopAppBarCart() {
                     onClick = {
                         context.finish()
                     },
-                    modifier = Modifier.padding(start = 8.dp)
+                    modifier = Modifier.padding(start = 0.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,

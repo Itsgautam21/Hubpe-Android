@@ -4,9 +4,5 @@
     <style name="Theme.Ladecentro" parent="android:Theme.Material.Light.NoActionBar">
 
         <item name="android:windowActivityTransitions">true</item>
-
-        <!-- Specify enter and exit transitions -->
-        <item name="android:windowEnterTransition"></item>
-        <item name="android:windowExitTransition">@transition/explode</item>
     </style>
 </resources>

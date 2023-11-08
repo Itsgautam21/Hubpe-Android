@@ -1,4 +1,4 @@
-package com.ladecentro.domain.use_case.get_users
+package com.ladecentro.domain.use_case
 
 import com.ladecentro.common.Resource
 import com.ladecentro.data.remote.dto.toUser

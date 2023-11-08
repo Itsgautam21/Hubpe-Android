@@ -2,7 +2,6 @@ package com.ladecentro.presentation.ui.home.compose
 
 import android.content.Intent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -46,6 +45,7 @@ fun TopAppBarHome(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+
     Surface(shadowElevation = 0.dp, color = Color.White) {
         Column {
             TopAppBar(

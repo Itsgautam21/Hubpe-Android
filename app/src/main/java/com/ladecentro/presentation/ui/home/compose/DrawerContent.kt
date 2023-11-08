@@ -1,5 +1,6 @@
 package com.ladecentro.presentation.ui.home.compose
 
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,25 +25,38 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ladecentro.R.drawable
+import com.ladecentro.common.Intents
 import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.fontFamilyHind
+import com.ladecentro.presentation.ui.home.HomeViewModel
+import com.ladecentro.presentation.ui.orders.MyOrdersActivity
+import com.ladecentro.presentation.ui.profile.ProfileActivity
 import kotlinx.coroutines.launch
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun DrawerContent(drawerState: DrawerState) {
-
+fun DrawerContent(
+    vm: HomeViewModel = hiltViewModel(),
+    drawerState: DrawerState,
+    logout: () -> Unit
+) {
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val state = vm.state.collectAsState().value
+
     LazyColumn(modifier = Modifier.fillMaxWidth()) {
         item {
             Box(
@@ -73,7 +87,17 @@ fun DrawerContent(drawerState: DrawerState) {
                             }
                         )
                         Spacer(modifier = Modifier.height(12.dp))
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.clickable {
+                                context.startActivity(
+                                    Intent(
+                                        context,
+                                        ProfileActivity::class.java
+                                    ).putExtra(Intents.USER_NAME.name, state.content?.name)
+                                        .putExtra(Intents.Phone.name, state.content?.phone)
+                                )
+                            }) {
                             Card(
                                 shape = RoundedCornerShape(12.dp),
                                 elevation = CardDefaults.cardElevation(0.dp),
@@ -94,7 +118,7 @@ fun DrawerContent(drawerState: DrawerState) {
                                     .padding(12.dp)
                             ) {
                                 Text(
-                                    text = "Gautam Kumar",
+                                    text = state.content?.name ?: "",
                                     fontSize = 18.sp,
                                     fontFamily = fontFamilyHind,
                                     color = Color.White,
@@ -102,12 +126,13 @@ fun DrawerContent(drawerState: DrawerState) {
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = "8101467223",
+                                    text = state.content?.phone ?: "",
                                     fontSize = 12.sp,
                                     fontFamily = fontFamilyHind,
                                     color = Color.White,
                                     fontWeight = FontWeight.Normal,
                                 )
+
                             }
 
                             Icon(
@@ -122,7 +147,6 @@ fun DrawerContent(drawerState: DrawerState) {
                     }
                 }
 
-
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -135,7 +159,11 @@ fun DrawerContent(drawerState: DrawerState) {
 
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(14.dp)
+                        modifier = Modifier
+                            .padding(14.dp)
+                            .clickable {
+                                context.startActivity(Intent(context, MyOrdersActivity::class.java))
+                            }
                     ) {
                         Image(
                             painter = painterResource(id = drawable.bag),
@@ -274,201 +302,50 @@ fun DrawerContent(drawerState: DrawerState) {
                                 .width(24.dp)
                         )
                     }
-                }
+                    Divider(
+                        color = card_border,
+                        thickness = 1.dp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 50.dp)
+                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .padding(14.dp)
+                            .clickable {
 
-            }
-        }
-        item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                shape = RoundedCornerShape(10.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(4.dp)
-            ) {
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(14.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = drawable.bag),
-                        contentDescription = "",
-                        modifier = Modifier
-                            .height(30.dp)
-                            .width(30.dp)
-                    )
-                    Text(
-                        text = "My Orders",
-                        fontSize = 15.sp,
-                        fontFamily = fontFamilyHind,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = 12.dp)
-                    )
-                    Icon(
-                        painter = painterResource(id = drawable.forward_arrow),
-                        contentDescription = "",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier
-                            .height(24.dp)
-                            .width(24.dp)
-                    )
-                }
-                Divider(
-                    color = card_border,
-                    thickness = 1.dp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 50.dp)
-                )
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(14.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = drawable.bag),
-                        contentDescription = "",
-                        modifier = Modifier
-                            .height(30.dp)
-                            .width(30.dp)
-                    )
-                    Text(
-                        text = "Saved Addresses",
-                        fontSize = 15.sp,
-                        fontFamily = fontFamilyHind,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = 12.dp)
-                    )
-                    Icon(
-                        painter = painterResource(id = drawable.forward_arrow),
-                        contentDescription = "",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier
-                            .height(24.dp)
-                            .width(24.dp)
-                    )
-                }
-                Divider(
-                    color = card_border,
-                    thickness = 1.dp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 50.dp)
-                )
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(14.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = drawable.bag),
-                        contentDescription = "",
-                        modifier = Modifier
-                            .height(30.dp)
-                            .width(30.dp)
-                    )
-                    Text(
-                        text = "Favourite Store",
-                        fontSize = 15.sp,
-                        fontFamily = fontFamilyHind,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = 12.dp)
-                    )
-                    Icon(
-                        painter = painterResource(id = drawable.forward_arrow),
-                        contentDescription = "",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier
-                            .height(24.dp)
-                            .width(24.dp)
-                    )
-                }
-                Divider(
-                    color = card_border,
-                    thickness = 1.dp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 50.dp)
-                )
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(14.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = drawable.bag),
-                        contentDescription = "",
-                        modifier = Modifier
-                            .height(30.dp)
-                            .width(30.dp)
-                    )
-                    Text(
-                        text = "My Rewards",
-                        fontSize = 15.sp,
-                        fontFamily = fontFamilyHind,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = 12.dp)
-                    )
-                    Icon(
-                        painter = painterResource(id = drawable.forward_arrow),
-                        contentDescription = "",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier
-                            .height(24.dp)
-                            .width(24.dp)
-                    )
-                }
-                Divider(
-                    color = card_border,
-                    thickness = 1.dp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 50.dp)
-                )
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(14.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = drawable.bag),
-                        contentDescription = "",
-                        modifier = Modifier
-                            .height(30.dp)
-                            .width(30.dp)
-                    )
-                    Text(
-                        text = "Logout",
-                        fontSize = 15.sp,
-                        fontFamily = fontFamilyHind,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = 12.dp)
-                    )
-                    Icon(
-                        painter = painterResource(id = drawable.forward_arrow),
-                        contentDescription = "",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier
-                            .height(24.dp)
-                            .width(24.dp)
-                    )
+                                logout()
+                            }
+                    ) {
+                        Image(
+                            painter = painterResource(id = drawable.bag),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .height(30.dp)
+                                .width(30.dp)
+                        )
+                        Text(
+                            text = "Logout",
+                            fontSize = 15.sp,
+                            fontFamily = fontFamilyHind,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(horizontal = 12.dp)
+                        )
+                        Icon(
+                            painter = painterResource(id = drawable.forward_arrow),
+                            contentDescription = "",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier
+                                .height(24.dp)
+                                .width(24.dp)
+                        )
+                    }
                 }
             }
-
-            Spacer(modifier = Modifier.height(100.dp))
         }
     }
 }

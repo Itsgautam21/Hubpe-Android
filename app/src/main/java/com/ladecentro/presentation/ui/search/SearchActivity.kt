@@ -20,12 +20,15 @@ import androidx.compose.ui.unit.dp
 import com.ladecentro.presentation.theme.LadecentroTheme
 import com.ladecentro.presentation.ui.search.compose.PastSearch
 import com.ladecentro.presentation.ui.search.compose.TopAppBarSearch
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 @OptIn(ExperimentalMaterial3Api::class)
 class SearchActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             LadecentroTheme {
                 Surface(
@@ -47,7 +50,6 @@ class SearchActivity : ComponentActivity() {
                                 Spacer(modifier = Modifier.height(16.dp))
                                 PastSearch()
                             }
-
                         }
                     }
                 }
