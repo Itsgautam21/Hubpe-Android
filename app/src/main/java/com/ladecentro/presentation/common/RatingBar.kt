@@ -30,7 +30,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun RatingBar(
     modifier: Modifier = Modifier,
-    rating: Int
+    rating: Int,
+    ratingValue: (rating: Int) -> Unit
 ) {
     var ratingState by remember {
         mutableIntStateOf(rating)
@@ -60,6 +61,7 @@ fun RatingBar(
                             MotionEvent.ACTION_DOWN -> {
                                 selected = true
                                 ratingState = i
+                                ratingValue(i)
                             }
                             MotionEvent.ACTION_UP -> {
                                 selected = false

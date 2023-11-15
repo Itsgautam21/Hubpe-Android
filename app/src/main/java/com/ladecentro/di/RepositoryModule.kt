@@ -1,8 +1,10 @@
 package com.ladecentro.di
 
 import com.ladecentro.data.repository.AuthRepositoryImpl
+import com.ladecentro.data.repository.OrderRepositoryImpl
 import com.ladecentro.data.repository.UserRepositoryImpl
 import com.ladecentro.domain.repository.AuthRepository
+import com.ladecentro.domain.repository.OrderRepository
 import com.ladecentro.domain.repository.UserRepository
 import dagger.Binds
 import dagger.Module
@@ -18,4 +20,7 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindAuthRepository(authRepositoryImpl: AuthRepositoryImpl): AuthRepository
+
+    @Binds
+    abstract fun bindOrderRepository(authRepositoryImpl: OrderRepositoryImpl): OrderRepository
 }

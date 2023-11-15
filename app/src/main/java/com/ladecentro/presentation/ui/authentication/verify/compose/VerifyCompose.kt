@@ -13,6 +13,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,7 +52,8 @@ fun VerifyCompose(viewModel: VerifyViewModel) {
                 color = light_gray
             )
             Spacer(modifier = Modifier.height(48.dp))
-            OtpInput(mViewModel = viewModel)
+            //OtpInput(mViewModel = viewModel)
+            TextField(value = viewModel.otpState, onValueChange = { viewModel.otpState = it })
             Spacer(modifier = Modifier.height(40.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text(

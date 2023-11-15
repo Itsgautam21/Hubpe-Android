@@ -2,9 +2,12 @@ package com.ladecentro.presentation.ui.home.compose
 
 import android.content.Intent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -25,6 +28,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,6 +39,7 @@ import com.ladecentro.presentation.theme.doppio_one
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_gray
 import com.ladecentro.presentation.ui.cart.CartActivity
+import com.ladecentro.presentation.ui.location.LocationActivity
 import kotlinx.coroutines.launch
 
 @Composable
@@ -54,9 +60,15 @@ fun TopAppBarHome(
                     scrolledContainerColor = Companion.White
                 ),
                 title = {
-                    Column(modifier = Modifier.padding(horizontal = 4.dp)) {
-
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                    Column(modifier = Modifier
+                        .padding(horizontal = 4.dp)
+                        .clickable {
+                            context.startActivity(Intent(context, LocationActivity::class.java))
+                        }) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
                             Text(
                                 text = "Home",
                                 fontFamily = doppio_one,
@@ -82,7 +94,8 @@ fun TopAppBarHome(
                             fontFamily = fontFamilyHind,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Thin,
-                            color = light_gray
+                            color = light_gray,
+                            style = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false))
                         )
                     }
 

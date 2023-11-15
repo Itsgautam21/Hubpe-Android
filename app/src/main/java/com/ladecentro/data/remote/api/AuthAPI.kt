@@ -1,8 +1,10 @@
 package com.ladecentro.data.remote.api
 
+import com.ladecentro.common.Constants
 import com.ladecentro.data.remote.dto.LogoutRequest
 import com.ladecentro.data.remote.dto.ProfileDto
 import com.ladecentro.data.remote.dto.SendOtpRequest
+import com.ladecentro.data.remote.dto.UpdateProfileRequest
 import com.ladecentro.data.remote.dto.VerifyOptRequest
 import com.ladecentro.data.remote.dto.VerifyOtpResponse
 import retrofit2.Response
@@ -23,9 +25,15 @@ interface AuthAPI {
     @POST("/v1/logoff")
     suspend fun logout(
         @Body request: LogoutRequest,
-        @Header("user-session-id") authorization: String?
+        @Header(Constants.Authorization) authorization: String?
     ): Response<Objects>
 
+    @POST("/v1/profile")
+    suspend fun updateProfile(
+        @Body request: UpdateProfileRequest,
+        @Header(Constants.Authorization) authorization: String?
+    ): Response<ProfileDto>
+
     @GET("/v1/profile")
-    suspend fun getProfile(@Header("user-session-id") authorization: String?) : Response<ProfileDto>
+    suspend fun getProfile(@Header("user-session-id") authorization: String?): Response<ProfileDto>
 }

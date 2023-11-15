@@ -1,11 +1,13 @@
 package com.ladecentro.data.repository
 
+import android.util.Log
 import com.ladecentro.common.Intents
 import com.ladecentro.common.MyPreference
 import com.ladecentro.data.remote.api.AuthAPI
 import com.ladecentro.data.remote.dto.LogoutRequest
 import com.ladecentro.data.remote.dto.ProfileDto
 import com.ladecentro.data.remote.dto.SendOtpRequest
+import com.ladecentro.data.remote.dto.UpdateProfileRequest
 import com.ladecentro.data.remote.dto.VerifyOptRequest
 import com.ladecentro.data.remote.dto.VerifyOtpResponse
 import com.ladecentro.domain.repository.AuthRepository
@@ -71,6 +73,22 @@ class AuthRepositoryImpl @Inject constructor(
             if (response.isSuccessful) {
                 return response.body()!!
             }
+            throw Exception("Something Went Wrong!")
+        } catch (e: IOException) {
+            throw Exception("Something Went Wrong!")
+        } catch (e: Exception) {
+            throw Exception("Something Went Wrong!")
+        }
+    }
+
+    override suspend fun updateUser(request: UpdateProfileRequest): ProfileDto {
+        try {
+            val response = authAPI.updateProfile(request, authToken)
+            Log.d("response body", response.body()?.toString() ?: "")
+            if (response.isSuccessful) {
+                return response.body()!!
+            }
+            Log.d("error body", response.errorBody()?.toString() ?: "")
             throw Exception("Something Went Wrong!")
         } catch (e: IOException) {
             throw Exception("Something Went Wrong!")

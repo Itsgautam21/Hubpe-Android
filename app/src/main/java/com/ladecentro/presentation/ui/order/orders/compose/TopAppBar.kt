@@ -1,4 +1,4 @@
-package com.ladecentro.presentation.ui.orders.compose
+package com.ladecentro.presentation.ui.order.orders.compose
 
 import android.app.Activity
 import androidx.compose.foundation.layout.padding

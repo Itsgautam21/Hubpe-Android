@@ -16,18 +16,24 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue.Closed
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion
@@ -47,7 +53,7 @@ import com.ladecentro.presentation.ui.home.compose.ShopCategory
 import com.ladecentro.presentation.ui.home.compose.Spotlight
 import com.ladecentro.presentation.ui.home.compose.TopAppBarHome
 import com.ladecentro.presentation.ui.home.compose.YourFavourite
-import com.ladecentro.presentation.ui.orders.compose.ShimmerContent
+import com.ladecentro.presentation.ui.order.orders.compose.ShimmerContent
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -67,6 +73,8 @@ class MainActivity : ComponentActivity() {
             LadecentroTheme {
 
                 val drawerState = rememberDrawerState(initialValue = Closed)
+                val sheetState = rememberModalBottomSheetState()
+                val openBottomSheet = remember { mutableStateOf(false) }
                 Log.d("token", myPreference.getStoresTag(Intents.Token.name)!!)
 
                 ChangeStatusBar(drawerState = drawerState, mainActivity = this)
@@ -121,7 +129,20 @@ class MainActivity : ComponentActivity() {
                                         Spotlight()
                                         ShopCategory()
                                         FooterCompose()
+                                        Button(onClick = { openBottomSheet.value = true }) {
+
+                                        }
                                         Spacer(modifier = Modifier.height(100.dp))
+                                        if (openBottomSheet.value) {
+                                            ModalBottomSheet(
+                                                onDismissRequest = { openBottomSheet.value = false },
+                                                sheetState = sheetState,
+                                                dragHandle = { BottomSheetDefaults.DragHandle() }) {
+
+                                                Spacer(modifier = Modifier.height(100.dp))
+
+                                            }
+                                        }
                                     }
                                 }
                             }

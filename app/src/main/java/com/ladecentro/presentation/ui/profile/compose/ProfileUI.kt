@@ -90,7 +90,9 @@ fun MainProfileUI(vm: ProfileViewModel = hiltViewModel()) {
             OutlinedTextField(
                 value = vm.userName ?: "",
                 onValueChange = {
-                    vm.userName = it
+                    if (it.length <= 50) {
+                        vm.userName = it
+                    }
                 },
                 label = {
                     Text(
@@ -102,6 +104,7 @@ fun MainProfileUI(vm: ProfileViewModel = hiltViewModel()) {
                     fontSize = 15.sp
                 ),
                 shape = RoundedCornerShape(10.dp),
+                singleLine = true,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(60.dp)
@@ -123,16 +126,17 @@ fun MainProfileUI(vm: ProfileViewModel = hiltViewModel()) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(60.dp),
-                readOnly = true
+                enabled = false
             )
             Spacer(modifier = Modifier.height(24.dp))
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { vm.updateUser() },
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = primary_orange),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(54.dp)
+                    .height(54.dp),
+                enabled = !vm.state.value.isLoading
             ) {
                 Text(
                     text = "Save",

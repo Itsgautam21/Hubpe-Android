@@ -7,6 +7,7 @@ import com.ladecentro.common.Resource.Success
 import com.ladecentro.data.remote.dto.LogoutRequest
 import com.ladecentro.data.remote.dto.ProfileDto
 import com.ladecentro.data.remote.dto.SendOtpRequest
+import com.ladecentro.data.remote.dto.UpdateProfileRequest
 import com.ladecentro.data.remote.dto.VerifyOptRequest
 import com.ladecentro.data.remote.dto.VerifyOtpResponse
 import com.ladecentro.domain.repository.AuthRepository
@@ -54,6 +55,17 @@ class GetProfileUseCase @Inject constructor(private val authRepository: AuthRepo
     operator fun invoke(): Flow<Resource<ProfileDto>> = flow {
         emit(Loading())
         val user = authRepository.userProfile()
+        emit(Success(user))
+    }.catch {
+        emit(Error(it.message!!))
+    }
+}
+
+class GetUpdateProfileUseCase @Inject constructor(private val authRepository: AuthRepository) {
+
+    operator fun invoke(request: UpdateProfileRequest): Flow<Resource<ProfileDto>> = flow {
+        emit(Loading())
+        val user = authRepository.updateUser(request)
         emit(Success(user))
     }.catch {
         emit(Error(it.message!!))
