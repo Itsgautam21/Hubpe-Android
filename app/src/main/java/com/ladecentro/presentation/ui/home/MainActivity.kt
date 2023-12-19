@@ -16,24 +16,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.BottomSheetDefaults
-import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue.Closed
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion
@@ -42,6 +36,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.ladecentro.common.Intents
 import com.ladecentro.common.MyPreference
 import com.ladecentro.presentation.theme.LadecentroTheme
@@ -49,6 +44,7 @@ import com.ladecentro.presentation.theme.darkBlue
 import com.ladecentro.presentation.ui.authentication.login.LoginActivity
 import com.ladecentro.presentation.ui.home.compose.DrawerContent
 import com.ladecentro.presentation.ui.home.compose.FooterCompose
+import com.ladecentro.presentation.ui.home.compose.LocationPermission
 import com.ladecentro.presentation.ui.home.compose.ShopCategory
 import com.ladecentro.presentation.ui.home.compose.Spotlight
 import com.ladecentro.presentation.ui.home.compose.TopAppBarHome
@@ -70,13 +66,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            LadecentroTheme {
 
+            LadecentroTheme {
                 val drawerState = rememberDrawerState(initialValue = Closed)
-                val sheetState = rememberModalBottomSheetState()
-                val openBottomSheet = remember { mutableStateOf(false) }
                 Log.d("token", myPreference.getStoresTag(Intents.Token.name)!!)
 
+                LocationPermission()
                 ChangeStatusBar(drawerState = drawerState, mainActivity = this)
                 ModalNavigationDrawer(
                     drawerContent = {
@@ -101,9 +96,7 @@ class MainActivity : ComponentActivity() {
                         val scrollBehaviour = TopAppBarDefaults.pinnedScrollBehavior()
                         val scrollBehaviourTop =
                             TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-
                         val state = mViewModel.state.collectAsState()
-
                         if (state.value.isLoading) {
                             ShimmerContent()
                         }
@@ -129,20 +122,7 @@ class MainActivity : ComponentActivity() {
                                         Spotlight()
                                         ShopCategory()
                                         FooterCompose()
-                                        Button(onClick = { openBottomSheet.value = true }) {
-
-                                        }
                                         Spacer(modifier = Modifier.height(100.dp))
-                                        if (openBottomSheet.value) {
-                                            ModalBottomSheet(
-                                                onDismissRequest = { openBottomSheet.value = false },
-                                                sheetState = sheetState,
-                                                dragHandle = { BottomSheetDefaults.DragHandle() }) {
-
-                                                Spacer(modifier = Modifier.height(100.dp))
-
-                                            }
-                                        }
                                     }
                                 }
                             }
@@ -154,7 +134,6 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    @OptIn(ExperimentalMaterial3Api::class)
     fun ChangeStatusBar(drawerState: DrawerState, mainActivity: MainActivity) {
 
         val localView = LocalView.current

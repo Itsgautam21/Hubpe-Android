@@ -20,5 +20,9 @@ data class ProfileDto(
     val name: String,
 
     @SerializedName("phone")
-    val phone: String
+    val phone: String,
+
+    val type: String,
+
+    val operation: String
 )

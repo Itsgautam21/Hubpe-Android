@@ -15,12 +15,11 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.rounded.Phone
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,7 +46,6 @@ import com.ladecentro.presentation.ui.authentication.login.LoginViewModel
 import com.ladecentro.presentation.ui.authentication.verify.VerifyActivity
 import com.ladecentro.presentation.validation.validatePhoneNumber
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Login(viewModel: LoginViewModel) {
 
@@ -106,10 +104,12 @@ fun Login(viewModel: LoginViewModel) {
                     )
                 },
                 isError = isError,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    containerColor = white,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = white,
+                    unfocusedContainerColor = white,
+                    disabledContainerColor = white,
                     unfocusedBorderColor = border_light_gray,
-                    unfocusedLabelColor = light_gray
+                    unfocusedLabelColor = light_gray,
                 ),
                 textStyle = TextStyle(
                     fontSize = 16.sp, fontFamily = fontFamilyFredoka, fontWeight = FontWeight.Medium
@@ -128,7 +128,7 @@ fun Login(viewModel: LoginViewModel) {
                     if (isError) {
                         Icon(
                             imageVector = Icons.Default.Warning,
-                            "error",
+                            contentDescription = "error",
                             tint = MaterialTheme.colorScheme.error
                         )
                     }

@@ -9,4 +9,8 @@
     <string name="title_activity_splash">SplashActivity</string>
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="title_activity_location">LocationActivity</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="title_activity_add_address">AddAddressActivity</string>
+    <string name="title_activity_addresses">AddressesActivity</string>
+    <string name="title_activity_order_details">OrderDetailsActivity</string>
 </resources>

@@ -1,6 +1,9 @@
 package com.ladecentro.presentation.ui.order.orders.compose
 
+import android.content.Intent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -17,22 +20,26 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.Icons.Rounded
-import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -40,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
+import androidx.paging.LoadState.Loading
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.airbnb.lottie.compose.LottieAnimation
@@ -51,10 +59,12 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.ladecentro.R.raw.*
 import com.ladecentro.common.OrderStatus
+import com.ladecentro.common.bounceClick
 import com.ladecentro.domain.model.Item
 import com.ladecentro.domain.model.Orders
 import com.ladecentro.domain.model.PaymentAndStatus
 import com.ladecentro.domain.model.Store
+import com.ladecentro.presentation.common.HorizontalDashDivider
 import com.ladecentro.presentation.common.RatingBar
 import com.ladecentro.presentation.theme.card_background
 import com.ladecentro.presentation.theme.card_border
@@ -63,16 +73,23 @@ import com.ladecentro.presentation.theme.fontFamilyFredoka
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_gray
 import com.ladecentro.presentation.theme.primary_orange
+import com.ladecentro.presentation.ui.order.details.OrderDetailsActivity
 import com.ladecentro.presentation.ui.order.orders.OrdersViewModel
 
 @Composable
 fun SampleMyOrder(order: Orders) {
 
+    val context = LocalContext.current
+
     Card(
         elevation = CardDefaults.cardElevation(0.dp),
         border = BorderStroke(1.dp, card_border),
         shape = RoundedCornerShape(12.dp),
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .bounceClick(true) {
+                context.startActivity(Intent(context, OrderDetailsActivity::class.java).putExtra("orderId", order.id))
+            },
         colors = CardDefaults.cardColors(containerColor = Color.White, contentColor = Color.Black),
     ) {
         Column(modifier = Modifier.background(card_background)) {
@@ -87,7 +104,7 @@ fun SampleMyOrder(order: Orders) {
                 ItemDetails(it)
             }
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                Divider(modifier = Modifier.height(1.dp), color = card_border)
+                HorizontalDivider(thickness = 1.dp, color = card_border)
                 Card(
                     border = BorderStroke(1.dp, card_border), colors = CardDefaults.cardColors(
                         contentColor = Color.Black, containerColor = Color.White
@@ -108,7 +125,7 @@ fun SampleMyOrder(order: Orders) {
             Spacer(modifier = Modifier.height(4.dp))
             if (order.paymentAndStatus.status == OrderStatus.COMPLETED.value) {
                 Spacer(modifier = Modifier.height(8.dp))
-                Divider(modifier = Modifier.height(1.dp), color = card_border)
+                HorizontalDashDivider()
                 Spacer(modifier = Modifier.height(12.dp))
                 Rating(order.rating, order.id)
             }
@@ -159,14 +176,14 @@ fun StoreDetails(store: Store) {
             )
         }
         Icon(
-            imageVector = Icons.Default.KeyboardArrowRight,
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = "forward arrow",
             modifier = Modifier
                 .height(28.dp)
                 .width(28.dp),
         )
     }
-    Divider(modifier = Modifier.height(1.dp), color = card_border)
+    HorizontalDivider(thickness = 1.dp, color = card_border)
 }
 
 @Composable
@@ -261,7 +278,7 @@ fun Rating(rating: String?, orderId: String, vm: OrdersViewModel = hiltViewModel
     ) {
         Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.Start) {
             Text(
-                text = "How would you rate this order?",
+                text = if (rating.isNullOrBlank()) "How would you rate this order?" else "You Rated",
                 fontWeight = FontWeight.Normal,
                 fontSize = 13.sp,
                 fontFamily = fontFamilyHind,
@@ -273,7 +290,7 @@ fun Rating(rating: String?, orderId: String, vm: OrdersViewModel = hiltViewModel
             }
         }
         Button(
-            onClick = { /*TODO*/ }, colors = ButtonDefaults.buttonColors(
+            onClick = { }, colors = ButtonDefaults.buttonColors(
                 containerColor = primary_orange, contentColor = Color.White
             ), shape = RoundedCornerShape(12.dp), contentPadding = PaddingValues(horizontal = 12.dp)
         ) {
@@ -296,10 +313,12 @@ fun Rating(rating: String?, orderId: String, vm: OrdersViewModel = hiltViewModel
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MyOrders(vm: OrdersViewModel = hiltViewModel()) {
 
     val state = vm.ordersState.collectAsLazyPagingItems()
+    var visibleState by remember { mutableStateOf(false) }
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = false)
     val composition by rememberLottieComposition(spec = RawRes(loading))
     val progress by animateLottieCompositionAsState(
@@ -311,45 +330,53 @@ fun MyOrders(vm: OrdersViewModel = hiltViewModel()) {
     )
     SwipeRefresh(state = swipeRefreshState, onRefresh = vm::getAllOrders) {
 
+        AnimatedVisibility(visible = visibleState) {
+            LazyColumn(
+                contentPadding = PaddingValues(
+                    start = 12.dp, end = 12.dp, top = 12.dp, bottom = 12.dp
+                ), verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                items(count = state.itemCount, key = { it }) {
+                    state[it]?.let { order ->
+                        Box(modifier = Modifier.animateItemPlacement()) {
+                            SampleMyOrder(order)
+                        }
+                    }
+                }
+                when (state.loadState.append) {
+                    is Loading -> {
+                        item {
+                            LottieAnimation(
+                                composition = composition,
+                                progress = progress,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(50.dp)
+                            )
+                        }
+                    }
+
+                    is LoadState.Error -> {}
+                    is LoadState.NotLoading -> {}
+                }
+            }
+
+        }
         when (state.loadState.refresh) {
-            is LoadState.Loading -> {
+            is Loading -> {
                 swipeRefreshState.isRefreshing = true
                 ShimmerContent()
+                visibleState = false
             }
 
             is LoadState.NotLoading -> {
                 swipeRefreshState.isRefreshing = false
-                LazyColumn(
-                    contentPadding = PaddingValues(
-                        start = 12.dp, end = 12.dp, top = 12.dp, bottom = 12.dp
-                    ), verticalArrangement = Arrangement.spacedBy(20.dp)
-                ) {
-                    items(count = state.itemCount) {
-                        state[it]?.let { order ->
-                            SampleMyOrder(order)
-                        }
-                    }
-                    when (state.loadState.append) {
-                        is LoadState.Loading -> {
-                            item {
-                                LottieAnimation(
-                                    composition = composition,
-                                    progress = progress,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(50.dp)
-                                )
-                            }
-                        }
-
-                        is LoadState.Error -> {}
-                        is LoadState.NotLoading -> {}
-                    }
-                }
+                visibleState = true
             }
 
             is LoadState.Error -> {
                 swipeRefreshState.isRefreshing = false
+                visibleState = false
             }
         }
     }

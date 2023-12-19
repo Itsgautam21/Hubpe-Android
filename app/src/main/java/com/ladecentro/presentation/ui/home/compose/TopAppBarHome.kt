@@ -2,7 +2,6 @@ package com.ladecentro.presentation.ui.home.compose
 
 import android.content.Intent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,7 +38,7 @@ import com.ladecentro.presentation.theme.doppio_one
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_gray
 import com.ladecentro.presentation.ui.cart.CartActivity
-import com.ladecentro.presentation.ui.location.LocationActivity
+import com.ladecentro.presentation.ui.location.select.LocationActivity
 import kotlinx.coroutines.launch
 
 @Composable

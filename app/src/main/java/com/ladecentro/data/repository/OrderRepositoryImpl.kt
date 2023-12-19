@@ -7,6 +7,8 @@ import com.ladecentro.common.Intents
 import com.ladecentro.common.MyPreference
 import com.ladecentro.data.paging.OrdersPagingSource
 import com.ladecentro.data.remote.api.OrderAPI
+import com.ladecentro.data.remote.dto.orders.Order
+import com.ladecentro.data.remote.dto.orders.OrderStatus
 import com.ladecentro.data.remote.dto.orders.UpdateOrderRequest
 import com.ladecentro.domain.model.Orders
 import com.ladecentro.domain.repository.OrderRepository
@@ -18,8 +20,7 @@ import javax.inject.Inject
 class OrderRepositoryImpl @Inject constructor(
     private val orderAPI: OrderAPI,
     myPreference: MyPreference
-) :
-    OrderRepository {
+) : OrderRepository {
 
     private val authToken = myPreference.getStoresTag(Intents.Token.name)
 
@@ -38,6 +39,36 @@ class OrderRepositoryImpl @Inject constructor(
     ): Objects {
         try {
             val response = orderAPI.updateOrder(updateOrderRequest, orderId, authToken)
+            if (response.isSuccessful) {
+                return response.body()!!
+            }
+            throw Exception("Something Went Wrong!")
+        } catch (e: IOException) {
+            throw Exception("Something Went Wrong!")
+        } catch (e: Exception) {
+            throw Exception("Something Went Wrong!")
+        }
+    }
+
+    override suspend fun getOrderById(orderId: String): Order {
+
+        try {
+            val response = orderAPI.getOrderById(orderId, authToken)
+            if (response.isSuccessful) {
+                return response.body()!!
+            }
+            throw Exception("Something Went Wrong!")
+        } catch (e: IOException) {
+            throw Exception("Something Went Wrong!")
+        } catch (e: Exception) {
+            throw Exception("Something Went Wrong!")
+        }
+    }
+
+    override suspend fun getOrderTrack(orderId: String): List<OrderStatus> {
+
+        try {
+            val response = orderAPI.getOrderTrack(orderId, authToken)
             if (response.isSuccessful) {
                 return response.body()!!
             }

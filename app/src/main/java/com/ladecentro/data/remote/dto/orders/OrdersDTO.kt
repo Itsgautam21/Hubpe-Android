@@ -10,10 +10,14 @@ import com.ladecentro.domain.model.PaymentAndStatus
 import com.ladecentro.domain.model.Store
 
 data class OrdersDTO(
-    @SerializedName("orders")
-    val orders: List<Order>,
-    @SerializedName("page")
-    val page: Page
+    @SerializedName("orders") val orders: List<Order>,
+    @SerializedName("page") val page: Page
+)
+
+data class Page(
+    @SerializedName("size") val size: Int,
+    @SerializedName("current") val current: Int,
+    @SerializedName("total") val total: Int,
 )
 
 fun OrdersDTO.toOrders(): List<Orders> {
@@ -38,7 +42,7 @@ fun OrdersDTO.toOrders(): List<Orders> {
                 createdDate = getFormattedDateTime(order.createdAt),
                 status = OrderStatus.fromValue(order.state).value,
                 statusIcon = getOrderStatusIcon(order.state),
-                paymentType = "Post Paid",
+                paymentType = order.payment[0].paymentTransaction[0].paymentMethod,
                 totalPrice = order.quote.price.value
             ),
             rating = order.rating

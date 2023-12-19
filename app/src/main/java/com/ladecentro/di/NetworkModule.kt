@@ -1,5 +1,12 @@
 package com.ladecentro.di
 
+import android.app.Application
+import android.content.Context
+import android.location.Geocoder
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.gson.GsonBuilder
 import com.ladecentro.common.Constants
 import com.ladecentro.data.remote.api.AuthAPI
@@ -8,9 +15,11 @@ import com.ladecentro.data.remote.api.UserAPI
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.*
 import javax.inject.Singleton
 
 @Module
@@ -42,5 +51,23 @@ class NetworkModule {
     @Singleton
     fun providesOrderAPI(retrofit: Retrofit): OrderAPI {
         return retrofit.create(OrderAPI::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun providesFusedLocationProviderClient(application: Application): FusedLocationProviderClient =
+        LocationServices.getFusedLocationProviderClient(application)
+
+    @Provides
+    @Singleton
+    fun providesGeocoder(@ApplicationContext context: Context): Geocoder {
+        return Geocoder(context, Locale.getDefault())
+    }
+
+    @Provides
+    @Singleton
+    fun providesPlacesAPI(@ApplicationContext context: Context): PlacesClient {
+        Places.initialize(context, "AIzaSyAmx7yRzVdbuN9JXpsfCCGHMyV3C56CsIM")
+        return Places.createClient(context)
     }
 }

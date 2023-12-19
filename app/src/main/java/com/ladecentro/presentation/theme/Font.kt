@@ -1,6 +1,8 @@
 package com.ladecentro.presentation.theme
 
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontWeight.Companion
 import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
 import com.ladecentro.R
@@ -16,3 +18,5 @@ val fontFamilyFredoka = FontFamily(Font(googleFont = GoogleFont("Fredoka"), font
 val signika = FontFamily(Font(googleFont = GoogleFont("Quasimoda"), fontProvider = provider))
 val hammersmith = FontFamily(Font(googleFont = GoogleFont("Hammersmith One"), fontProvider = provider))
 val doppio_one = FontFamily(Font(googleFont = GoogleFont("Doppio One"), fontProvider = provider))
+val Montserrat = FontFamily(Font(googleFont = GoogleFont("Open Sans"), fontProvider = provider))
+val Poppins = FontFamily(Font(googleFont = GoogleFont("Poppins"), fontProvider = provider, weight = FontWeight.SemiBold))

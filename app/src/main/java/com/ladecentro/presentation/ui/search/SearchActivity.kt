@@ -37,7 +37,9 @@ class SearchActivity : ComponentActivity() {
                 ) {
                     Scaffold(
                         topBar = {
-                            TopAppBarSearch()
+                            TopAppBarSearch(placeHolder = "Search Here", isFocus = true) {
+
+                            }
                         }
                     ) { padding ->
                         Box(

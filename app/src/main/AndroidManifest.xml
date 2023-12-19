@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:name=".MainApplication"
@@ -16,7 +18,27 @@
         android:theme="@style/Theme.Ladecentro"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.ui.location.LocationActivity"
+            android:name=".presentation.ui.order.details.OrderDetailsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_order_details"
+            android:theme="@style/Theme.Ladecentro" />
+        <activity
+            android:name=".presentation.ui.address.addresses.AddressesActivity"
+            android:exported="false"
+            android:label="@string/title_activity_addresses"
+            android:theme="@style/Theme.Ladecentro" />
+        <activity
+            android:name=".presentation.ui.address.add.AddAddressActivity"
+            android:exported="false"
+            android:label="@string/title_activity_add_address"
+            android:theme="@style/Theme.Ladecentro" />
+        <activity
+            android:name=".presentation.ui.location.maps.MapsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_maps"
+            android:theme="@style/Theme.Ladecentro" />
+        <activity
+            android:name=".presentation.ui.location.select.LocationActivity"
             android:exported="false"
             android:label="@string/title_activity_location"
             android:theme="@style/Theme.Ladecentro" />
@@ -71,6 +93,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAmx7yRzVdbuN9JXpsfCCGHMyV3C56CsIM" />
     </application>
 
 </manifest>

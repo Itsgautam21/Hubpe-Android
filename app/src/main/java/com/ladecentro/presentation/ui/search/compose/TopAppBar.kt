@@ -10,10 +10,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -21,9 +21,8 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -41,34 +40,37 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ladecentro.R
+import com.ladecentro.R.drawable
 import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.darkBlue
-import com.ladecentro.presentation.theme.dark_gray
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_text
+import com.ladecentro.presentation.theme.shimmer_gray
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun TopAppBarSearch() {
+fun TopAppBarSearch(
+    placeHolder: String,
+    isFocus: Boolean,
+    color: Color = Color.White,
+    textValue: (value: String) -> Unit
+) {
 
     TopAppBar(
-        colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White),
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = color),
         title = {
             Column {
                 Spacer(modifier = Modifier.height(12.dp))
-                SearchMainCompose()
+                SearchMainCompose(placeHolder, isFocus, textValue)
             }
         }
     )
 }
 
 @Composable
-@Preview(showBackground = true)
-fun SearchMainCompose() {
+fun SearchMainCompose(placeHolder: String, isFocus: Boolean, textValue: (value: String) -> Unit) {
 
     val context = LocalContext.current as Activity
     Card(
@@ -98,74 +100,89 @@ fun SearchMainCompose() {
             }
             Divider(
                 modifier = Modifier
-                    .padding(top = 12.dp, bottom = 12.dp, end = 0.dp)
-                    .fillMaxHeight()
-                    .width(1.dp), color = card_border
-            )
-            Box(modifier = Modifier.weight(1f)) {
-                SearchTextField()
-            }
-            Divider(
-                modifier = Modifier
                     .padding(top = 12.dp, bottom = 12.dp, end = 12.dp)
                     .fillMaxHeight()
                     .width(1.dp), color = card_border
             )
+            Box(modifier = Modifier.weight(1f)) {
+                SearchTextField(placeHolder, isFocus, textValue)
+            }
+            Divider(
+                modifier = Modifier
+                    .padding(top = 12.dp, bottom = 12.dp, end = 12.dp, start = 4.dp)
+                    .fillMaxHeight()
+                    .width(1.dp), color = card_border
+            )
             Icon(
-                painter = painterResource(id = R.drawable.search),
+                painter = painterResource(id = drawable.search),
                 contentDescription = "search",
-                tint = darkBlue
+                tint = darkBlue,
+                modifier = Modifier.size(18.dp)
             )
         }
     }
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
-private fun SearchTextField() {
+private fun SearchTextField(
+    placeHolder: String,
+    isFocus: Boolean,
+    textValue: (value: String) -> Unit
+) {
 
     var searchText by remember { mutableStateOf("") }
     val focusRequest = remember { FocusRequester() }
 
-    TextField(
+    LaunchedEffect(key1 = searchText) {
+        textValue(searchText)
+    }
+
+    BasicTextField(
         value = searchText,
         onValueChange = { searchText = it },
         singleLine = true,
-        placeholder = {
-            Text(
-                text = "Search Here",
-                fontSize = 14.sp,
-                color = light_text,
-                fontFamily = fontFamilyHind
-            )
-        },
-        trailingIcon = {
-            if (searchText.isNotEmpty()) {
-                IconButton(onClick = { searchText = "" }) {
-                    Icon(
-                        imageVector = Icons.Filled.Clear,
-                        contentDescription = "close",
-                        modifier = Modifier
-                            .height(20.dp)
-                            .width(20.dp),
-                        tint = dark_gray
+        modifier = Modifier
+            .fillMaxWidth()
+            .focusRequester(focusRequest),
+        textStyle = TextStyle(
+            fontSize = 16.sp,
+            fontFamily = fontFamilyHind,
+            fontWeight = FontWeight.Bold
+        ),
+        decorationBox = { innerTextField ->
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(Modifier.weight(1f)) {
+                    if (searchText.isEmpty()) Text(
+                        placeHolder,
+                        style = LocalTextStyle.current.copy(
+                            color = light_text,
+                            fontSize = 15.sp,
+                            fontFamily = fontFamilyHind
+                        )
                     )
+                    innerTextField()
+                }
+                if (searchText.isNotBlank()) {
+                    IconButton(
+                        onClick = { searchText = "" },
+                        modifier = Modifier.size(30.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = drawable.icons_clear),
+                            contentDescription = "clear text",
+                            modifier = Modifier.size(18.dp),
+                            tint = shimmer_gray
+                        )
+                    }
                 }
             }
-        },
-        modifier = Modifier.focusRequester(focusRequest),
-        shape = RoundedCornerShape(12.dp),
-        textStyle = TextStyle(
-            fontSize = 14.sp,
-            fontFamily = fontFamilyHind,
-            fontWeight = FontWeight.SemiBold
-        ),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = Color.White,
-            unfocusedBorderColor = Color.White
-        )
+        }
     )
     LaunchedEffect(key1 = Unit) {
-        focusRequest.requestFocus()
+        if (isFocus) {
+            focusRequest.requestFocus()
+        }
     }
 }
