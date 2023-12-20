@@ -6,4 +6,5 @@ object Constants {
     const val PREFERENCE_TAG = "MY_PREFERENCE"
     const val Authorization = "user-session-id"
     const val RATING = "RATING"
+    const val GENERIC_ERROR_MESSAGE = "Something Went Wrong!"
 }

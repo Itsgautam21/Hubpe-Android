@@ -11,9 +11,11 @@ import com.ladecentro.data.remote.dto.UpdateProfileRequest
 import com.ladecentro.data.remote.dto.VerifyOptRequest
 import com.ladecentro.data.remote.dto.VerifyOtpResponse
 import com.ladecentro.domain.repository.AuthRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import java.util.*
 import javax.inject.Inject
 
@@ -25,7 +27,7 @@ class GetAuthUseCase @Inject constructor(private val authRepository: AuthReposit
         emit(Success(user!!))
     }.catch {
         emit(Error(it.message!!))
-    }
+    }.flowOn(Dispatchers.IO)
 }
 
 class GetVerifyUseCase @Inject constructor(private val authRepository: AuthRepository) {
@@ -36,7 +38,7 @@ class GetVerifyUseCase @Inject constructor(private val authRepository: AuthRepos
         emit(Success(user))
     }.catch {
         emit(Error(it.message!!))
-    }
+    }.flowOn(Dispatchers.IO)
 }
 
 class GetLogoutUseCase @Inject constructor(private val authRepository: AuthRepository) {
@@ -47,7 +49,7 @@ class GetLogoutUseCase @Inject constructor(private val authRepository: AuthRepos
         emit(Success(user))
     }.catch {
         emit(Error(it.message!!))
-    }
+    }.flowOn(Dispatchers.IO)
 }
 
 class GetProfileUseCase @Inject constructor(private val authRepository: AuthRepository) {
@@ -58,7 +60,7 @@ class GetProfileUseCase @Inject constructor(private val authRepository: AuthRepo
         emit(Success(user))
     }.catch {
         emit(Error(it.message!!))
-    }
+    }.flowOn(Dispatchers.IO)
 }
 
 class GetUpdateProfileUseCase @Inject constructor(private val authRepository: AuthRepository) {
@@ -69,5 +71,5 @@ class GetUpdateProfileUseCase @Inject constructor(private val authRepository: Au
         emit(Success(user))
     }.catch {
         emit(Error(it.message!!))
-    }
+    }.flowOn(Dispatchers.IO)
 }

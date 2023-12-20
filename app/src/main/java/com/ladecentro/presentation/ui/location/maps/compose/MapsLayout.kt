@@ -43,12 +43,12 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.ladecentro.R
+import com.ladecentro.presentation.common.SimpleTopAppBar
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_gray
 import com.ladecentro.presentation.theme.primary_orange
 import com.ladecentro.presentation.ui.address.add.AddAddressActivity
 import com.ladecentro.presentation.ui.location.maps.MapsViewModel
-import com.ladecentro.presentation.ui.order.orders.compose.TopAppBarMyOrders
 
 @Composable
 fun MapsLayout(vm: MapsViewModel = hiltViewModel()) {
@@ -72,7 +72,7 @@ fun MapsLayout(vm: MapsViewModel = hiltViewModel()) {
     }
 
     Scaffold(
-        topBar = { TopAppBarMyOrders(title = "Choose Location") }
+        topBar = { SimpleTopAppBar(title = "Choose Location") }
     ) {
         Column(
             modifier = Modifier
@@ -146,8 +146,9 @@ fun MapsLayout(vm: MapsViewModel = hiltViewModel()) {
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(
                         onClick = {
-                            context.startActivity(Intent(context, AddAddressActivity::class.java)
-                                .putExtra("address", address)
+                            context.startActivity(
+                                Intent(context, AddAddressActivity::class.java)
+                                    .putExtra("address", address)
                             )
                         },
                         colors = ButtonDefaults.buttonColors(

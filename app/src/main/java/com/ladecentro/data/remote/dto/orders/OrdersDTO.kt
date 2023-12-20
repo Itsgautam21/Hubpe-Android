@@ -42,7 +42,7 @@ fun OrdersDTO.toOrders(): List<Orders> {
                 createdDate = getFormattedDateTime(order.createdAt),
                 status = OrderStatus.fromValue(order.state).value,
                 statusIcon = getOrderStatusIcon(order.state),
-                paymentType = order.payment[0].paymentTransaction[0].paymentMethod,
+                paymentType = order.payment[0].paymentTransaction[0].paymentMethod ?: "COD",
                 totalPrice = order.quote.price.value
             ),
             rating = order.rating

@@ -1,15 +1,16 @@
-package com.ladecentro.presentation.ui.address.addresses.compose
+package com.ladecentro.presentation.ui.address.addresses
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ladecentro.common.Resource.Error
 import com.ladecentro.common.Resource.Loading
 import com.ladecentro.common.Resource.Success
-import com.ladecentro.data.remote.dto.LocationXX
+import com.ladecentro.data.remote.dto.Location
 import com.ladecentro.domain.use_case.GetProfileUseCase
 import com.ladecentro.presentation.common.UIStates
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,8 +19,8 @@ class AddressViewModel @Inject constructor(
     private val getProfileUseCase: GetProfileUseCase
 ) : ViewModel() {
 
-    private val _userLocation = MutableStateFlow(UIStates<List<LocationXX>>())
-    val userLocation = _userLocation
+    private val _userLocation = MutableStateFlow(UIStates<List<Location>>())
+    val userLocation: StateFlow<UIStates<List<Location>>> = _userLocation
 
     init {
         getUserProfile()

@@ -143,7 +143,8 @@ fun StoreDetails(store: Store) {
         Card(
             shape = RoundedCornerShape(12.dp),
             border = BorderStroke(1.dp, card_border),
-            elevation = CardDefaults.cardElevation(0.dp)
+            elevation = CardDefaults.cardElevation(0.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White, contentColor = Color.Black)
         ) {
             AsyncImage(
                 model = store.image,
@@ -151,7 +152,7 @@ fun StoreDetails(store: Store) {
                 modifier = Modifier
                     .height(48.dp)
                     .width(48.dp),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Inside
             )
         }
         Column(modifier = Modifier.weight(1f)) {

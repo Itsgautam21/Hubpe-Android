@@ -11,6 +11,7 @@ import com.ladecentro.domain.use_case.GetOrderTrackUseCase
 import com.ladecentro.presentation.common.UIStates
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,10 +25,10 @@ class OrderDetailsViewModel @Inject constructor(
     private val id: String = savedStateHandle["orderId"] ?: ""
 
     private val _orderDetails = MutableStateFlow<UIStates<OrderDetails>>(UIStates())
-    val orderDetails get() = _orderDetails
+    val orderDetails: StateFlow<UIStates<OrderDetails>> get() = _orderDetails
 
     private val _orderTrack = MutableStateFlow<UIStates<List<OrderStatus>>>(UIStates())
-    val orderTrack get() = _orderTrack
+    val orderTrack: StateFlow<UIStates<List<OrderStatus>>> get() = _orderTrack
 
     init {
         getOrder()

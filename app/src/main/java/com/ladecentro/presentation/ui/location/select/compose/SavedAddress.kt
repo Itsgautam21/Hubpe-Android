@@ -31,13 +31,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ladecentro.R.drawable
-import com.ladecentro.data.remote.dto.LocationXX
+import com.ladecentro.data.remote.dto.Location
 import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_gray
 
 @Composable
-fun SampleSavedAddress(location: LocationXX? = null) {
+fun SampleSavedAddress(location: Location? = null) {
 
     Card(
         colors = CardDefaults.cardColors(Color.White),

@@ -89,7 +89,7 @@ fun StoreDetails(store: Store) {
                 modifier = Modifier
                     .height(48.dp)
                     .width(48.dp),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Inside
             )
         }
         Column(modifier = Modifier.weight(1f)) {

@@ -21,7 +21,7 @@ fun LoadImage(
 
     val painter = // You can apply additional options for image loading here if needed
         rememberAsyncImagePainter(
-            Builder(LocalContext.current).data(data = image).error(R.drawable.avatar)
+            Builder(LocalContext.current).data(data = image).error(R.drawable.default_profile)
                 .apply(block = fun Builder.() {
                     // You can apply additional options for image loading here if needed
                 }).build()

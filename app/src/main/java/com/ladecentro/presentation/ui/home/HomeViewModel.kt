@@ -17,6 +17,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
@@ -30,10 +31,10 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(UIStates<ProfileDto>())
-    val state get() = _state
+    val state: StateFlow<UIStates<ProfileDto>> get() = _state
 
     private val _location: MutableStateFlow<Location?> = MutableStateFlow(null)
-    val location get() = _location
+    val location: StateFlow<Location?> get() = _location
 
     init {
         userProfile()
@@ -72,7 +73,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun userLogout() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             getLogoutUseCase(LogoutRequest("LOGOFF")).collect()
         }
     }

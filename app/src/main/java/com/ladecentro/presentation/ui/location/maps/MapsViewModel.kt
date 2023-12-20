@@ -9,6 +9,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.ladecentro.domain.use_case.MapsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -20,7 +21,7 @@ class MapsViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _markerAddressDetail = MutableStateFlow(Address(Locale.US))
-    val markerAddressDetail get() = _markerAddressDetail
+    val markerAddressDetail: StateFlow<Address> get() = _markerAddressDetail
 
     private val _cameraPosition: MutableStateFlow<CameraPosition> = MutableStateFlow(
         savedStateHandle["camera"] ?: CameraPosition.fromLatLngZoom(

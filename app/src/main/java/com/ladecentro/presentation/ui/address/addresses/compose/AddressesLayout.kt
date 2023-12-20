@@ -22,11 +22,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ladecentro.presentation.common.SimpleTopAppBar
 import com.ladecentro.presentation.theme.card_background
 import com.ladecentro.presentation.ui.address.add.AddAddressActivity
+import com.ladecentro.presentation.ui.address.addresses.AddressViewModel
 import com.ladecentro.presentation.ui.location.select.compose.SampleSavedAddress
 import com.ladecentro.presentation.ui.order.orders.compose.ShimmerContent
-import com.ladecentro.presentation.ui.order.orders.compose.TopAppBarMyOrders
 
 @Composable
 fun AddressesLayout(vm: AddressViewModel = hiltViewModel()) {
@@ -36,7 +37,7 @@ fun AddressesLayout(vm: AddressViewModel = hiltViewModel()) {
 
     Scaffold(
         topBar = {
-            TopAppBarMyOrders(title = "My Addresses")
+            SimpleTopAppBar(title = "My Addresses")
         },
         floatingActionButton = {
             FloatingActionButton(

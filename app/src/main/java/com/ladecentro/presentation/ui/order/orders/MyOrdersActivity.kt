@@ -12,9 +12,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion
+import com.ladecentro.presentation.common.SimpleTopAppBar
 import com.ladecentro.presentation.theme.LadecentroTheme
 import com.ladecentro.presentation.ui.order.orders.compose.MyOrders
-import com.ladecentro.presentation.ui.order.orders.compose.TopAppBarMyOrders
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -30,7 +30,7 @@ class MyOrdersActivity : ComponentActivity() {
                 ) {
                     Scaffold(
                         topBar = {
-                            TopAppBarMyOrders("My Orders")
+                            SimpleTopAppBar("My Orders")
                         },
                         contentColor = Color.White
                     ) {

@@ -17,10 +17,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.ladecentro.common.OrderStatus
+import com.ladecentro.presentation.common.SimpleTopAppBar
 import com.ladecentro.presentation.theme.card_background
 import com.ladecentro.presentation.ui.order.details.OrderDetailsViewModel
 import com.ladecentro.presentation.ui.order.orders.compose.ShimmerContent
-import com.ladecentro.presentation.ui.order.orders.compose.TopAppBarMyOrders
 
 @Composable
 fun OrderDetailsLayout(vm: OrderDetailsViewModel = hiltViewModel()) {
@@ -29,7 +29,7 @@ fun OrderDetailsLayout(vm: OrderDetailsViewModel = hiltViewModel()) {
     val orderState by vm.orderDetails.collectAsState()
 
     Scaffold(topBar = {
-        TopAppBarMyOrders(title = "Order Details")
+        SimpleTopAppBar(title = "Order Details")
     }) {
         SwipeRefresh(state = swipeRefreshState, onRefresh = {}) {
             Column(

@@ -1,9 +1,9 @@
-package com.ladecentro.presentation.ui.order.orders.compose
+package com.ladecentro.presentation.common
 
 import android.app.Activity
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons.Filled
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,14 +21,14 @@ import com.ladecentro.presentation.theme.doppio_one
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun TopAppBarMyOrders(title: String) {
+fun SimpleTopAppBar(title: String) {
 
     val context = LocalContext.current as Activity
 
     Surface(shadowElevation = 4.dp) {
 
         TopAppBar(
-            colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White),
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White),
             title = {
                 Text(
                     text = title,
@@ -43,7 +43,7 @@ fun TopAppBarMyOrders(title: String) {
                     modifier = Modifier.padding(start = 0.dp)
                 ) {
                     Icon(
-                        imageVector = Filled.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = null
                     )
                 }

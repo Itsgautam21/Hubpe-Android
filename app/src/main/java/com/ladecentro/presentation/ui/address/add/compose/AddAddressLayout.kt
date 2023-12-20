@@ -28,11 +28,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ladecentro.common.bounceClick
+import com.ladecentro.presentation.common.SimpleTopAppBar
 import com.ladecentro.presentation.theme.card_background
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.primary_orange
 import com.ladecentro.presentation.ui.address.add.AddAddressViewModel
-import com.ladecentro.presentation.ui.order.orders.compose.TopAppBarMyOrders
 import com.ladecentro.presentation.validation.validateName
 import com.ladecentro.presentation.validation.validatePhoneNumber
 import com.ladecentro.presentation.validation.validateRequiredField
@@ -47,7 +47,7 @@ fun AddAddressLayout(vm: AddAddressViewModel = hiltViewModel()) {
     }
     Scaffold(
         topBar = {
-            TopAppBarMyOrders(title = "Add an address")
+            SimpleTopAppBar(title = "Add an address")
         }
     ) {
         Column(

@@ -17,6 +17,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.*
@@ -69,5 +71,11 @@ class NetworkModule {
     fun providesPlacesAPI(@ApplicationContext context: Context): PlacesClient {
         Places.initialize(context, "AIzaSyAmx7yRzVdbuN9JXpsfCCGHMyV3C56CsIM")
         return Places.createClient(context)
+    }
+
+    @Provides
+    @Singleton
+    fun providesIoDispatcher(): CoroutineDispatcher {
+        return Dispatchers.IO
     }
 }

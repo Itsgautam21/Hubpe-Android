@@ -3,6 +3,7 @@ package com.ladecentro.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.ladecentro.common.Constants
 import com.ladecentro.common.Intents
 import com.ladecentro.common.MyPreference
 import com.ladecentro.data.paging.OrdersPagingSource
@@ -42,11 +43,11 @@ class OrderRepositoryImpl @Inject constructor(
             if (response.isSuccessful) {
                 return response.body()!!
             }
-            throw Exception("Something Went Wrong!")
+            throw Exception(Constants.GENERIC_ERROR_MESSAGE)
         } catch (e: IOException) {
-            throw Exception("Something Went Wrong!")
+            throw Exception(Constants.GENERIC_ERROR_MESSAGE)
         } catch (e: Exception) {
-            throw Exception("Something Went Wrong!")
+            throw Exception(Constants.GENERIC_ERROR_MESSAGE)
         }
     }
 
@@ -57,11 +58,11 @@ class OrderRepositoryImpl @Inject constructor(
             if (response.isSuccessful) {
                 return response.body()!!
             }
-            throw Exception("Something Went Wrong!")
+            throw Exception(Constants.GENERIC_ERROR_MESSAGE)
         } catch (e: IOException) {
-            throw Exception("Something Went Wrong!")
+            throw Exception(Constants.GENERIC_ERROR_MESSAGE)
         } catch (e: Exception) {
-            throw Exception("Something Went Wrong!")
+            throw Exception(Constants.GENERIC_ERROR_MESSAGE)
         }
     }
 
@@ -72,11 +73,11 @@ class OrderRepositoryImpl @Inject constructor(
             if (response.isSuccessful) {
                 return response.body()!!
             }
-            throw Exception("Something Went Wrong!")
+            throw Exception(Constants.GENERIC_ERROR_MESSAGE)
         } catch (e: IOException) {
-            throw Exception("Something Went Wrong!")
+            throw Exception(Constants.GENERIC_ERROR_MESSAGE)
         } catch (e: Exception) {
-            throw Exception("Something Went Wrong!")
+            throw Exception(Constants.GENERIC_ERROR_MESSAGE)
         }
     }
 }

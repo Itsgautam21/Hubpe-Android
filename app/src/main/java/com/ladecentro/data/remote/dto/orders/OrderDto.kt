@@ -340,8 +340,8 @@ fun Order.toOrderDetails(): OrderDetails =
         paymentDetails = PaymentDetails(
             date = payment[0].timestamp,
             price = payment[0].amount,
-            mode = payment[0].paymentTransaction[0].paymentMethod,
-            info = payment[0].paymentTransaction[0].payerVpa,
+            mode = payment[0].paymentTransaction[0].paymentMethod ?: "COD",
+            info = payment[0].paymentTransaction[0].payerVpa ?: "",
             refNo = payment[0].pgOrderId
         ),
         lastUpdateOrderTrack = getFormattedDateTime(orderTrack.lastUpdatedAt)

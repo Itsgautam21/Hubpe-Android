@@ -19,9 +19,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.ladecentro.presentation.common.SimpleTopAppBar
 import com.ladecentro.presentation.theme.LadecentroTheme
 import com.ladecentro.presentation.theme.card_border
-import com.ladecentro.presentation.ui.order.orders.compose.TopAppBarMyOrders
 import com.ladecentro.presentation.ui.profile.compose.MainProfileUI
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -43,7 +43,7 @@ class ProfileActivity : ComponentActivity() {
                     color = Color.White
                 ) {
                     Scaffold(
-                        topBar = { TopAppBarMyOrders("Profile Settings") },
+                        topBar = { SimpleTopAppBar("Profile Settings") },
                         snackbarHost = { SnackbarHost(snackBarHostState) }
                     ) {
                         Column(

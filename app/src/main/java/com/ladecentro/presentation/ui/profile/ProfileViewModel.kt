@@ -1,5 +1,6 @@
 package com.ladecentro.presentation.ui.profile
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -24,14 +25,14 @@ class ProfileViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    var userName by mutableStateOf(savedStateHandle.get<String>(Intents.USER_NAME.name))
-    val phoneNumber = savedStateHandle.get<String>(Intents.Phone.name)
+    val phoneNumber: String? = savedStateHandle[Intents.Phone.name]
+    var userName: String by mutableStateOf(savedStateHandle[Intents.USER_NAME.name] ?: "")
 
     private val _state = mutableStateOf(UIStates<ProfileDto>())
-    val state get() = _state
+    val state: State<UIStates<ProfileDto>> get() = _state
 
     fun updateUser() {
-        val request = UpdateProfileRequest(userName!!.trim(), listOf("NAME"))
+        val request = UpdateProfileRequest(userName.trim(), listOf("NAME"))
         viewModelScope.launch {
             getUpdateProfileUseCase(request).collect {
                 when (it) {

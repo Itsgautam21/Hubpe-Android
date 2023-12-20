@@ -6,11 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.ladecentro.data.remote.dto.City
-import com.ladecentro.data.remote.dto.CountryXX
-import com.ladecentro.data.remote.dto.CreateAddress
-import com.ladecentro.data.remote.dto.DescriptorXXXX
-import com.ladecentro.data.remote.dto.LocationXX
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -23,10 +18,10 @@ class AddAddressViewModel @Inject constructor(
 
     var receiverName by mutableStateOf("")
     var phoneNumber by mutableStateOf("")
-    var house by mutableStateOf((address?.locality ?: "") + ", " + ( address?.premises ?: ""))
-    var area by mutableStateOf((address?.thoroughfare ?: "") + ", " + ( address?.subLocality ?: ""))
+    var house by mutableStateOf((address?.locality ?: "") + ", " + (address?.premises ?: ""))
+    var area by mutableStateOf((address?.thoroughfare ?: "") + ", " + (address?.subLocality ?: ""))
     var city by mutableStateOf(address?.locality ?: "")
-    var landmark by mutableStateOf( "")
+    var landmark by mutableStateOf("")
 
     var isPhoneError by mutableStateOf(false)
     var isNameError by mutableStateOf(false)
@@ -40,19 +35,18 @@ class AddAddressViewModel @Inject constructor(
     var areaErrorText by mutableStateOf("")
     var cityErrorText by mutableStateOf("")
 
-
     fun addAddress() {
 
-        val addresses = com.ladecentro.data.remote.dto.Address(address?.postalCode!!, house, city,
-            "India", "", "", receiverName, address.adminArea)
-
-        val addressess = CreateAddress(address = addresses,
-            city = City(city),
-            country = CountryXX("India"),
-            descriptor = DescriptorXXXX(address.getAddressLine(0), "Home"),
-            gps = address.latitude.toString() +"," + address.longitude.toString(),
-            id = null,
-            mobileNumber =  phoneNumber,
-            primary = false)
+//        val addresses = com.ladecentro.data.remote.dto.Address(address?.postalCode!!, house, city,
+//            "India", "", "", receiverName, address.adminArea)
+//
+//        val addressess = CreateAddress(address = addresses,
+//            city = City(city),
+//            country = CountryXX("India"),
+//            descriptor = DescriptorXXXX(address.getAddressLine(0), "Home"),
+//            gps = address.latitude.toString() +"," + address.longitude.toString(),
+//            id = null,
+//            mobileNumber =  phoneNumber,
+//            primary = false)
     }
 }

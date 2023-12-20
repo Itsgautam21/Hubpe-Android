@@ -10,7 +10,6 @@ import com.ladecentro.data.remote.dto.Profile
 import com.ladecentro.data.remote.dto.SendOtpRequest
 import com.ladecentro.domain.use_case.GetAuthUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,7 +24,7 @@ class LoginViewModel @Inject constructor(private val authUserCase: GetAuthUseCas
         val request = SendOtpRequest("SEND", Profile(phoneState))
         Log.d("LoginViewModel", request.toString())
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             authUserCase(request).collect()
         }
     }

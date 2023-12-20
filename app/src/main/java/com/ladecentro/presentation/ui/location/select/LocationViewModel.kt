@@ -1,5 +1,6 @@
 package com.ladecentro.presentation.ui.location.select
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,13 +13,14 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LocationViewModel @Inject constructor(private val placesUseCase: MapPlacesUseCase) : ViewModel() {
+class LocationViewModel @Inject constructor(private val placesUseCase: MapPlacesUseCase) :
+    ViewModel() {
 
     val locationAutofill: List<PlacesResult>
         get() = placesUseCase.locationAutofill.toList()
 
     private val _searchState = mutableStateOf("")
-    val searchState get() = _searchState
+    val searchState: State<String> get() = _searchState
 
     private var job: Job? = null
 
@@ -30,9 +32,11 @@ class LocationViewModel @Inject constructor(private val placesUseCase: MapPlaces
         }
     }
 
-    fun getCameraPosition(placesResult: PlacesResult, result: (cameraPos: CameraPosition?) -> Unit) {
+    fun getCameraPosition(
+        placesResult: PlacesResult,
+        result: (cameraPos: CameraPosition?) -> Unit
+    ) {
         viewModelScope.launch {
-
             placesUseCase.getCoordinates(placesResult) {
                 it?.let {
                     result(CameraPosition.fromLatLngZoom(it, 18f))

@@ -11,8 +11,8 @@ import com.ladecentro.domain.model.Orders
 import com.ladecentro.domain.use_case.GetOrdersUseCase
 import com.ladecentro.domain.use_case.GetUpdateOrderUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,14 +24,14 @@ class OrdersViewModel @Inject constructor(
 
     private val _ordersState: MutableStateFlow<PagingData<Orders>> =
         MutableStateFlow(PagingData.empty())
-    val ordersState get() = _ordersState
+    val ordersState: StateFlow<PagingData<Orders>> get() = _ordersState
 
     init {
         getAllOrders()
     }
 
     fun getAllOrders() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             ordersUseCase.invoke().cachedIn(viewModelScope).collect {
                 _ordersState.value = it
             }
@@ -41,16 +41,14 @@ class OrdersViewModel @Inject constructor(
     fun updateOrderRating(rating: String, orderId: String) {
 
         val ratingRequest = UpdateOrderRequest(Constants.RATING, rating)
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             updateOrderUseCase.invoke(ratingRequest, orderId).collect {
                 when (it) {
-                    is Resource.Loading -> {
-                    }
                     is Resource.Success -> {
                         getAllOrders()
                     }
-                    is Resource.Error -> {
-                    }
+
+                    else -> {}
                 }
             }
         }
