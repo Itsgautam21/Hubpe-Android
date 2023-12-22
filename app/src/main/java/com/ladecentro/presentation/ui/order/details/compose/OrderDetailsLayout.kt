@@ -31,28 +31,32 @@ fun OrderDetailsLayout(vm: OrderDetailsViewModel = hiltViewModel()) {
     Scaffold(topBar = {
         SimpleTopAppBar(title = "Order Details")
     }) {
-        SwipeRefresh(state = swipeRefreshState, onRefresh = {}) {
+        SwipeRefresh(state = swipeRefreshState, onRefresh = {
+            vm.getOrder()
+            vm.getOrderTrack()
+        }, modifier = Modifier.padding(it)) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(it)
                     .background(card_background)
                     .verticalScroll(rememberScrollState())
             ) {
                 if (orderState.isLoading) {
+                    swipeRefreshState.isRefreshing = true
                     ShimmerContent()
                 }
                 orderState.content?.let {
+                    swipeRefreshState.isRefreshing = false
                     Column(
                         modifier = Modifier.padding(12.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         DeliveryDetails(it.deliveryDetails)
                         OrderDetails(it.orderDetails, it.displayOrderId)
-                        if (it.status.equals(OrderStatus.COMPLETED.value, true)) {
+                        if (it.status == OrderStatus.COMPLETED.name) {
                             OrderDeliveredStatus(it)
                         }
-                        if (it.status.equals(OrderStatus.CANCELLED.value, true)) {
+                        if (it.status == OrderStatus.CANCELLED.name) {
                             OrderCancelCompose(it)
                         }
                         OrderTrackDetails(it.lastUpdateOrderTrack)

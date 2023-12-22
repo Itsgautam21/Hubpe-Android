@@ -56,7 +56,7 @@ class AuthRepositoryImpl @Inject constructor(
         try {
             val response = authAPI.logout(request, authToken)
             if (response.isSuccessful) {
-                return response.body()!!
+                return response.body()
             }
             throw Exception("Something Went Wrong!")
         } catch (e: IOException) {

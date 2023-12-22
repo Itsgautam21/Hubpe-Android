@@ -1,12 +1,19 @@
 package com.ladecentro.presentation.ui.home
 
 import android.location.Location
+import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ladecentro.common.Resource
+import com.google.gson.Gson
+import com.ladecentro.common.Constants.ERROR_TAG
+import com.ladecentro.common.MyPreference
+import com.ladecentro.common.Resource.Error
+import com.ladecentro.common.Resource.Loading
+import com.ladecentro.common.Resource.Success
+import com.ladecentro.common.SharedPreference
 import com.ladecentro.data.remote.dto.LogoutRequest
 import com.ladecentro.data.remote.dto.ProfileDto
 import com.ladecentro.domain.location.LocationTracker
@@ -18,7 +25,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,7 +33,8 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getLogoutUseCase: GetLogoutUseCase,
     private val getProfileUseCase: GetProfileUseCase,
-    private val locationTracker: LocationTracker
+    private val locationTracker: LocationTracker,
+    private val myPreference: MyPreference
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(UIStates<ProfileDto>())
@@ -36,6 +43,8 @@ class HomeViewModel @Inject constructor(
     private val _location: MutableStateFlow<Location?> = MutableStateFlow(null)
     val location: StateFlow<Location?> get() = _location
 
+    private var localProfile: String? = myPreference.getStoresTag(SharedPreference.PROFILE.name)
+
     init {
         userProfile()
     }
@@ -43,17 +52,22 @@ class HomeViewModel @Inject constructor(
     private fun userProfile() {
 
         viewModelScope.launch {
-            getProfileUseCase().flowOn(Dispatchers.IO).collect {
+            if (localProfile != null) {
+                setUserProfileFromPreference()
+                return@launch
+            }
+            getProfileUseCase().collect {
                 when (it) {
-                    is Resource.Loading -> {
+                    is Loading -> {
                         _state.emit(UIStates(isLoading = true))
                     }
 
-                    is Resource.Success -> {
+                    is Success -> {
                         _state.emit(UIStates(isLoading = false, content = it.data))
+                        myPreference.setStoredTag(SharedPreference.PROFILE.name, Gson().toJson(it.data))
                     }
 
-                    is Resource.Error -> {
+                    is Error -> {
                         _state.emit(UIStates(isLoading = false, error = it.message))
                     }
                 }
@@ -72,9 +86,29 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun userLogout() {
+    fun userLogout(clearUI: () -> Unit) {
         viewModelScope.launch {
-            getLogoutUseCase(LogoutRequest("LOGOFF")).collect()
+            getLogoutUseCase(LogoutRequest("LOGOFF")).collect {
+                when (it) {
+                    is Loading -> {}
+                    is Success -> {
+                        myPreference.removeAllTags()
+                        clearUI()
+                    }
+                    is Error -> {
+                        Log.d(ERROR_TAG, myPreference.getStoresTag(SharedPreference.PROFILE.name).toString())
+                    }
+                }
+            }
+        }
+    }
+
+    fun setUserProfileFromPreference() {
+        localProfile = myPreference.getStoresTag(SharedPreference.PROFILE.name)
+        viewModelScope.launch {
+            localProfile?.let {
+                _state.emit(UIStates(content = Gson().fromJson(it, ProfileDto::class.java)))
+            }
         }
     }
 }

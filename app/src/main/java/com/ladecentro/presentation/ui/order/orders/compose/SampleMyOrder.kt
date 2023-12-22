@@ -58,6 +58,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.ladecentro.R.raw.*
+import com.ladecentro.common.Intents
 import com.ladecentro.common.OrderStatus
 import com.ladecentro.common.bounceClick
 import com.ladecentro.domain.model.Item
@@ -77,7 +78,7 @@ import com.ladecentro.presentation.ui.order.details.OrderDetailsActivity
 import com.ladecentro.presentation.ui.order.orders.OrdersViewModel
 
 @Composable
-fun SampleMyOrder(order: Orders) {
+fun SampleMyOrder(order: Orders, vm: OrdersViewModel = hiltViewModel()) {
 
     val context = LocalContext.current
 
@@ -88,7 +89,12 @@ fun SampleMyOrder(order: Orders) {
         modifier = Modifier
             .fillMaxWidth()
             .bounceClick(true) {
-                context.startActivity(Intent(context, OrderDetailsActivity::class.java).putExtra("orderId", order.id))
+                context.startActivity(
+                    Intent(context, OrderDetailsActivity::class.java).putExtra(
+                        Intents.ORDER_ID.name,
+                        order.id
+                    )
+                )
             },
         colors = CardDefaults.cardColors(containerColor = Color.White, contentColor = Color.Black),
     ) {
@@ -127,7 +133,9 @@ fun SampleMyOrder(order: Orders) {
                 Spacer(modifier = Modifier.height(8.dp))
                 HorizontalDashDivider()
                 Spacer(modifier = Modifier.height(12.dp))
-                Rating(order.rating, order.id)
+                Rating(order.rating) {
+                    vm.updateOrderRating(it, order.id)
+                }
             }
         }
     }
@@ -272,7 +280,7 @@ fun PaymentsAndStatus(paymentAndStatus: PaymentAndStatus) {
 }
 
 @Composable
-fun Rating(rating: String?, orderId: String, vm: OrdersViewModel = hiltViewModel()) {
+fun Rating(rating: String?, onRatingClick: (rating: String) -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -287,7 +295,7 @@ fun Rating(rating: String?, orderId: String, vm: OrdersViewModel = hiltViewModel
             )
             Spacer(modifier = Modifier.height(4.dp))
             RatingBar(rating = rating?.toInt() ?: 0) {
-                vm.updateOrderRating(it.toString(), orderId)
+                onRatingClick(it.toString())
             }
         }
         Button(

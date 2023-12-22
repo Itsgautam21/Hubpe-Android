@@ -7,10 +7,13 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.ladecentro.common.Intents
+import com.ladecentro.common.MyPreference
 import com.ladecentro.common.Resource.Error
 import com.ladecentro.common.Resource.Loading
 import com.ladecentro.common.Resource.Success
+import com.ladecentro.common.SharedPreference
 import com.ladecentro.data.remote.dto.ProfileDto
 import com.ladecentro.data.remote.dto.UpdateProfileRequest
 import com.ladecentro.domain.use_case.GetUpdateProfileUseCase
@@ -22,11 +25,14 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val getUpdateProfileUseCase: GetUpdateProfileUseCase,
+    private val myPreference: MyPreference,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val phoneNumber: String? = savedStateHandle[Intents.Phone.name]
+    var phoneNumber: String? = savedStateHandle[Intents.Phone.name]
     var userName: String by mutableStateOf(savedStateHandle[Intents.USER_NAME.name] ?: "")
+    var nameErrorText by mutableStateOf("")
+    var isNameError by mutableStateOf(false)
 
     private val _state = mutableStateOf(UIStates<ProfileDto>())
     val state: State<UIStates<ProfileDto>> get() = _state
@@ -42,6 +48,7 @@ class ProfileViewModel @Inject constructor(
 
                     is Success -> {
                         _state.value = UIStates(content = it.data)
+                        myPreference.setStoredTag(SharedPreference.PROFILE.name, Gson().toJson(it.data))
                     }
 
                     is Error -> {

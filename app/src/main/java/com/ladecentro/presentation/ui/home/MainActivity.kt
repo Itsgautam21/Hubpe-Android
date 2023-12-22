@@ -2,7 +2,6 @@ package com.ladecentro.presentation.ui.home
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -36,9 +35,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.ladecentro.common.Intents
-import com.ladecentro.common.MyPreference
 import com.ladecentro.presentation.theme.LadecentroTheme
 import com.ladecentro.presentation.theme.darkBlue
 import com.ladecentro.presentation.ui.authentication.login.LoginActivity
@@ -51,26 +47,19 @@ import com.ladecentro.presentation.ui.home.compose.TopAppBarHome
 import com.ladecentro.presentation.ui.home.compose.YourFavourite
 import com.ladecentro.presentation.ui.order.orders.compose.ShimmerContent
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
 
-    @Inject
-    lateinit var myPreference: MyPreference
-
     private val mViewModel by viewModels<HomeViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
 
             LadecentroTheme {
                 val drawerState = rememberDrawerState(initialValue = Closed)
-                Log.d("token", myPreference.getStoresTag(Intents.Token.name)!!)
-
                 LocationPermission()
                 ChangeStatusBar(drawerState = drawerState, mainActivity = this)
                 ModalNavigationDrawer(
@@ -81,10 +70,10 @@ class MainActivity : ComponentActivity() {
                             drawerContentColor = Companion.Black
                         ) {
                             DrawerContent(drawerState = drawerState) {
-                                mViewModel.userLogout()
-                                myPreference.removeStoredTag(Intents.Token.name)
-                                startActivity(Intent(applicationContext, LoginActivity::class.java))
-                                finish()
+                                mViewModel.userLogout {
+                                    startActivity(Intent(applicationContext, LoginActivity::class.java))
+                                    finish()
+                                }
                             }
                         }
                     },

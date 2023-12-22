@@ -111,17 +111,15 @@ fun OrderTrackDetails(lastUpdatedAt: String, vm: OrderDetailsViewModel = hiltVie
 @Composable
 fun Tracking(track: OrderStatus, isCurrent: Boolean = false, isLast: Boolean = false) {
 
-    var descState by remember { mutableStateOf(isCurrent) }
+    var descState by remember { mutableStateOf(isCurrent && !isLast) }
     Row(modifier = Modifier.height(Max), horizontalArrangement = Arrangement.Center) {
-        Column {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             TrackCircle(!track.activities.isNullOrEmpty())
             if (!isLast) {
                 VerticalDivider(
-                    thickness = 1.dp,
+                    thickness = 1.2.dp,
                     color = border_light_gray,
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(horizontal = 8.dp)
+                    modifier = Modifier.fillMaxHeight()
                 )
             }
 
@@ -188,7 +186,7 @@ fun TrackCircle(isComplete: Boolean = true) {
 }
 
 @Composable
-fun OrderDeliveredStatus(order: OrderDetails) {
+fun OrderDeliveredStatus(order: OrderDetails, vm: OrderDetailsViewModel = hiltViewModel()) {
 
     Card(
         colors = CardDefaults.cardColors(
@@ -234,10 +232,12 @@ fun OrderDeliveredStatus(order: OrderDetails) {
                         .width(20.dp)
                 )
             }
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             HorizontalDashDivider()
             Spacer(modifier = Modifier.height(12.dp))
-            Rating(order.rating, order.orderId)
+            Rating(order.rating) {
+                vm.updateOrderRating(it, order.orderId)
+            }
         }
     }
 }

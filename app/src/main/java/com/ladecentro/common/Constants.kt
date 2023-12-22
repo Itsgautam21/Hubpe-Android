@@ -7,4 +7,5 @@ object Constants {
     const val Authorization = "user-session-id"
     const val RATING = "RATING"
     const val GENERIC_ERROR_MESSAGE = "Something Went Wrong!"
+    const val ERROR_TAG = ">>>> ERROR TAG"
 }

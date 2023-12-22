@@ -1,6 +1,9 @@
 package com.ladecentro.presentation.ui.home.compose
 
 import android.content.Intent
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,12 +18,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.Icons.AutoMirrored.Filled
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerState
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -44,6 +48,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ladecentro.R.drawable
 import com.ladecentro.common.Intents
+import com.ladecentro.common.bounceClick
 import com.ladecentro.presentation.common.SimpleAlertDialog
 import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.fontFamilyHind
@@ -63,6 +68,11 @@ fun DrawerContent(
     val context = LocalContext.current
     val state = vm.state.collectAsState().value
     var dialog by remember { mutableStateOf(false) }
+    val result = rememberLauncherForActivityResult(StartActivityForResult()) {
+        if (it.resultCode == ComponentActivity.RESULT_OK) {
+            vm.setUserProfileFromPreference()
+        }
+    }
 
     LazyColumn(modifier = Modifier.fillMaxWidth()) {
         item {
@@ -76,7 +86,6 @@ fun DrawerContent(
                         .height(170.dp)
                         .background(color = MaterialTheme.colorScheme.primary)
                 ) {
-
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -84,7 +93,7 @@ fun DrawerContent(
 
                     ) {
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
+                            imageVector = Filled.ArrowBack,
                             contentDescription = "arrow_back",
                             tint = Color.White,
                             modifier = Modifier.clickable {
@@ -96,8 +105,8 @@ fun DrawerContent(
                         Spacer(modifier = Modifier.height(12.dp))
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.clickable {
-                                context.startActivity(
+                            modifier = Modifier.bounceClick {
+                                result.launch(
                                     Intent(
                                         context,
                                         ProfileActivity::class.java
@@ -145,7 +154,6 @@ fun DrawerContent(
                                 )
 
                             }
-
                             Icon(
                                 painter = painterResource(id = drawable.forward_arrow),
                                 contentDescription = "arrow",
@@ -157,7 +165,6 @@ fun DrawerContent(
                         }
                     }
                 }
-
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -167,12 +174,11 @@ fun DrawerContent(
                     colors = CardDefaults.cardColors(containerColor = Color.White),
                     elevation = CardDefaults.cardElevation(4.dp)
                 ) {
-
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .padding(14.dp)
-                            .clickable {
+                            .bounceClick {
                                 context.startActivity(Intent(context, MyOrdersActivity::class.java))
                             }
                     ) {
@@ -202,7 +208,7 @@ fun DrawerContent(
                                 .width(24.dp)
                         )
                     }
-                    Divider(
+                    HorizontalDivider(
                         color = card_border,
                         thickness = 1.dp,
                         modifier = Modifier
@@ -213,7 +219,7 @@ fun DrawerContent(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .padding(14.dp)
-                            .clickable {
+                            .bounceClick {
                                 context.startActivity(
                                     Intent(
                                         context,
@@ -248,7 +254,7 @@ fun DrawerContent(
                                 .width(24.dp)
                         )
                     }
-                    Divider(
+                    HorizontalDivider(
                         color = card_border,
                         thickness = 1.dp,
                         modifier = Modifier
@@ -285,7 +291,7 @@ fun DrawerContent(
                                 .width(24.dp)
                         )
                     }
-                    Divider(
+                    HorizontalDivider(
                         color = card_border,
                         thickness = 1.dp,
                         modifier = Modifier
@@ -322,7 +328,7 @@ fun DrawerContent(
                                 .width(24.dp)
                         )
                     }
-                    Divider(
+                    HorizontalDivider(
                         color = card_border,
                         thickness = 1.dp,
                         modifier = Modifier

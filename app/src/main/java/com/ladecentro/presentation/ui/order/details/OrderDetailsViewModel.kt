@@ -3,11 +3,15 @@ package com.ladecentro.presentation.ui.order.details
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ladecentro.common.Constants
+import com.ladecentro.common.Intents
 import com.ladecentro.common.Resource
 import com.ladecentro.data.remote.dto.orders.OrderStatus
+import com.ladecentro.data.remote.dto.orders.UpdateOrderRequest
 import com.ladecentro.domain.model.OrderDetails
 import com.ladecentro.domain.use_case.GetOrderDetailsUseCase
 import com.ladecentro.domain.use_case.GetOrderTrackUseCase
+import com.ladecentro.domain.use_case.GetUpdateOrderUseCase
 import com.ladecentro.presentation.common.UIStates
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,10 +23,11 @@ import javax.inject.Inject
 class OrderDetailsViewModel @Inject constructor(
     private val getOrderDetailsUseCase: GetOrderDetailsUseCase,
     private val getOrderTrackUseCase: GetOrderTrackUseCase,
+    private val updateOrderUseCase: GetUpdateOrderUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val id: String = savedStateHandle["orderId"] ?: ""
+    private val id: String = savedStateHandle[Intents.ORDER_ID.name] ?: ""
 
     private val _orderDetails = MutableStateFlow<UIStates<OrderDetails>>(UIStates())
     val orderDetails: StateFlow<UIStates<OrderDetails>> get() = _orderDetails
@@ -35,7 +40,7 @@ class OrderDetailsViewModel @Inject constructor(
         getOrderTrack()
     }
 
-    private fun getOrder() {
+    fun getOrder() {
         viewModelScope.launch {
             getOrderDetailsUseCase(id).collect {
                 when (it) {
@@ -55,7 +60,7 @@ class OrderDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun getOrderTrack() {
+    fun getOrderTrack() {
 
         viewModelScope.launch {
             getOrderTrackUseCase(id).collect {
@@ -71,6 +76,22 @@ class OrderDetailsViewModel @Inject constructor(
                     is Resource.Error -> {
                         _orderTrack.emit(UIStates(isLoading = false, error = it.message))
                     }
+                }
+            }
+        }
+    }
+
+    fun updateOrderRating(rating: String, orderId: String) {
+
+        val ratingRequest = UpdateOrderRequest(Constants.RATING, rating)
+        viewModelScope.launch {
+            updateOrderUseCase.invoke(ratingRequest, orderId).collect {
+                when (it) {
+                    is Resource.Success -> {
+                        getOrder()
+                    }
+
+                    else -> {}
                 }
             }
         }

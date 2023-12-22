@@ -52,7 +52,9 @@ class GetLogoutUseCase @Inject constructor(private val authRepository: AuthRepos
     }.flowOn(Dispatchers.IO)
 }
 
-class GetProfileUseCase @Inject constructor(private val authRepository: AuthRepository) {
+class GetProfileUseCase @Inject constructor(
+    private val authRepository: AuthRepository
+) {
 
     operator fun invoke(): Flow<Resource<ProfileDto>> = flow {
         emit(Loading())
@@ -63,7 +65,9 @@ class GetProfileUseCase @Inject constructor(private val authRepository: AuthRepo
     }.flowOn(Dispatchers.IO)
 }
 
-class GetUpdateProfileUseCase @Inject constructor(private val authRepository: AuthRepository) {
+class GetUpdateProfileUseCase @Inject constructor(
+    private val authRepository: AuthRepository
+) {
 
     operator fun invoke(request: UpdateProfileRequest): Flow<Resource<ProfileDto>> = flow {
         emit(Loading())

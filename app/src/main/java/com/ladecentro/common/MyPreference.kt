@@ -3,7 +3,9 @@ package com.ladecentro.common
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class MyPreference @Inject constructor(@ApplicationContext context: Context) {
 
     private val preference =
@@ -19,5 +21,9 @@ class MyPreference @Inject constructor(@ApplicationContext context: Context) {
 
     fun removeStoredTag(key: String) {
         preference.edit().remove(key).apply()
+    }
+
+    fun removeAllTags() {
+        preference.edit().clear().apply()
     }
 }

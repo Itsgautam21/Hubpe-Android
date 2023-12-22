@@ -33,6 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ladecentro.R.drawable
+import com.ladecentro.common.bounceClick
 import com.ladecentro.presentation.theme.darkBlue
 import com.ladecentro.presentation.theme.doppio_one
 import com.ladecentro.presentation.theme.fontFamilyHind
@@ -61,7 +62,7 @@ fun TopAppBarHome(
                 title = {
                     Column(modifier = Modifier
                         .padding(horizontal = 4.dp)
-                        .clickable {
+                        .bounceClick {
                             context.startActivity(Intent(context, LocationActivity::class.java))
                         }) {
                         Row(
