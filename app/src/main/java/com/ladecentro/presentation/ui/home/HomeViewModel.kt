@@ -1,14 +1,14 @@
 package com.ladecentro.presentation.ui.home
 
-import android.location.Location
 import android.util.Log
-import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.IntentSenderRequest
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.ladecentro.common.Constants.ERROR_TAG
+import com.ladecentro.common.LocationResource
 import com.ladecentro.common.MyPreference
 import com.ladecentro.common.Resource.Error
 import com.ladecentro.common.Resource.Loading
@@ -17,15 +17,14 @@ import com.ladecentro.common.SharedPreference
 import com.ladecentro.data.remote.dto.LogoutRequest
 import com.ladecentro.data.remote.dto.ProfileDto
 import com.ladecentro.domain.location.LocationTracker
+import com.ladecentro.domain.model.LocationRequest
 import com.ladecentro.domain.use_case.GetLogoutUseCase
 import com.ladecentro.domain.use_case.GetProfileUseCase
 import com.ladecentro.presentation.common.UIStates
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -34,19 +33,28 @@ class HomeViewModel @Inject constructor(
     private val getLogoutUseCase: GetLogoutUseCase,
     private val getProfileUseCase: GetProfileUseCase,
     private val locationTracker: LocationTracker,
-    private val myPreference: MyPreference
+    private val myPreference: MyPreference,
+    private val gson: Gson
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(UIStates<ProfileDto>())
     val state: StateFlow<UIStates<ProfileDto>> get() = _state
 
-    private val _location: MutableStateFlow<Location?> = MutableStateFlow(null)
-    val location: StateFlow<Location?> get() = _location
+    private val _location: MutableStateFlow<LocationResource> =
+        MutableStateFlow(LocationResource.Loading(null))
+    val location: StateFlow<LocationResource> get() = _location
+
+    private val _locationAddress =
+        MutableStateFlow(UIStates<LocationRequest>())
+    val locationAddress: StateFlow<UIStates<LocationRequest>> get() = _locationAddress
 
     private var localProfile: String? = myPreference.getStoresTag(SharedPreference.PROFILE.name)
 
+    var openBottomSheet by mutableStateOf(false)
+
     init {
         userProfile()
+        getLocationFromLocal()
     }
 
     private fun userProfile() {
@@ -64,7 +72,10 @@ class HomeViewModel @Inject constructor(
 
                     is Success -> {
                         _state.emit(UIStates(isLoading = false, content = it.data))
-                        myPreference.setStoredTag(SharedPreference.PROFILE.name, Gson().toJson(it.data))
+                        myPreference.setStoredTag(
+                            SharedPreference.PROFILE.name,
+                            Gson().toJson(it.data)
+                        )
                     }
 
                     is Error -> {
@@ -75,13 +86,20 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getUserLocation(launcher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>?) {
+    fun getUserLocation() {
         viewModelScope.launch {
-            delay(100)
-            locationTracker.getCurrentLocation {
-                launcher?.launch(it)
-            }.flowOn(Dispatchers.IO).collect {
-                _location.emit(it)
+            delay(50)
+            locationTracker.getCurrentLocation().collect {
+                when (it) {
+                    is LocationResource.Loading -> {}
+                    is LocationResource.Success -> {
+                        _location.emit(LocationResource.Success(it.location))
+                    }
+
+                    is LocationResource.Error -> {
+                        _location.emit(LocationResource.Error(it.intent))
+                    }
+                }
             }
         }
     }
@@ -95,8 +113,12 @@ class HomeViewModel @Inject constructor(
                         myPreference.removeAllTags()
                         clearUI()
                     }
+
                     is Error -> {
-                        Log.d(ERROR_TAG, myPreference.getStoresTag(SharedPreference.PROFILE.name).toString())
+                        Log.d(
+                            ERROR_TAG,
+                            myPreference.getStoresTag(SharedPreference.PROFILE.name).toString()
+                        )
                     }
                 }
             }
@@ -108,6 +130,22 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             localProfile?.let {
                 _state.emit(UIStates(content = Gson().fromJson(it, ProfileDto::class.java)))
+            }
+        }
+    }
+
+    fun getLocationFromLocal() {
+        val locationJSON = myPreference.getStoresTag(SharedPreference.LOCATION.name)
+        if (locationJSON != null) {
+            viewModelScope.launch {
+                _locationAddress.emit(
+                    UIStates(
+                        content = gson.fromJson(
+                            locationJSON,
+                            LocationRequest::class.java
+                        )
+                    )
+                )
             }
         }
     }

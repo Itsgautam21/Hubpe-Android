@@ -40,6 +40,7 @@ fun ContactDetails(vm: AddAddressViewModel = hiltViewModel()) {
             )
             Spacer(modifier = Modifier.height(24.dp))
             OutlinedTextFieldCompose(
+                value = vm.receiverName,
                 label = "Receiver's name *",
                 isError = vm.isNameError,
                 textLimit = 50,
@@ -51,6 +52,7 @@ fun ContactDetails(vm: AddAddressViewModel = hiltViewModel()) {
             }
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextFieldCompose(
+                value = vm.phoneNumber,
                 label = "Phone number *",
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Phone

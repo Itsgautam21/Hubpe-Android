@@ -1,6 +1,7 @@
 package com.ladecentro.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
+import com.ladecentro.domain.model.LocationRequest
 
 data class Location(
     @SerializedName("id") val id: String,
@@ -107,3 +108,25 @@ data class ProfileDto(
     @SerializedName("favourites") val favourites: List<Favourite>,
     @SerializedName("history") val history: List<History>
 )
+
+fun Location.mapToLocationRequest(): LocationRequest {
+
+    return LocationRequest(
+        id = id,
+        mobileNumber = mobileNumber,
+        primary = primary,
+        gps = gps,
+        descriptor = com.ladecentro.domain.model.Descriptor(name = descriptor.name, longDesc = descriptor.longDesc),
+        address = com.ladecentro.domain.model.Address(
+            name = address.name,
+            building = address.building,
+            locality = address.locality,
+            city = address.city,
+            state = address.state,
+            country = address.country,
+            areaCode = address.areaCode
+        ),
+        city = com.ladecentro.domain.model.City(name = city.name),
+        country = com.ladecentro.domain.model.Country(name = country.name, code = country.code)
+    )
+}

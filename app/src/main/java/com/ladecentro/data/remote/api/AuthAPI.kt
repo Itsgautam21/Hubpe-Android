@@ -4,15 +4,15 @@ import com.ladecentro.common.Constants
 import com.ladecentro.data.remote.dto.LogoutRequest
 import com.ladecentro.data.remote.dto.ProfileDto
 import com.ladecentro.data.remote.dto.SendOtpRequest
-import com.ladecentro.data.remote.dto.UpdateProfileRequest
 import com.ladecentro.data.remote.dto.VerifyOptRequest
 import com.ladecentro.data.remote.dto.VerifyOtpResponse
+import com.ladecentro.domain.model.ProfileRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
-import java.util.Objects
+import java.util.*
 
 interface AuthAPI {
 
@@ -30,7 +30,7 @@ interface AuthAPI {
 
     @POST("/v1/profile")
     suspend fun updateProfile(
-        @Body request: UpdateProfileRequest,
+        @Body request: ProfileRequest,
         @Header(Constants.Authorization) authorization: String?
     ): Response<ProfileDto>
 

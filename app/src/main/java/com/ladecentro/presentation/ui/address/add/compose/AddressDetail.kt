@@ -79,7 +79,8 @@ fun AddressDetails(vm: AddAddressViewModel = hiltViewModel()) {
                 label = "City *",
                 isError = vm.isCityError,
                 textLimit = 50,
-                supportingText = vm.cityErrorText
+                supportingText = vm.cityErrorText,
+                enabled = false
             ) { text ->
                 vm.city = text.trim()
                 vm.isCityError = false

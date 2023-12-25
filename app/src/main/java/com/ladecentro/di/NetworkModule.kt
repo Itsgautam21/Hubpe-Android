@@ -7,9 +7,11 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.net.PlacesClient
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.ladecentro.common.Constants
 import com.ladecentro.data.remote.api.AuthAPI
+import com.ladecentro.data.remote.api.LookupAPI
 import com.ladecentro.data.remote.api.OrderAPI
 import com.ladecentro.data.remote.api.UserAPI
 import dagger.Module
@@ -57,6 +59,12 @@ class NetworkModule {
 
     @Provides
     @Singleton
+    fun providesLookupAPI(retrofit: Retrofit): LookupAPI {
+        return retrofit.create(LookupAPI::class.java)
+    }
+
+    @Provides
+    @Singleton
     fun providesFusedLocationProviderClient(application: Application): FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(application)
 
@@ -77,5 +85,11 @@ class NetworkModule {
     @Singleton
     fun providesIoDispatcher(): CoroutineDispatcher {
         return Dispatchers.IO
+    }
+
+    @Provides
+    @Singleton
+    fun providesGson(): Gson {
+        return Gson()
     }
 }

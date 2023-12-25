@@ -2,7 +2,6 @@ package com.ladecentro.data.location
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.location.Location
 import android.os.Looper
 import android.util.Log
 import androidx.activity.result.IntentSenderRequest
@@ -13,14 +12,10 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.LocationSettingsRequest.Builder
-import com.google.android.gms.location.LocationSettingsResponse
 import com.google.android.gms.location.Priority
-import com.ladecentro.common.hasLocationPermission
-import com.ladecentro.common.isGPSEnable
+import com.ladecentro.common.LocationResource
 import com.ladecentro.domain.location.LocationTracker
-import com.ladecentro.exception.LocationException
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -34,10 +29,11 @@ class CurrentLocationTracker @Inject constructor(
 ) : LocationTracker {
 
     @SuppressLint("MissingPermission")
-    override fun getCurrentLocation(location : (intentSenderRequest: IntentSenderRequest) -> Unit): Flow<Location> {
+    override fun getCurrentLocation(): Flow<LocationResource> {
 
         return callbackFlow {
 
+            launch { send(LocationResource.Loading(true)) }
             val locationRequest = LocationRequest
                 .Builder(Priority.PRIORITY_HIGH_ACCURACY, 500)
                 .setGranularity(Granularity.GRANULARITY_PERMISSION_LEVEL)
@@ -50,7 +46,7 @@ class CurrentLocationTracker @Inject constructor(
                 override fun onLocationResult(p0: LocationResult) {
                     super.onLocationResult(p0)
                     p0.locations.lastOrNull()?.let {
-                        launch { send(it) }
+                        launch { send(LocationResource.Success(it)) }
                     }
                     fusedLocationProviderClient.removeLocationUpdates(this)
                 }
@@ -69,8 +65,11 @@ class CurrentLocationTracker @Inject constructor(
                 .addOnFailureListener { ex ->
                     if (ex is ResolvableApiException) {
                         try {
-                            val intentSenderRequest: IntentSenderRequest = IntentSenderRequest.Builder(ex.resolution).build()
-                            location(intentSenderRequest)
+                            val intentSenderRequest: IntentSenderRequest =
+                                IntentSenderRequest.Builder(ex.resolution).build()
+                            launch {
+                                send(LocationResource.Error(intentSenderRequest))
+                            }
                         } catch (exception: Exception) {
                             Log.d("TAG", "enableLocationSettings: $exception")
                         }

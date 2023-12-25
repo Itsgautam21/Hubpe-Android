@@ -19,4 +19,4 @@ val signika = FontFamily(Font(googleFont = GoogleFont("Quasimoda"), fontProvider
 val hammersmith = FontFamily(Font(googleFont = GoogleFont("Hammersmith One"), fontProvider = provider))
 val doppio_one = FontFamily(Font(googleFont = GoogleFont("Doppio One"), fontProvider = provider))
 val Montserrat = FontFamily(Font(googleFont = GoogleFont("Open Sans"), fontProvider = provider))
-val Poppins = FontFamily(Font(googleFont = GoogleFont("Poppins"), fontProvider = provider, weight = FontWeight.SemiBold))
+val poppins = FontFamily(Font(googleFont = GoogleFont("Poppins"), fontProvider = provider, weight = FontWeight.SemiBold))

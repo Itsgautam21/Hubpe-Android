@@ -1,5 +1,6 @@
 package com.ladecentro.presentation.ui.address.add.compose
 
+import android.app.Activity
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,11 +19,14 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,6 +49,9 @@ fun AddAddressLayout(vm: AddAddressViewModel = hiltViewModel()) {
             vm.isNameError || vm.isPhoneError || vm.isHouseError || vm.isAreaError || vm.isCityError
         }
     }
+    val context = LocalContext.current as Activity
+    val updateState by vm.updateState.collectAsState()
+
     Scaffold(
         topBar = {
             SimpleTopAppBar(title = "Add an address")
@@ -76,6 +83,7 @@ fun AddAddressLayout(vm: AddAddressViewModel = hiltViewModel()) {
                             return@Button
                         }
                         Log.d(">>>> Success", "Button Click!")
+                        vm.addAddress()
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = primary_orange
@@ -87,7 +95,8 @@ fun AddAddressLayout(vm: AddAddressViewModel = hiltViewModel()) {
                         .height(50.dp)
                         .bounceClick(true) {
 
-                        }
+                        },
+                    enabled = !updateState.isLoading
                 ) {
                     Text(
                         text = "Save Address",
@@ -98,6 +107,15 @@ fun AddAddressLayout(vm: AddAddressViewModel = hiltViewModel()) {
                     )
                 }
             }
+        }
+    }
+
+    LaunchedEffect(key1 = updateState) {
+
+        updateState.content?.let {
+            vm.setProfileToLocal(it)
+            context.setResult(Activity.RESULT_OK)
+            context.finish()
         }
     }
 }

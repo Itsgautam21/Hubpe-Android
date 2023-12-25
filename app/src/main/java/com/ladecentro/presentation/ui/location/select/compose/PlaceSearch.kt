@@ -1,6 +1,9 @@
 package com.ladecentro.presentation.ui.location.select.compose
 
+import android.app.Activity
 import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -38,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ladecentro.R
+import com.ladecentro.common.Intents
 import com.ladecentro.domain.model.PlacesResult
 import com.ladecentro.presentation.theme.card_background
 import com.ladecentro.presentation.theme.card_border
@@ -51,7 +55,13 @@ import com.ladecentro.presentation.ui.location.select.LocationViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 fun SamplePlaces(placesResult: PlacesResult, vm: LocationViewModel = hiltViewModel()) {
 
-    val context = LocalContext.current
+    val context = LocalContext.current as Activity
+    val activityLauncher = rememberLauncherForActivityResult(StartActivityForResult()) {
+        if (it.resultCode == Activity.RESULT_OK) {
+            context.setResult(Activity.RESULT_OK)
+            context.finish()
+        }
+    }
 
     Card(
         colors = CardDefaults.cardColors(Color.White),
@@ -60,11 +70,11 @@ fun SamplePlaces(placesResult: PlacesResult, vm: LocationViewModel = hiltViewMod
         onClick = {
             vm.getCameraPosition(placesResult) { cam ->
                 cam?.let { notNullCamPos ->
-                    context.startActivity(
+                    activityLauncher.launch(
                         Intent(
                             context,
                             MapsActivity::class.java
-                        ).putExtra("camera", notNullCamPos)
+                        ).putExtra(Intents.CAMERA.name, notNullCamPos)
                     )
                 }
             }

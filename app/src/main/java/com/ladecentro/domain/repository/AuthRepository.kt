@@ -6,6 +6,7 @@ import com.ladecentro.data.remote.dto.SendOtpRequest
 import com.ladecentro.data.remote.dto.UpdateProfileRequest
 import com.ladecentro.data.remote.dto.VerifyOptRequest
 import com.ladecentro.data.remote.dto.VerifyOtpResponse
+import com.ladecentro.domain.model.ProfileRequest
 import java.util.Objects
 
 interface AuthRepository {
@@ -18,5 +19,5 @@ interface AuthRepository {
 
     suspend fun userProfile(): ProfileDto
 
-    suspend fun updateUser(request: UpdateProfileRequest): ProfileDto
+    suspend fun updateUser(request: ProfileRequest): ProfileDto
 }

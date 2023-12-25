@@ -10,6 +10,7 @@ import com.ladecentro.data.remote.dto.SendOtpRequest
 import com.ladecentro.data.remote.dto.UpdateProfileRequest
 import com.ladecentro.data.remote.dto.VerifyOptRequest
 import com.ladecentro.data.remote.dto.VerifyOtpResponse
+import com.ladecentro.domain.model.ProfileRequest
 import com.ladecentro.domain.repository.AuthRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -69,7 +70,7 @@ class GetUpdateProfileUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
 
-    operator fun invoke(request: UpdateProfileRequest): Flow<Resource<ProfileDto>> = flow {
+    operator fun invoke(request: ProfileRequest): Flow<Resource<ProfileDto>> = flow {
         emit(Loading())
         val user = authRepository.updateUser(request)
         emit(Success(user))

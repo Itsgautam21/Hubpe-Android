@@ -27,7 +27,7 @@ class OrderRepositoryImpl @Inject constructor(
 
     override fun getAllOrders(): Flow<PagingData<Orders>> {
         return Pager(
-            config = PagingConfig(pageSize = 5, maxSize = 100),
+            config = PagingConfig(pageSize = 20, maxSize = 100),
             pagingSourceFactory = {
                 OrdersPagingSource(orderAPI, authToken)
             }

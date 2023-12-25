@@ -31,18 +31,22 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ladecentro.R.drawable
+import com.ladecentro.common.bounceClick
 import com.ladecentro.data.remote.dto.Location
 import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_gray
 
 @Composable
-fun SampleSavedAddress(location: Location? = null) {
+fun SampleSavedAddress(location: Location, onLocationClick: (location: Location) -> Unit) {
 
     Card(
         colors = CardDefaults.cardColors(Color.White),
         elevation = CardDefaults.cardElevation(0.dp),
         shape = RoundedCornerShape(12.dp),
+        modifier = Modifier.bounceClick {
+            onLocationClick(location)
+        }
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -65,7 +69,7 @@ fun SampleSavedAddress(location: Location? = null) {
             }
             Column(Modifier.weight(1f)) {
                 Text(
-                    text = location?.descriptor?.name ?: "Homes",
+                    text = location.descriptor.name,
                     fontSize = 15.sp,
                     fontFamily = fontFamilyHind,
                     fontWeight = FontWeight.SemiBold,
@@ -75,7 +79,7 @@ fun SampleSavedAddress(location: Location? = null) {
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = location?.descriptor?.longDesc ?: "601, 6th floor, Tower-1, Godrej waterside , Sector-V, Salt Lake, DP Block, Sector V, Bidhannagar, Kolkata...",
+                    text = location.descriptor.longDesc,
                     fontSize = 12.sp,
                     fontFamily = fontFamilyHind,
                     fontWeight = FontWeight.SemiBold,
@@ -111,7 +115,6 @@ fun SampleSavedAddress(location: Location? = null) {
                             .padding(8.dp)
                             .size(12.dp)
                     )
-
                 }
             }
         }

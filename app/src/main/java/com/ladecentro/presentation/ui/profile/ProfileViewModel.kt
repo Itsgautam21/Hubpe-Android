@@ -16,6 +16,7 @@ import com.ladecentro.common.Resource.Success
 import com.ladecentro.common.SharedPreference
 import com.ladecentro.data.remote.dto.ProfileDto
 import com.ladecentro.data.remote.dto.UpdateProfileRequest
+import com.ladecentro.domain.model.ProfileRequest
 import com.ladecentro.domain.use_case.GetUpdateProfileUseCase
 import com.ladecentro.presentation.common.UIStates
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,7 +39,7 @@ class ProfileViewModel @Inject constructor(
     val state: State<UIStates<ProfileDto>> get() = _state
 
     fun updateUser() {
-        val request = UpdateProfileRequest(userName.trim(), listOf("NAME"))
+        val request = ProfileRequest(name = userName.trim(), type = listOf("NAME"))
         viewModelScope.launch {
             getUpdateProfileUseCase(request).collect {
                 when (it) {

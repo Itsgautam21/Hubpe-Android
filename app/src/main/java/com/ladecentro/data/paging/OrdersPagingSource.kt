@@ -20,7 +20,7 @@ class OrdersPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Orders> {
         return try {
             val position = params.key ?: 1
-            val response = orderAPI.getOrders(position.minus(1), 5, authToken)
+            val response = orderAPI.getOrders(position.minus(1), 20, authToken)
             val orders = response.body()
             if (response.isSuccessful) {
                 LoadResult.Page(

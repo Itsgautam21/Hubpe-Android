@@ -1,6 +1,9 @@
 package com.ladecentro.presentation.ui.home.compose
 
 import android.content.Intent
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -24,17 +27,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ladecentro.R.drawable
 import com.ladecentro.presentation.theme.fontFamilyFredoka
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_gray
 import com.ladecentro.presentation.theme.primary_orange
+import com.ladecentro.presentation.ui.home.HomeViewModel
 import com.ladecentro.presentation.ui.location.select.LocationActivity
 
 @Composable
-fun LocationBottomSheet(onEnableLocation: () -> Unit) {
+fun LocationBottomSheet(vm: HomeViewModel = hiltViewModel(), onEnableLocation: () -> Unit) {
 
     val context = LocalContext.current
+    val result = rememberLauncherForActivityResult(StartActivityForResult()) {
+        if (it.resultCode == ComponentActivity.RESULT_OK) {
+            vm.getLocationFromLocal()
+            vm.openBottomSheet = false
+        }
+    }
 
     Column(
         modifier = Modifier.padding(horizontal = 30.dp),
@@ -94,7 +105,7 @@ fun LocationBottomSheet(onEnableLocation: () -> Unit) {
             fontWeight = FontWeight.Medium,
             color = primary_orange,
             modifier = Modifier.clickable {
-                context.startActivity(Intent(context, LocationActivity::class.java))
+                result.launch(Intent(context, LocationActivity::class.java))
             }
         )
         Spacer(modifier = Modifier.height(40.dp))

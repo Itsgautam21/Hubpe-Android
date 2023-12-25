@@ -13,11 +13,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons.AutoMirrored.Filled
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,8 +26,10 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,9 +40,11 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ladecentro.R.drawable
@@ -52,10 +57,12 @@ import com.ladecentro.presentation.theme.shimmer_gray
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun TopAppBarSearch(
+    value: String = "",
     placeHolder: String,
     isFocus: Boolean,
     color: Color = Color.White,
-    textValue: (value: String) -> Unit
+    searchAction: () -> Unit = {},
+    textValue: (value: MutableState<String>) -> Unit,
 ) {
 
     TopAppBar(
@@ -63,14 +70,20 @@ fun TopAppBarSearch(
         title = {
             Column {
                 Spacer(modifier = Modifier.height(12.dp))
-                SearchMainCompose(placeHolder, isFocus, textValue)
+                SearchMainCompose(value, placeHolder, isFocus, searchAction, textValue)
             }
         }
     )
 }
 
 @Composable
-fun SearchMainCompose(placeHolder: String, isFocus: Boolean, textValue: (value: String) -> Unit) {
+fun SearchMainCompose(
+    value: String = "",
+    placeHolder: String,
+    isFocus: Boolean,
+    searchAction: () -> Unit = {},
+    textValue: (value: MutableState<String>) -> Unit
+) {
 
     val context = LocalContext.current as Activity
     Card(
@@ -94,20 +107,20 @@ fun SearchMainCompose(placeHolder: String, isFocus: Boolean, textValue: (value: 
                 context.finish()
             }) {
                 Icon(
-                    imageVector = Icons.Default.KeyboardArrowLeft,
+                    imageVector = Filled.KeyboardArrowLeft,
                     contentDescription = "search back"
                 )
             }
-            Divider(
+            VerticalDivider(
                 modifier = Modifier
                     .padding(top = 12.dp, bottom = 12.dp, end = 12.dp)
                     .fillMaxHeight()
                     .width(1.dp), color = card_border
             )
             Box(modifier = Modifier.weight(1f)) {
-                SearchTextField(placeHolder, isFocus, textValue)
+                SearchTextField(value, placeHolder, isFocus, searchAction, textValue)
             }
-            Divider(
+            VerticalDivider(
                 modifier = Modifier
                     .padding(top = 12.dp, bottom = 12.dp, end = 12.dp, start = 4.dp)
                     .fillMaxHeight()
@@ -125,21 +138,23 @@ fun SearchMainCompose(placeHolder: String, isFocus: Boolean, textValue: (value: 
 
 @Composable
 private fun SearchTextField(
+    value: String = "",
     placeHolder: String,
     isFocus: Boolean,
-    textValue: (value: String) -> Unit
+    searchAction: () -> Unit = {},
+    textValue: (value: MutableState<String>) -> Unit
 ) {
-
-    var searchText by remember { mutableStateOf("") }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val searchText = remember { mutableStateOf(value) }
     val focusRequest = remember { FocusRequester() }
 
-    LaunchedEffect(key1 = searchText) {
+    LaunchedEffect(key1 = searchText.value) {
         textValue(searchText)
     }
 
     BasicTextField(
-        value = searchText,
-        onValueChange = { searchText = it },
+        value = searchText.value,
+        onValueChange = { searchText.value = it },
         singleLine = true,
         modifier = Modifier
             .fillMaxWidth()
@@ -149,12 +164,17 @@ private fun SearchTextField(
             fontFamily = fontFamilyHind,
             fontWeight = FontWeight.Bold
         ),
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+        keyboardActions = KeyboardActions(onSearch = {
+            keyboardController?.hide()
+            searchAction()
+        }),
         decorationBox = { innerTextField ->
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(Modifier.weight(1f)) {
-                    if (searchText.isEmpty()) Text(
+                    if (searchText.value.isEmpty()) Text(
                         placeHolder,
                         style = LocalTextStyle.current.copy(
                             color = light_text,
@@ -164,9 +184,9 @@ private fun SearchTextField(
                     )
                     innerTextField()
                 }
-                if (searchText.isNotBlank()) {
+                if (searchText.value.isNotBlank()) {
                     IconButton(
-                        onClick = { searchText = "" },
+                        onClick = { searchText.value = "" },
                         modifier = Modifier.size(30.dp)
                     ) {
                         Icon(

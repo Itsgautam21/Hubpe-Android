@@ -1,6 +1,10 @@
 package com.ladecentro.presentation.ui.location.maps.compose
 
+import android.app.Activity
 import android.content.Intent
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,6 +47,7 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.ladecentro.R
+import com.ladecentro.common.Intents
 import com.ladecentro.presentation.common.SimpleTopAppBar
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_gray
@@ -63,7 +68,14 @@ fun MapsLayout(vm: MapsViewModel = hiltViewModel()) {
         mutableStateOf(MapProperties(isMyLocationEnabled = false))
     }
     val address by vm.markerAddressDetail.collectAsState()
-    val context = LocalContext.current
+    val context = LocalContext.current as Activity
+
+    val activityLauncher = rememberLauncherForActivityResult(StartActivityForResult()) {
+        if (it.resultCode == Activity.RESULT_OK) {
+            context.setResult(Activity.RESULT_OK)
+            context.finish()
+        }
+    }
 
     LaunchedEffect(cameraPositionState.isMoving) {
         if (!cameraPositionState.isMoving) {
@@ -146,10 +158,16 @@ fun MapsLayout(vm: MapsViewModel = hiltViewModel()) {
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(
                         onClick = {
-                            context.startActivity(
-                                Intent(context, AddAddressActivity::class.java)
-                                    .putExtra("address", address)
-                            )
+                            vm.isAddAddress?.let {
+                                activityLauncher.launch(
+                                    Intent(context, AddAddressActivity::class.java)
+                                        .putExtra(Intents.ADDRESS.name, address)
+                                )
+                                return@Button
+                            }
+                            vm.setLocationToLocal()
+                            context.setResult(ComponentActivity.RESULT_OK)
+                            context.finish()
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = primary_orange

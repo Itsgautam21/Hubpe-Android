@@ -1,11 +1,11 @@
 package com.ladecentro.common
 
 enum class Intents {
-    Phone, Token, USER_NAME, ORDER_ID
+    Phone, Token, USER_NAME, ORDER_ID, CAMERA, ADD_ADDRESS, ADDRESS
 }
 
 enum class SharedPreference {
-    PROFILE
+    PROFILE, LOCATION, SEARCH
 }
 
 enum class OrderStatus(val value: String) {

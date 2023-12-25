@@ -10,6 +10,7 @@ import com.ladecentro.data.remote.dto.SendOtpRequest
 import com.ladecentro.data.remote.dto.UpdateProfileRequest
 import com.ladecentro.data.remote.dto.VerifyOptRequest
 import com.ladecentro.data.remote.dto.VerifyOtpResponse
+import com.ladecentro.domain.model.ProfileRequest
 import com.ladecentro.domain.repository.AuthRepository
 import java.io.IOException
 import java.util.*
@@ -81,7 +82,7 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateUser(request: UpdateProfileRequest): ProfileDto {
+    override suspend fun updateUser(request: ProfileRequest): ProfileDto {
         try {
             val response = authAPI.updateProfile(request, authToken)
             Log.d("response body", response.body()?.toString() ?: "")

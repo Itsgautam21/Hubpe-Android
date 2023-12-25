@@ -1,8 +1,10 @@
 package com.ladecentro.presentation.ui.home.compose
 
 import android.content.Intent
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +22,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,15 +34,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ladecentro.R.drawable
 import com.ladecentro.common.bounceClick
 import com.ladecentro.presentation.theme.darkBlue
 import com.ladecentro.presentation.theme.doppio_one
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_gray
+import com.ladecentro.presentation.theme.poppins
 import com.ladecentro.presentation.ui.cart.CartActivity
+import com.ladecentro.presentation.ui.home.HomeViewModel
 import com.ladecentro.presentation.ui.location.select.LocationActivity
 import kotlinx.coroutines.launch
 
@@ -47,10 +55,17 @@ import kotlinx.coroutines.launch
 fun TopAppBarHome(
     scrollBehaviour: TopAppBarScrollBehavior,
     scrollBehaviourTop: TopAppBarScrollBehavior,
-    drawerState: DrawerState
+    drawerState: DrawerState,
+    vm: HomeViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val result = rememberLauncherForActivityResult(StartActivityForResult()) {
+        if (it.resultCode == ComponentActivity.RESULT_OK) {
+            vm.getLocationFromLocal()
+        }
+    }
+    val address by vm.locationAddress.collectAsState()
 
     Surface(shadowElevation = 0.dp, color = Color.White) {
         Column {
@@ -60,43 +75,58 @@ fun TopAppBarHome(
                     scrolledContainerColor = Companion.White
                 ),
                 title = {
-                    Column(modifier = Modifier
-                        .padding(horizontal = 4.dp)
-                        .bounceClick {
-                            context.startActivity(Intent(context, LocationActivity::class.java))
-                        }) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
+                    address.content?.let {
+                        Column(modifier = Modifier
+                            .padding(horizontal = 4.dp)
+                            .bounceClick {
+                                result.launch(
+                                    Intent(
+                                        context,
+                                        LocationActivity::class.java
+                                    )
+                                )
+                            }) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth(0.5f)
+                            ) {
+                                Text(
+                                    text = it.descriptor?.name ?: "",
+                                    fontFamily = poppins,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = darkBlue,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Icon(
+                                    painter = painterResource(id = drawable.down_arrow),
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .height(18.dp)
+                                        .width(18.dp)
+                                        .padding(top = 2.dp),
+                                    tint = darkBlue
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = "Home",
-                                fontFamily = doppio_one,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = darkBlue
+                                text = it.descriptor?.longDesc ?: "",
+                                fontFamily = fontFamilyHind,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Normal,
+                                color = light_gray,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.fillMaxWidth(0.7f),
+                                style = TextStyle(
+                                    platformStyle = PlatformTextStyle(
+                                        includeFontPadding = false
+                                    )
+                                )
                             )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Icon(
-                                painter = painterResource(id = drawable.down_arrow),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .height(18.dp)
-                                    .width(18.dp)
-                                    .padding(top = 2.dp),
-                                tint = darkBlue
-                            )
-
                         }
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text(
-                            text = "DN Block, Ring Road, Sector V...",
-                            fontFamily = fontFamilyHind,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Thin,
-                            color = light_gray,
-                            style = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false))
-                        )
                     }
 
                 },
@@ -135,7 +165,7 @@ fun TopAppBarHome(
                 ),
                 title = {
                     Column {
-                        Spacer(modifier = Modifier.height(20.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
                         SearchCompose()
                         Spacer(modifier = Modifier.height(12.dp))
                     }
