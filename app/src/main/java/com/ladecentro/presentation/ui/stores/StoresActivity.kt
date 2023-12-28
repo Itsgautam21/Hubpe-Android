@@ -17,7 +17,9 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import com.ladecentro.presentation.theme.LadecentroTheme
 import com.ladecentro.presentation.ui.stores.compose.StoreComposeUI
 import com.ladecentro.presentation.ui.stores.compose.TopAppBarStores
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 @OptIn(ExperimentalMaterial3Api::class)
 class StoresActivity : ComponentActivity() {
 

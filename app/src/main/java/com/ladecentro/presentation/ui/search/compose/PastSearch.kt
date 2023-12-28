@@ -49,15 +49,12 @@ private fun SamplePastSearch(pastSearch: String, vm: SearchViewModel = hiltViewM
                 .weight(1f)
                 .padding(horizontal = 12.dp)
                 .bounceClick {
-                    vm.searchText.value = pastSearch
+                    vm.isFocusState = false
+                    vm.searchText = pastSearch
                 }
         )
         IconButton(
-            onClick = {
-                val search = vm.pastSearch.value.toMutableList()
-                search.remove(pastSearch)
-                vm.pastSearch.value = search
-            },
+            onClick = { vm.removePastSearch(pastSearch) },
             modifier = Modifier.size(20.dp)
         ) {
             Icon(
@@ -85,7 +82,7 @@ fun PastSearch(vm: SearchViewModel = hiltViewModel()) {
                 fontWeight = FontWeight.SemiBold
             )
         }
-        items(vm.pastSearch.value.reversed()) {
+        items(items = vm.pastSearch.value.reversed(), key = { it }) {
             SamplePastSearch(it)
         }
     }

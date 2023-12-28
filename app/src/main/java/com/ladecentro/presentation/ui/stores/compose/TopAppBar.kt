@@ -7,13 +7,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons.Filled
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -23,41 +19,45 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ladecentro.R.drawable
-import com.ladecentro.presentation.theme.doppio_one
 import com.ladecentro.presentation.ui.cart.CartActivity
 import com.ladecentro.presentation.ui.home.compose.SearchCompose
+import com.ladecentro.presentation.ui.home.compose.SelectedLocationAppBarTitle
+import com.ladecentro.presentation.ui.stores.StoresViewModel
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun TopAppBarStores(
     scrollBehaviour: TopAppBarScrollBehavior,
-    scrollBehaviourTop: TopAppBarScrollBehavior
+    scrollBehaviourTop: TopAppBarScrollBehavior,
+    vm: StoresViewModel = hiltViewModel()
 ) {
-
     val context = LocalContext.current as Activity
+
     Surface(shadowElevation = 0.dp) {
-
         Column {
-
             TopAppBar(
-                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White),
                 title = {
-                    Text(
-                        text = "Set Your Location",
-                        fontFamily = doppio_one, fontSize = 18.sp
-                    )
+                    vm.locationState.let {
+                        SelectedLocationAppBarTitle(
+                            title = it.descriptor?.name ?: "",
+                            description = it.descriptor?.longDesc ?: ""
+                        ) {
+                            vm.getLocationFromLocal()
+                        }
+                    }
                 },
                 navigationIcon = {
                     IconButton(
                         onClick = {
                             context.finish()
                         },
-                        modifier = Modifier.padding(start = 0.dp)
+                        modifier = Modifier.padding(start = 8.dp)
                     ) {
-                        Icon(
-                            imageVector = Filled.ArrowBack,
+                        Image(
+                            painter = painterResource(id = drawable.back_arrow),
                             contentDescription = null
                         )
                     }

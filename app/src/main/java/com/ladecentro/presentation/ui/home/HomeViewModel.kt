@@ -10,6 +10,7 @@ import com.google.gson.Gson
 import com.ladecentro.common.Constants.ERROR_TAG
 import com.ladecentro.common.LocationResource
 import com.ladecentro.common.MyPreference
+import com.ladecentro.common.PreferenceUtils
 import com.ladecentro.common.Resource.Error
 import com.ladecentro.common.Resource.Loading
 import com.ladecentro.common.Resource.Success
@@ -34,7 +35,7 @@ class HomeViewModel @Inject constructor(
     private val getProfileUseCase: GetProfileUseCase,
     private val locationTracker: LocationTracker,
     private val myPreference: MyPreference,
-    private val gson: Gson
+    private val preferenceUtils: PreferenceUtils,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(UIStates<ProfileDto>())
@@ -44,9 +45,8 @@ class HomeViewModel @Inject constructor(
         MutableStateFlow(LocationResource.Loading(null))
     val location: StateFlow<LocationResource> get() = _location
 
-    private val _locationAddress =
-        MutableStateFlow(UIStates<LocationRequest>())
-    val locationAddress: StateFlow<UIStates<LocationRequest>> get() = _locationAddress
+    private var _locationAddress: LocationRequest? by mutableStateOf(preferenceUtils.getLocationFromLocal())
+    val locationAddress: LocationRequest? get() = _locationAddress
 
     private var localProfile: String? = myPreference.getStoresTag(SharedPreference.PROFILE.name)
 
@@ -54,7 +54,6 @@ class HomeViewModel @Inject constructor(
 
     init {
         userProfile()
-        getLocationFromLocal()
     }
 
     private fun userProfile() {
@@ -135,18 +134,6 @@ class HomeViewModel @Inject constructor(
     }
 
     fun getLocationFromLocal() {
-        val locationJSON = myPreference.getStoresTag(SharedPreference.LOCATION.name)
-        if (locationJSON != null) {
-            viewModelScope.launch {
-                _locationAddress.emit(
-                    UIStates(
-                        content = gson.fromJson(
-                            locationJSON,
-                            LocationRequest::class.java
-                        )
-                    )
-                )
-            }
-        }
+        _locationAddress = preferenceUtils.getLocationFromLocal()
     }
 }

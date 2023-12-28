@@ -3,7 +3,10 @@ package com.ladecentro.common
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode.Restart
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.clickable
@@ -37,12 +40,22 @@ fun Context.isGPSEnable(): Boolean {
             locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
 }
 
-fun Modifier.shimmer(duration: Int): Modifier = composed {
-    val shimmer = rememberShimmer(
-        shimmerBounds = ShimmerBounds.View,
-        theme = defaultShimmerTheme.copy(animationSpec = tween(200))
+fun Modifier.customShimmer(): Modifier = composed {
+    shimmer(
+        customShimmer = rememberShimmer(
+            shimmerBounds = ShimmerBounds.View,
+            theme = defaultShimmerTheme.copy(
+                animationSpec = infiniteRepeatable(
+                    animation = tween(
+                        durationMillis = 400,
+                        easing = LinearEasing,
+                        delayMillis = 500,
+                    ),
+                    repeatMode = Restart,
+                )
+            )
+        )
     )
-    shimmer(customShimmer = shimmer)
 }
 
 fun Modifier.bounceClick(

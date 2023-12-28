@@ -1,7 +1,9 @@
 package com.ladecentro.presentation.ui.location.select
 
-import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.CameraPosition
@@ -17,10 +19,10 @@ import com.ladecentro.domain.model.PlacesResult
 import com.ladecentro.domain.use_case.MapPlacesUseCase
 import com.ladecentro.presentation.common.UIStates
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -42,13 +44,11 @@ class LocationViewModel @Inject constructor(
     private val _userLocation = MutableStateFlow(UIStates<List<Location>>())
     val userLocation: StateFlow<UIStates<List<Location>>> = _userLocation
 
-    private val _searchState = mutableStateOf("")
-    val searchState: State<String> get() = _searchState
-
-    private var job: Job? = null
+    var searchState by mutableStateOf("")
 
     init {
         getUserAddresses()
+        searchPlaces()
     }
 
     private fun getUserAddresses() {
@@ -59,11 +59,15 @@ class LocationViewModel @Inject constructor(
         }
     }
 
-    fun searchPlaces(query: String) {
-        _searchState.value = query
-        job?.cancel()
-        job = viewModelScope.launch {
-            placesUseCase(query)
+    private fun searchPlaces() {
+
+        viewModelScope.launch {
+            snapshotFlow { searchState }
+                .collectLatest {
+                    if (it.isNotBlank()) {
+                        placesUseCase(it)
+                    }
+                }
         }
     }
 

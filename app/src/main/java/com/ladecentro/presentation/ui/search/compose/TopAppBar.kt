@@ -1,6 +1,8 @@
 package com.ladecentro.presentation.ui.search.compose
 
 import android.app.Activity
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,17 +31,15 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -62,7 +62,8 @@ fun TopAppBarSearch(
     isFocus: Boolean,
     color: Color = Color.White,
     searchAction: () -> Unit = {},
-    textValue: (value: MutableState<String>) -> Unit,
+    changeValue: () -> Unit = {},
+    textValue: (value: String) -> Unit,
 ) {
 
     TopAppBar(
@@ -70,7 +71,7 @@ fun TopAppBarSearch(
         title = {
             Column {
                 Spacer(modifier = Modifier.height(12.dp))
-                SearchMainCompose(value, placeHolder, isFocus, searchAction, textValue)
+                SearchMainCompose(value, placeHolder, isFocus, searchAction, changeValue, textValue)
             }
         }
     )
@@ -82,7 +83,8 @@ fun SearchMainCompose(
     placeHolder: String,
     isFocus: Boolean,
     searchAction: () -> Unit = {},
-    textValue: (value: MutableState<String>) -> Unit
+    changeValue: () -> Unit = {},
+    textValue: (value: String) -> Unit
 ) {
 
     val context = LocalContext.current as Activity
@@ -118,7 +120,7 @@ fun SearchMainCompose(
                     .width(1.dp), color = card_border
             )
             Box(modifier = Modifier.weight(1f)) {
-                SearchTextField(value, placeHolder, isFocus, searchAction, textValue)
+                SearchTextField(value, placeHolder, isFocus, searchAction, changeValue, textValue)
             }
             VerticalDivider(
                 modifier = Modifier
@@ -138,23 +140,22 @@ fun SearchMainCompose(
 
 @Composable
 private fun SearchTextField(
-    value: String = "",
+    searchText: String = "",
     placeHolder: String,
     isFocus: Boolean,
     searchAction: () -> Unit = {},
-    textValue: (value: MutableState<String>) -> Unit
+    changeValue: () -> Unit = {},
+    textValue: (value: String) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    val searchText = remember { mutableStateOf(value) }
     val focusRequest = remember { FocusRequester() }
-
-    LaunchedEffect(key1 = searchText.value) {
-        textValue(searchText)
-    }
+    val focusManager = LocalFocusManager.current
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
 
     BasicTextField(
-        value = searchText.value,
-        onValueChange = { searchText.value = it },
+        value = searchText,
+        onValueChange = { textValue(it) },
         singleLine = true,
         modifier = Modifier
             .fillMaxWidth()
@@ -164,6 +165,7 @@ private fun SearchTextField(
             fontFamily = fontFamilyHind,
             fontWeight = FontWeight.Bold
         ),
+        interactionSource = interactionSource,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         keyboardActions = KeyboardActions(onSearch = {
             keyboardController?.hide()
@@ -174,7 +176,7 @@ private fun SearchTextField(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(Modifier.weight(1f)) {
-                    if (searchText.value.isEmpty()) Text(
+                    if (searchText.isEmpty()) Text(
                         placeHolder,
                         style = LocalTextStyle.current.copy(
                             color = light_text,
@@ -184,9 +186,9 @@ private fun SearchTextField(
                     )
                     innerTextField()
                 }
-                if (searchText.value.isNotBlank()) {
+                if (searchText.isNotBlank()) {
                     IconButton(
-                        onClick = { searchText.value = "" },
+                        onClick = { changeValue() },
                         modifier = Modifier.size(30.dp)
                     ) {
                         Icon(
@@ -200,9 +202,11 @@ private fun SearchTextField(
             }
         }
     )
-    LaunchedEffect(key1 = Unit) {
+    LaunchedEffect(key1 = isFocus) {
         if (isFocus) {
             focusRequest.requestFocus()
+        } else {
+            focusManager.clearFocus()
         }
     }
 }

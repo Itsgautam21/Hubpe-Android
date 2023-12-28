@@ -15,25 +15,19 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle.Event.ON_CREATE
-import androidx.lifecycle.Lifecycle.Event.ON_START
 import androidx.lifecycle.LifecycleEventObserver
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
-import com.google.accompanist.permissions.shouldShowRationale
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
 import com.ladecentro.common.LocationResource
 import com.ladecentro.common.hasLocationPermission
 import com.ladecentro.common.isGPSEnable
-import com.ladecentro.presentation.common.SimpleAlertDialog
+import com.ladecentro.presentation.common.LocationPermissions
 import com.ladecentro.presentation.ui.home.HomeViewModel
 
 @Composable
@@ -42,21 +36,20 @@ fun LocationPermission(vm: HomeViewModel = hiltViewModel()) {
 
     val context = LocalContext.current as Activity
     val state by vm.location.collectAsState()
-    var dialog by remember { mutableStateOf(false) }
     val permissionState = rememberPermissionState(permission = permission.ACCESS_FINE_LOCATION)
-    val sheetState = rememberModalBottomSheetState()
+    val confirmStateChange by rememberSaveable { mutableStateOf(vm.locationAddress != null) }
+    val sheetState = rememberModalBottomSheetState(confirmValueChange = { confirmStateChange })
     val launcher = rememberLauncherForActivityResult(contract = StartIntentSenderForResult()) {
         if (it.resultCode == Activity.RESULT_OK) {
             vm.getUserLocation()
         }
     }
+    LocationPermissions(permissionState = permissionState) {
+    }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(key1 = lifecycleOwner, effect = {
         val observer = LifecycleEventObserver { _, event ->
-            if (event == ON_START) {
-                permissionState.launchPermissionRequest()
-            }
             if (event == ON_CREATE) {
                 if (!context.isGPSEnable()) {
                     vm.openBottomSheet = true
@@ -99,32 +92,12 @@ fun LocationPermission(vm: HomeViewModel = hiltViewModel()) {
         ) {
             LocationBottomSheet(
                 onEnableLocation = {
-                    if (!context.hasLocationPermission()) {
-                        permissionState.launchPermissionRequest()
-                    } else {
+                    permissionState.launchPermissionRequest()
+                    if (context.hasLocationPermission()) {
                         vm.getUserLocation()
                     }
                 }
             )
-        }
-    }
-    if (dialog) {
-        SimpleAlertDialog(
-            onDismissRequest = { dialog = false },
-            onConfirmation = { /*TODO*/ },
-            dialogTitle = "Warning!",
-            dialogText = "Permanent location disable",
-            icon = null
-        )
-    }
-
-    when {
-        permissionState.status.isGranted -> {}
-
-        permissionState.status.shouldShowRationale -> {}
-
-        !permissionState.status.isGranted && !permissionState.status.shouldShowRationale -> {
-            dialog = true
         }
     }
 }

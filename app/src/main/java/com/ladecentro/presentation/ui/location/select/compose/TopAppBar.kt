@@ -9,7 +9,12 @@ import com.ladecentro.presentation.ui.search.compose.TopAppBarSearch
 @Composable
 fun TopAppBarLocation(vm: LocationViewModel = hiltViewModel()) {
 
-    TopAppBarSearch(placeHolder = "Search Location", isFocus = false, color = card_background) {
-        vm.searchPlaces(it.value)
-    }
+    TopAppBarSearch(
+        value = vm.searchState,
+        placeHolder = "Search Location",
+        isFocus = false,
+        color = card_background,
+        changeValue = { vm.searchState = "" },
+        textValue = { vm.searchState = it }
+    )
 }

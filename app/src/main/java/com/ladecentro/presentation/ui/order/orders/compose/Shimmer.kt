@@ -20,9 +20,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.ladecentro.common.customShimmer
 import com.ladecentro.presentation.theme.card_background
 import com.ladecentro.presentation.theme.shimmer_gray
-import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun SampleOrderShimmer() {
@@ -43,7 +43,7 @@ fun SampleOrderShimmer() {
                 Box(
                     modifier = Modifier
                         .size(48.dp)
-                        .shimmer()
+                        .customShimmer()
                         .background(color = shimmer_gray, shape = RoundedCornerShape(10.dp))
                 )
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -51,7 +51,7 @@ fun SampleOrderShimmer() {
                         modifier = Modifier
                             .fillMaxWidth(0.3f)
                             .height(12.dp)
-                            .shimmer()
+                            .customShimmer()
                             .background(
                                 color = shimmer_gray, shape = RoundedCornerShape(10.dp)
                             )
@@ -60,7 +60,7 @@ fun SampleOrderShimmer() {
                         modifier = Modifier
                             .fillMaxWidth(.5f)
                             .height(12.dp)
-                            .shimmer()
+                            .customShimmer()
                             .background(
                                 color = shimmer_gray, shape = RoundedCornerShape(10.dp)
                             )
@@ -78,7 +78,7 @@ fun SampleOrderShimmer() {
                     Box(
                         modifier = Modifier
                             .size(16.dp)
-                            .shimmer()
+                            .customShimmer()
                             .background(
                                 color = shimmer_gray, shape = RoundedCornerShape(10.dp)
                             )
@@ -87,7 +87,7 @@ fun SampleOrderShimmer() {
                         modifier = Modifier
                             .fillMaxWidth(.5f)
                             .height(12.dp)
-                            .shimmer()
+                            .customShimmer()
                             .background(
                                 color = shimmer_gray, shape = RoundedCornerShape(10.dp)
                             )
@@ -101,7 +101,7 @@ fun SampleOrderShimmer() {
                     Box(
                         modifier = Modifier
                             .size(16.dp)
-                            .shimmer()
+                            .customShimmer()
                             .background(
                                 color = shimmer_gray, shape = RoundedCornerShape(10.dp)
                             )
@@ -110,7 +110,7 @@ fun SampleOrderShimmer() {
                         modifier = Modifier
                             .fillMaxWidth(.5f)
                             .height(12.dp)
-                            .shimmer()
+                            .customShimmer()
                             .background(
                                 color = shimmer_gray, shape = RoundedCornerShape(10.dp)
                             )
@@ -123,7 +123,7 @@ fun SampleOrderShimmer() {
                 modifier = Modifier
                     .fillMaxWidth(.3f)
                     .height(12.dp)
-                    .shimmer()
+                    .customShimmer()
                     .background(
                         color = shimmer_gray, shape = RoundedCornerShape(10.dp)
                     )
@@ -138,7 +138,7 @@ fun SampleOrderShimmer() {
                         modifier = Modifier
                             .fillMaxWidth(0.6f)
                             .height(12.dp)
-                            .shimmer()
+                            .customShimmer()
                             .background(
                                 color = shimmer_gray, shape = RoundedCornerShape(10.dp)
                             )
@@ -147,7 +147,7 @@ fun SampleOrderShimmer() {
                         modifier = Modifier
                             .fillMaxWidth(0.4f)
                             .height(12.dp)
-                            .shimmer()
+                            .customShimmer()
                             .background(
                                 color = shimmer_gray, shape = RoundedCornerShape(10.dp)
                             )
@@ -162,7 +162,7 @@ fun SampleOrderShimmer() {
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(12.dp)
-                            .shimmer()
+                            .customShimmer()
                             .background(
                                 color = shimmer_gray, shape = RoundedCornerShape(10.dp)
                             )
@@ -171,7 +171,7 @@ fun SampleOrderShimmer() {
                         modifier = Modifier
                             .fillMaxWidth(.5f)
                             .height(12.dp)
-                            .shimmer()
+                            .customShimmer()
                             .background(
                                 color = shimmer_gray, shape = RoundedCornerShape(10.dp)
                             )

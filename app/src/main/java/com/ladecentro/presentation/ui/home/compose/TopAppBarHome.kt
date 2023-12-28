@@ -22,8 +22,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,7 +39,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ladecentro.R.drawable
 import com.ladecentro.common.bounceClick
 import com.ladecentro.presentation.theme.darkBlue
-import com.ladecentro.presentation.theme.doppio_one
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_gray
 import com.ladecentro.presentation.theme.poppins
@@ -60,12 +57,6 @@ fun TopAppBarHome(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val result = rememberLauncherForActivityResult(StartActivityForResult()) {
-        if (it.resultCode == ComponentActivity.RESULT_OK) {
-            vm.getLocationFromLocal()
-        }
-    }
-    val address by vm.locationAddress.collectAsState()
 
     Surface(shadowElevation = 0.dp, color = Color.White) {
         Column {
@@ -75,57 +66,12 @@ fun TopAppBarHome(
                     scrolledContainerColor = Companion.White
                 ),
                 title = {
-                    address.content?.let {
-                        Column(modifier = Modifier
-                            .padding(horizontal = 4.dp)
-                            .bounceClick {
-                                result.launch(
-                                    Intent(
-                                        context,
-                                        LocationActivity::class.java
-                                    )
-                                )
-                            }) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth(0.5f)
-                            ) {
-                                Text(
-                                    text = it.descriptor?.name ?: "",
-                                    fontFamily = poppins,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = darkBlue,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Icon(
-                                    painter = painterResource(id = drawable.down_arrow),
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .height(18.dp)
-                                        .width(18.dp)
-                                        .padding(top = 2.dp),
-                                    tint = darkBlue
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Text(
-                                text = it.descriptor?.longDesc ?: "",
-                                fontFamily = fontFamilyHind,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Normal,
-                                color = light_gray,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.fillMaxWidth(0.7f),
-                                style = TextStyle(
-                                    platformStyle = PlatformTextStyle(
-                                        includeFontPadding = false
-                                    )
-                                )
-                            )
+                    vm.locationAddress?.let {
+                        SelectedLocationAppBarTitle(
+                            title = it.descriptor?.name ?: "",
+                            description = it.descriptor?.longDesc ?: ""
+                        ) {
+                            vm.getLocationFromLocal()
                         }
                     }
 
@@ -173,5 +119,68 @@ fun TopAppBarHome(
                 scrollBehavior = scrollBehaviour
             )
         }
+    }
+}
+
+@Composable
+fun SelectedLocationAppBarTitle(title: String, description: String, onLocationSelect: () -> Unit) {
+
+    val context = LocalContext.current
+    val result = rememberLauncherForActivityResult(StartActivityForResult()) {
+        if (it.resultCode == ComponentActivity.RESULT_OK) {
+            onLocationSelect()
+        }
+    }
+
+    Column(modifier = Modifier
+        .padding(horizontal = 4.dp)
+        .bounceClick {
+            result.launch(
+                Intent(
+                    context,
+                    LocationActivity::class.java
+                )
+            )
+        }) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(0.5f)
+        ) {
+            Text(
+                text = title,
+                fontFamily = poppins,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = darkBlue,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Icon(
+                painter = painterResource(id = drawable.down_arrow),
+                contentDescription = null,
+                modifier = Modifier
+                    .height(18.dp)
+                    .width(18.dp)
+                    .padding(top = 2.dp),
+                tint = darkBlue
+            )
+        }
+        Spacer(modifier = Modifier.height(2.dp))
+        Text(
+            text = description,
+            fontFamily = fontFamilyHind,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Normal,
+            color = light_gray,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.fillMaxWidth(0.7f),
+            style = TextStyle(
+                platformStyle = PlatformTextStyle(
+                    includeFontPadding = false
+                )
+            )
+        )
     }
 }

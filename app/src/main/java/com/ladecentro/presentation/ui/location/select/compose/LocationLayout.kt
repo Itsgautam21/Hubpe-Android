@@ -64,14 +64,14 @@ fun LocationLayout(vm: LocationViewModel = hiltViewModel()) {
                 .background(card_background)
         ) {
             AnimatedVisibility(
-                visible = vm.searchState.value.isNotEmpty(),
+                visible = vm.searchState.isNotEmpty(),
                 enter = fadeIn(animationSpec = tween(1000)),
                 exit = fadeOut(animationSpec = tween(1000))
             ) {
                 PlacesUI()
             }
             AnimatedVisibility(
-                visible = vm.searchState.value.isEmpty(),
+                visible = vm.searchState.isEmpty(),
                 enter = fadeIn(animationSpec = tween(1000)),
                 exit = fadeOut(animationSpec = tween(1000))
             ) {

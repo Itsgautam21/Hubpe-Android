@@ -1,10 +1,6 @@
-package com.ladecentro.presentation.ui.location.select.compose
+package com.ladecentro.presentation.ui.location.maps.compose
 
-import android.app.Activity
-import android.content.Intent
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,50 +26,49 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.ladecentro.R
-import com.ladecentro.common.Intents
+import com.ladecentro.R.drawable
 import com.ladecentro.domain.model.PlacesResult
 import com.ladecentro.presentation.theme.card_background
 import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_gray
-import com.ladecentro.presentation.ui.location.maps.MapsActivity
-import com.ladecentro.presentation.ui.location.select.LocationViewModel
+import com.ladecentro.presentation.ui.location.maps.MapsViewModel
+
+@Composable
+fun PlacesMapCompose(vm: MapsViewModel = hiltViewModel()) {
+
+    LazyColumn(
+        contentPadding = PaddingValues(top = 0.dp, start = 14.dp, end = 14.dp, bottom = 14.dp),
+        modifier = Modifier
+            .padding(top = 12.dp)
+            .background(card_background)
+            .padding(bottom = 12.dp)
+            .fillMaxSize()
+            .animateContentSize()
+    ) {
+        items(vm.locationAutofill) {
+            SampleMapsPlaces(it)
+        }
+    }
+}
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun SamplePlaces(placesResult: PlacesResult, vm: LocationViewModel = hiltViewModel()) {
-
-    val context = LocalContext.current as Activity
-    val activityLauncher = rememberLauncherForActivityResult(StartActivityForResult()) {
-        if (it.resultCode == Activity.RESULT_OK) {
-            context.setResult(Activity.RESULT_OK)
-            context.finish()
-        }
-    }
+fun SampleMapsPlaces(placesResult: PlacesResult, vm: MapsViewModel = hiltViewModel()) {
 
     Card(
         colors = CardDefaults.cardColors(Color.White),
         elevation = CardDefaults.cardElevation(0.dp),
         shape = RoundedCornerShape(12.dp),
         onClick = {
-            vm.getCameraPosition(placesResult) { cam ->
-                cam?.let { notNullCamPos ->
-                    activityLauncher.launch(
-                        Intent(
-                            context,
-                            MapsActivity::class.java
-                        ).putExtra(Intents.CAMERA.name, notNullCamPos)
-                    )
-                }
-            }
+            vm.searchText = ""
+            vm.getCameraPosition(placesResult)
         }
     ) {
 
@@ -88,7 +83,7 @@ fun SamplePlaces(placesResult: PlacesResult, vm: LocationViewModel = hiltViewMod
             Column(modifier = Modifier.padding(0.dp)) {
 
                 Icon(
-                    painter = painterResource(id = R.drawable.location),
+                    painter = painterResource(id = drawable.location),
                     contentDescription = "location",
                     modifier = Modifier.size(18.dp),
                     tint = MaterialTheme.colorScheme.primary
@@ -120,28 +115,5 @@ fun SamplePlaces(placesResult: PlacesResult, vm: LocationViewModel = hiltViewMod
             }
         }
         HorizontalDivider(color = card_border, thickness = 1.dp)
-    }
-}
-
-@Composable
-fun PlacesUI(vm: LocationViewModel = hiltViewModel()) {
-
-    LazyColumn(
-        contentPadding = PaddingValues(12.dp),
-        verticalArrangement = Arrangement.spacedBy(0.dp),
-        modifier = Modifier
-            .fillMaxSize()
-            .background(card_background)
-    ) {
-        item {
-            Spacer(modifier = Modifier.height(4.dp))
-            LocationOptionCurrent()
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-        items(vm.locationAutofill) {
-            AnimatedVisibility(visible = vm.locationAutofill.isNotEmpty()) {
-                SamplePlaces(placesResult = it)
-            }
-        }
     }
 }

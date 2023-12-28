@@ -20,12 +20,13 @@ fun SearchLayout(vm: SearchViewModel = hiltViewModel()) {
 
     Scaffold(
         topBar = {
-            TopAppBarSearch(placeHolder = "Search Here", isFocus = true) {
-                vm.searchText.value = it.value
-                if (vm.searchText.value.length > 2) {
-                    vm.searchStoreProduct()
-                }
-            }
+            TopAppBarSearch(
+                value = vm.searchText,
+                placeHolder = "Search Here",
+                isFocus = vm.isFocusState,
+                changeValue = { vm.searchText = "" },
+                textValue = { vm.searchText = it }
+            )
         }
     ) { padding ->
         Column(
@@ -34,7 +35,7 @@ fun SearchLayout(vm: SearchViewModel = hiltViewModel()) {
                 .background(color = Color.White)
                 .padding(padding)
         ) {
-            if (vm.searchText.value.length <= 2) {
+            if (vm.searchText.length <= 2) {
                 PastSearch()
             } else {
                 SearchTabCompose()
@@ -46,13 +47,7 @@ fun SearchLayout(vm: SearchViewModel = hiltViewModel()) {
     DisposableEffect(key1 = lifecycleOwner, effect = {
         val observer = LifecycleEventObserver { _, event ->
             if (event == ON_DESTROY) {
-                val searches = vm.pastSearch.value.toMutableList()
-                vm.saveSearch?.let {
-                    searches.removeIf { text -> text == it }
-                    searches.add(it)
-                }
-                vm.pastSearch.value = searches
-                vm.setPastSearchToPreference(searches)
+                vm.setPastSearchToPreference()
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
