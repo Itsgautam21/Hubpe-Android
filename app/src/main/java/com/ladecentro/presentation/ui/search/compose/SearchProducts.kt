@@ -1,6 +1,7 @@
 package com.ladecentro.presentation.ui.search.compose
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,12 +9,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -23,6 +24,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,15 +36,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.paging.LoadState
+import androidx.paging.LoadState.Loading
+import androidx.paging.LoadState.NotLoading
+import androidx.paging.compose.LazyPagingItems
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec.RawRes
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.ladecentro.R.raw
 import com.ladecentro.common.bounceClick
 import com.ladecentro.data.remote.dto.Product
 import com.ladecentro.presentation.common.HorizontalDashDivider
 import com.ladecentro.presentation.common.LoadImage
+import com.ladecentro.presentation.theme.card_background
 import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.doppio_one
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_orange
 import com.ladecentro.presentation.theme.primary_orange
+import com.ladecentro.presentation.ui.order.orders.compose.ShimmerContent
 
 @Composable
 fun SampleSearchProduct(product: Product) {
@@ -62,7 +76,7 @@ fun SampleSearchProduct(product: Product) {
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = product.storeDescriptor.name,
+                    text = product.storeDescriptor.name ?: "",
                     fontSize = 13.sp,
                     fontFamily = fontFamilyHind,
                     fontWeight = FontWeight.Bold,
@@ -97,7 +111,7 @@ fun SampleSearchProduct(product: Product) {
                     color = Companion.White
                 ) {
                     LoadImage(
-                        image = if (product.descriptor.images.isEmpty()) "" else product.descriptor.images[0],
+                        image = product.descriptor.images.getOrNull(index = 0),
                         modifier = Modifier.size(110.dp),
                         contentScale = ContentScale.FillBounds
                     )
@@ -109,7 +123,7 @@ fun SampleSearchProduct(product: Product) {
                     modifier = Modifier
                         .defaultMinSize(minHeight = 32.dp)
                         .height(32.dp),
-                    contentPadding = PaddingValues(horizontal = 20.dp),
+                    contentPadding = PaddingValues(horizontal = 24.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = light_orange,
                         contentColor = Companion.Black
@@ -131,15 +145,55 @@ fun SampleSearchProduct(product: Product) {
 }
 
 @Composable
-fun SearchProducts(products: List<Product>) {
+fun SearchProducts(productSearch: LazyPagingItems<Product>, onLoad: () -> Unit) {
 
-    LazyColumn(
-        contentPadding = PaddingValues(12.dp),
-        verticalArrangement = Arrangement.spacedBy(0.dp)
-    ) {
-        items(products) {
-            SampleSearchProduct(it)
-            HorizontalDashDivider()
+    val composition by rememberLottieComposition(spec = RawRes(raw.loading))
+    val progress by animateLottieCompositionAsState(
+        composition,
+        iterations = LottieConstants.IterateForever,
+        isPlaying = true,
+        speed = 1f,
+        restartOnPlay = false
+    )
+
+    when (productSearch.loadState.refresh) {
+
+        is Loading -> {
+            ShimmerContent()
         }
+
+        is NotLoading -> {
+            LazyColumn(
+                contentPadding = PaddingValues(12.dp),
+                verticalArrangement = Arrangement.spacedBy(0.dp)
+            ) {
+                items(count = productSearch.itemCount, key = { it }) { index ->
+                    productSearch[index]?.let { product ->
+                        SampleSearchProduct(product)
+                        HorizontalDashDivider()
+                    }
+                }
+                when (productSearch.loadState.append) {
+                    is Loading -> {
+                        item {
+                            LottieAnimation(
+                                composition = composition,
+                                progress = progress,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(card_background)
+                                    .height(50.dp)
+                            )
+                        }
+                    }
+
+                    is LoadState.Error -> {}
+                    is NotLoading -> {}
+                }
+            }
+            onLoad()
+        }
+
+        is LoadState.Error -> {}
     }
 }

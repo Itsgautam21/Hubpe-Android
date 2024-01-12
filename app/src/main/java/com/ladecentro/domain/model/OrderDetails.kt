@@ -23,7 +23,7 @@ data class OrderDetail(
 )
 
 data class ItemDetails(
-    val image: String,
+    val image: String?,
     val quantity: Int,
     val name: String,
     val price: String,

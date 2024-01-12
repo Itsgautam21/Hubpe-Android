@@ -3,6 +3,7 @@ package com.ladecentro.presentation.ui.address.add
 import android.location.Address
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -14,6 +15,7 @@ import com.ladecentro.common.Resource.Error
 import com.ladecentro.common.Resource.Loading
 import com.ladecentro.common.Resource.Success
 import com.ladecentro.common.SharedPreference
+import com.ladecentro.data.remote.dto.Location
 import com.ladecentro.data.remote.dto.ProfileDto
 import com.ladecentro.domain.model.City
 import com.ladecentro.domain.model.Country
@@ -23,8 +25,6 @@ import com.ladecentro.domain.model.ProfileRequest
 import com.ladecentro.domain.use_case.GetUpdateProfileUseCase
 import com.ladecentro.presentation.common.UIStates
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -37,14 +37,19 @@ class AddAddressViewModel @Inject constructor(
 ) : ViewModel() {
 
     val address: Address = savedStateHandle[Intents.ADDRESS.name]!!
+    private val prevAddress: Location? = savedStateHandle[Intents.UPDATE_ADDRESS.name]
 
-    private val _updateState = MutableStateFlow(UIStates<ProfileDto>())
-    val updateState: StateFlow<UIStates<ProfileDto>> get() = _updateState
+    private var _updateState by mutableStateOf(UIStates<ProfileDto>())
+    val updateState: UIStates<ProfileDto> get() = _updateState
 
-    var receiverName by mutableStateOf(getProfileFromLocal()?.name ?: "")
-    var phoneNumber by mutableStateOf(getProfileFromLocal()?.phone ?: "")
-    var house by mutableStateOf(address.featureName ?: "")
-    var area by mutableStateOf( address.subLocality ?: "")
+    var receiverName by mutableStateOf(
+        value = prevAddress?.address?.name ?: getProfileFromLocal()?.name ?: ""
+    )
+    var phoneNumber by mutableStateOf(
+        value = prevAddress?.mobileNumber ?: getProfileFromLocal()?.phone ?: ""
+    )
+    var house by mutableStateOf("")
+    var area by mutableStateOf(address.subLocality ?: "")
     var city by mutableStateOf(address.locality ?: "")
     var landmark by mutableStateOf(address.thoroughfare ?: "")
 
@@ -60,17 +65,21 @@ class AddAddressViewModel @Inject constructor(
     var areaErrorText by mutableStateOf("")
     var cityErrorText by mutableStateOf("")
 
+    val addressTypes = listOf("Home", "Office", "Hotel", "Other")
+    var selectedItem by mutableStateOf(addressTypes[0])
+
     fun addAddress() {
 
         val request = ProfileRequest(
             type = listOf("LOCATION"),
-            operation = "ADD",
+            operation = if (prevAddress == null) "ADD" else "REPLACE",
             locations = listOf(
                 LocationRequest(
+                    id = prevAddress?.id,
                     primary = false,
                     descriptor = Descriptor(
-                        name = "Home",
-                        longDesc = address.getAddressLine(0)
+                        name = selectedItem,
+                        longDesc = "$house, ${address.getAddressLine(0)}"
                     ),
                     address = com.ladecentro.domain.model.Address(
                         name = receiverName,
@@ -93,18 +102,10 @@ class AddAddressViewModel @Inject constructor(
         )
         viewModelScope.launch {
             getUpdateProfileUseCase(request).collect {
-                when (it) {
-                    is Loading -> {
-                        _updateState.emit(UIStates(isLoading = true))
-                    }
-
-                    is Success -> {
-                        _updateState.emit(UIStates(content = it.data))
-                    }
-
-                    is Error -> {
-                        _updateState.emit(UIStates(error = it.message))
-                    }
+                _updateState = when (it) {
+                    is Loading -> UIStates(isLoading = true)
+                    is Success -> UIStates(content = it.data)
+                    is Error -> UIStates(error = it.message)
                 }
             }
         }

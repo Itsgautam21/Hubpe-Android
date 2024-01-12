@@ -27,13 +27,13 @@ fun OrdersDTO.toOrders(): List<Orders> {
             id = order.id,
             displayOrderId = order.displayOrderId,
             store = Store(
-                image = order.store.descriptor.images[0],
+                image = order.store.descriptor.images.getOrNull(0),
                 name = order.store.descriptor.name,
                 shortAddress = order.store.locations[0].descriptor.shortDesc
             ),
             items = order.items.map { item ->
                 Item(
-                    image = item.descriptor.images[0],
+                    image = item.descriptor.images.getOrNull(0),
                     quantity = item.quantity.selected.count,
                     name = item.descriptor.name
                 )

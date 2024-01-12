@@ -32,7 +32,7 @@ class OrdersViewModel @Inject constructor(
 
     fun getAllOrders() {
         viewModelScope.launch {
-            ordersUseCase.invoke().cachedIn(viewModelScope).collect {
+            ordersUseCase().cachedIn(viewModelScope).collect {
                 _ordersState.value = it
             }
         }

@@ -14,12 +14,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons.Rounded
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -28,9 +29,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.ladecentro.common.Intents
+import com.ladecentro.data.remote.dto.Location
+import com.ladecentro.domain.model.DropdownMenu
+import com.ladecentro.domain.model.LocationRequest
 import com.ladecentro.presentation.common.SimpleTopAppBar
 import com.ladecentro.presentation.theme.card_background
-import com.ladecentro.presentation.ui.address.add.AddAddressActivity
 import com.ladecentro.presentation.ui.address.addresses.AddressViewModel
 import com.ladecentro.presentation.ui.location.maps.MapsActivity
 import com.ladecentro.presentation.ui.location.select.compose.SampleSavedAddress
@@ -40,7 +43,6 @@ import com.ladecentro.presentation.ui.order.orders.compose.ShimmerContent
 fun AddressesLayout(vm: AddressViewModel = hiltViewModel()) {
 
     val context = LocalContext.current as Activity
-    val locations = vm.userLocation.collectAsState().value
     val activityLauncher = rememberLauncherForActivityResult(StartActivityForResult()) {
         if (it.resultCode == Activity.RESULT_OK) {
             vm.getUserProfile()
@@ -54,15 +56,12 @@ fun AddressesLayout(vm: AddressViewModel = hiltViewModel()) {
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    val gps: List<Double> =
-                        vm.location.gps?.split(",")?.map { it.toDouble() } ?: listOf()
-                    val cameraPos = CameraPosition.fromLatLngZoom(LatLng(gps[0], gps[1]), 18f)
                     activityLauncher.launch(
                         Intent(
                             context,
                             MapsActivity::class.java
                         ).putExtra(Intents.ADD_ADDRESS.name, Intents.ADD_ADDRESS.name)
-                            .putExtra(Intents.CAMERA.name, cameraPos)
+                            .putExtra(Intents.CAMERA.name, getCameraPosition(vm.location))
                     )
                 },
                 shape = RoundedCornerShape(30.dp),
@@ -82,23 +81,54 @@ fun AddressesLayout(vm: AddressViewModel = hiltViewModel()) {
                 .padding(it)
                 .fillMaxSize()
         ) {
-            locations.content?.let { locations ->
+            vm.userLocation.content?.let { locations ->
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(card_background),
-                    contentPadding = PaddingValues(12.dp)
+                    contentPadding = PaddingValues(
+                        top = 12.dp,
+                        start = 12.dp,
+                        end = 12.dp,
+                        bottom = 100.dp
+                    )
                 ) {
                     items(locations) { location ->
-                        SampleSavedAddress(location) {
+                        val dropdownList = listOf(
+                            DropdownMenu("Edit", Rounded.Edit) { loc ->
+                                activityLauncher.launch(
+                                    Intent(context, MapsActivity::class.java)
+                                        .putExtra(
+                                            Intents.ADD_ADDRESS.name,
+                                            Intents.ADD_ADDRESS.name
+                                        )
+                                        .putExtra(Intents.UPDATE_ADDRESS.name, loc)
+                                        .putExtra(Intents.CAMERA.name, getCameraPosition(loc))
+                                )
+                            },
+                            DropdownMenu("Delete", Rounded.Delete) { loc ->
+                                vm.deleteAddress(loc)
+                            }
+                        )
+                        SampleSavedAddress(location, dropdownList) {
 
                         }
                     }
                 }
             }
-            if (locations.isLoading) {
+            if (vm.userLocation.isLoading) {
                 ShimmerContent()
             }
         }
     }
+}
+
+fun getCameraPosition(loc: Location): CameraPosition {
+    val gps: List<Double> = loc.gps.split(",").map { d -> d.toDouble() }
+    return CameraPosition.fromLatLngZoom(LatLng(gps[0], gps[1]), 18f)
+}
+
+fun getCameraPosition(location: LocationRequest): CameraPosition {
+    val gps: List<Double> = location.gps?.split(",")?.map { it.toDouble() } ?: listOf()
+    return CameraPosition.fromLatLngZoom(LatLng(gps[1], gps[0]), 18f)
 }

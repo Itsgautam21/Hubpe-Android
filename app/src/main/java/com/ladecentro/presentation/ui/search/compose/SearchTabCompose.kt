@@ -1,6 +1,5 @@
 package com.ladecentro.presentation.ui.search.compose
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,7 +11,6 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -23,11 +21,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_text
 import com.ladecentro.presentation.theme.primary_orange
-import com.ladecentro.presentation.ui.order.orders.compose.ShimmerContent
 import com.ladecentro.presentation.ui.search.SearchViewModel
 
 @Composable
@@ -35,7 +33,8 @@ fun SearchTabCompose(vm: SearchViewModel = hiltViewModel()) {
 
     var tabIndex by rememberSaveable { mutableIntStateOf(0) }
     val tabs = listOf("Products", "Stores")
-    val searchState by vm.searchState.collectAsState()
+    val storeSearch = vm.storeSearch.collectAsLazyPagingItems()
+    val productSearch = vm.productSearch.collectAsLazyPagingItems()
 
     PrimaryTabRow(
         selectedTabIndex = tabIndex,
@@ -75,17 +74,15 @@ fun SearchTabCompose(vm: SearchViewModel = hiltViewModel()) {
             }
         }
     }
-    if (searchState.isLoading) {
-        ShimmerContent()
-    }
-    AnimatedVisibility(visible = tabIndex == 0) {
-        searchState.content?.let {
-            SearchProducts(it.products)
+    when (tabIndex) {
+        0 -> SearchProducts(productSearch) {
+            vm.addPastSearch()
         }
-    }
-    AnimatedVisibility(visible = tabIndex == 1) {
-        searchState.content?.let {
-            SearchStores(it.stores)
+
+        1 -> SearchStores(storeSearch) {
+            vm.addPastSearch()
         }
+
+        else -> {}
     }
 }

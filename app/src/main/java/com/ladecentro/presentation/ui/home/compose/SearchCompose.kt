@@ -3,7 +3,6 @@ package com.ladecentro.presentation.ui.home.compose
 import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,8 +19,8 @@ import androidx.compose.foundation.lazy.grid.GridCells.Fixed
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons.Outlined
-import androidx.compose.material.icons.outlined.KeyboardArrowRight
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -42,6 +41,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ladecentro.R.drawable
+import com.ladecentro.common.Intents
+import com.ladecentro.common.bounceClick
 import com.ladecentro.presentation.theme.card_background
 import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.darkBlue
@@ -204,8 +205,10 @@ fun YourFavourite() {
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.weight(1f)
                 )
-                Icon(imageVector = Outlined.KeyboardArrowRight, contentDescription = "")
-
+                Icon(
+                    imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
+                    contentDescription = ""
+                )
             }
         }
 
@@ -369,8 +372,11 @@ fun ShopCategory() {
                         modifier = Modifier
                             .height(90.dp)
                             .width(90.dp)
-                            .clickable {
-                                context.startActivity(Intent(context, StoresActivity::class.java))
+                            .bounceClick {
+                                context.startActivity(
+                                    Intent(context, StoresActivity::class.java)
+                                        .putExtra(Intents.CATEGORY_NAME.name, it.value)
+                                )
                             }
                     )
                     Spacer(modifier = Modifier.height(8.dp))
@@ -388,14 +394,14 @@ fun ShopCategory() {
 }
 
 val list = listOf(
-    Category(drawable.category1, "Beauty"),
-    Category(drawable.category2, "Electronics"),
-    Category(drawable.category3, "Home & Decor"),
-    Category(drawable.category4, "Pharma"),
-    Category(drawable.category4, "Pharma"),
-    Category(drawable.category5, "Food"),
-    Category(drawable.category6, "Grocery"),
-    Category(drawable.category7, "Fashion"),
+    Category(drawable.category4, "turbo", ""),
+    Category(drawable.category7, "Fashion", "Fashion"),
+    Category(drawable.category5, "Food", "Food and Beverage"),
+    Category(drawable.category2, "Electronics", "Electronics"),
+    Category(drawable.category6, "Grocery", "Grocery"),
+    Category(drawable.category3, "Home & Decor", "Home & Decor"),
+    Category(drawable.category1, "Beauty", "Beauty"),
+    Category(drawable.category4, "Pharma", "Pharma"),
 )
 
-data class Category(val image: Int, val name: String)
+data class Category(val image: Int, val name: String, val value: String)

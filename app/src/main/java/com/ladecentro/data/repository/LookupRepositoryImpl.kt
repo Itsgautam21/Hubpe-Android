@@ -18,8 +18,15 @@ class LookupRepositoryImpl @Inject constructor(
 
     override suspend fun search(request: SearchRequest): SearchDto {
         try {
-            val response = lookupAPI.search(authToken,
-                request.term, request.location, request.size, request.page
+            val response = lookupAPI.search(
+                authToken,
+                request.term,
+                request.location,
+                request.size,
+                request.page,
+                request.sector,
+                request.isPromoted,
+                request.expectedEntity
             )
             if (response.isSuccessful) {
                 return response.body()!!

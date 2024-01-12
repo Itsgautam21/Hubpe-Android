@@ -2,6 +2,7 @@ package com.ladecentro.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
 import com.ladecentro.domain.model.LocationRequest
+import java.io.Serializable
 
 data class Location(
     @SerializedName("id") val id: String,
@@ -12,12 +13,12 @@ data class Location(
     @SerializedName("address") val address: Address,
     @SerializedName("city") val city: City,
     @SerializedName("country") val country: Country
-)
+): Serializable
 
 data class Descriptor(
     @SerializedName("name") val name: String,
     @SerializedName("long_desc") val longDesc: String
-)
+): Serializable
 
 data class Address(
     @SerializedName("name") val name: String,
@@ -27,16 +28,16 @@ data class Address(
     @SerializedName("state") val state: String,
     @SerializedName("country") val country: String,
     @SerializedName("area_code") val areaCode: String
-)
+): Serializable
 
 data class City(
     @SerializedName("name") val name: String
-)
+): Serializable
 
 data class Country(
     @SerializedName("name") val name: String,
     @SerializedName("code") val code: String
-)
+): Serializable
 
 data class Favourite(
     @SerializedName("id") val id: String,
@@ -111,11 +112,13 @@ data class ProfileDto(
 
 fun Location.mapToLocationRequest(): LocationRequest {
 
+    val array = gps.split(",")
+    val changeGps = "${array[1]},${array[0]}"
     return LocationRequest(
         id = id,
         mobileNumber = mobileNumber,
         primary = primary,
-        gps = gps,
+        gps = changeGps,
         descriptor = com.ladecentro.domain.model.Descriptor(name = descriptor.name, longDesc = descriptor.longDesc),
         address = com.ladecentro.domain.model.Address(
             name = address.name,

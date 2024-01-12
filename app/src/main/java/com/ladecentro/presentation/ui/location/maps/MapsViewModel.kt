@@ -16,6 +16,7 @@ import com.ladecentro.common.LocationResource
 import com.ladecentro.common.MyPreference
 import com.ladecentro.common.Resource
 import com.ladecentro.common.SharedPreference
+import com.ladecentro.data.remote.dto.Location
 import com.ladecentro.domain.location.LocationTracker
 import com.ladecentro.domain.model.City
 import com.ladecentro.domain.model.Country
@@ -64,6 +65,7 @@ class MapsViewModel @Inject constructor(
     )
     val cameraPosition: StateFlow<CameraPosition> get() = _cameraPosition
     val isAddAddress: String? = savedStateHandle[Intents.ADD_ADDRESS.name]
+    val address: Location? = savedStateHandle[Intents.UPDATE_ADDRESS.name]
     var searchText by mutableStateOf("")
 
     init {
@@ -148,7 +150,7 @@ class MapsViewModel @Inject constructor(
                     name = it.featureName,
                     longDesc = it.getAddressLine(0)
                 ),
-                gps = "${it.latitude},${it.longitude}",
+                gps = "${it.longitude},${it.latitude}",
                 city = City(name = it.locality),
                 country = Country(
                     name = it.countryName,

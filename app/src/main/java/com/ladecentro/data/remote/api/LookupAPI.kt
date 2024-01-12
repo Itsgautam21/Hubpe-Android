@@ -15,6 +15,9 @@ interface LookupAPI {
         @Query("term") term: String?,
         @Query("location") location: String?,
         @Query("size") size: Int?,
-        @Query("page") page: Int?
+        @Query("page") page: Int?,
+        @Query("sector") sector: String?,
+        @Query("is_promoted") isPromoted: Boolean?,
+        @Query("expected_entity") expectedEntity: String?,
     ): Response<SearchDto>
 }

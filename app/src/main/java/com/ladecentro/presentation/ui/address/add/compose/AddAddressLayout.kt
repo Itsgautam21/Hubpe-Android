@@ -1,7 +1,6 @@
 package com.ladecentro.presentation.ui.address.add.compose
 
 import android.app.Activity
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,7 +19,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -50,7 +48,6 @@ fun AddAddressLayout(vm: AddAddressViewModel = hiltViewModel()) {
         }
     }
     val context = LocalContext.current as Activity
-    val updateState by vm.updateState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -82,7 +79,6 @@ fun AddAddressLayout(vm: AddAddressViewModel = hiltViewModel()) {
                         if (errorState) {
                             return@Button
                         }
-                        Log.d(">>>> Success", "Button Click!")
                         vm.addAddress()
                     },
                     colors = ButtonDefaults.buttonColors(
@@ -96,7 +92,7 @@ fun AddAddressLayout(vm: AddAddressViewModel = hiltViewModel()) {
                         .bounceClick(true) {
 
                         },
-                    enabled = !updateState.isLoading
+                    enabled = !vm.updateState.isLoading
                 ) {
                     Text(
                         text = "Save Address",
@@ -110,9 +106,9 @@ fun AddAddressLayout(vm: AddAddressViewModel = hiltViewModel()) {
         }
     }
 
-    LaunchedEffect(key1 = updateState) {
+    LaunchedEffect(key1 = vm.updateState) {
 
-        updateState.content?.let {
+        vm.updateState.content?.let {
             vm.setProfileToLocal(it)
             context.setResult(Activity.RESULT_OK)
             context.finish()

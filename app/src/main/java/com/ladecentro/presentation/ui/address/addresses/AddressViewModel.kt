@@ -1,5 +1,8 @@
 package com.ladecentro.presentation.ui.address.addresses
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
@@ -10,24 +13,26 @@ import com.ladecentro.common.Resource.Success
 import com.ladecentro.common.SharedPreference
 import com.ladecentro.data.remote.dto.Location
 import com.ladecentro.data.remote.dto.ProfileDto
+import com.ladecentro.data.remote.dto.mapToLocationRequest
 import com.ladecentro.domain.model.LocationRequest
+import com.ladecentro.domain.model.ProfileRequest
 import com.ladecentro.domain.use_case.GetProfileUseCase
+import com.ladecentro.domain.use_case.GetUpdateProfileUseCase
 import com.ladecentro.presentation.common.UIStates
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AddressViewModel @Inject constructor(
     private val getProfileUseCase: GetProfileUseCase,
+    private val getUpdateProfileUseCase: GetUpdateProfileUseCase,
     private val myPreference: MyPreference,
     private val gson: Gson
 ) : ViewModel() {
 
-    private val _userLocation = MutableStateFlow(UIStates<List<Location>>())
-    val userLocation: StateFlow<UIStates<List<Location>>> = _userLocation
+    private var _userLocation by mutableStateOf(UIStates<List<Location>>())
+    val userLocation: UIStates<List<Location>> get() = _userLocation
 
     val location: LocationRequest = gson.fromJson(
         myPreference.getStoresTag(SharedPreference.LOCATION.name),
@@ -42,31 +47,43 @@ class AddressViewModel @Inject constructor(
 
         viewModelScope.launch {
             getProfileFromLocal()?.let { data ->
-                _userLocation.emit(UIStates(content = data.locations))
+                _userLocation = UIStates(content = data.locations)
                 return@launch
             }
             getProfileUseCase.invoke().collect {
-                when (it) {
-                    is Loading -> {
-                        _userLocation.emit(UIStates(isLoading = true))
-                    }
-
+                _userLocation = when (it) {
+                    is Loading -> UIStates(isLoading = true)
+                    is Error -> UIStates(error = it.message)
                     is Success -> {
-                        _userLocation.emit(
-                            UIStates(
-                                isLoading = false,
-                                content = it.data?.locations
-                            )
-                        )
                         myPreference.setStoredTag(
                             SharedPreference.PROFILE.name,
                             gson.toJson(it.data)
                         )
+                        UIStates(content = it.data?.locations)
+                    }
+                }
+            }
+        }
+    }
+
+    fun deleteAddress(location: Location) {
+
+        val request = ProfileRequest(
+            type = listOf("LOCATION"),
+            operation = "REMOVE",
+            locations = listOf(location.mapToLocationRequest())
+        )
+
+        viewModelScope.launch {
+            getUpdateProfileUseCase(request).collect {
+                _userLocation = when (it) {
+                    is Loading -> UIStates(isLoading = true)
+                    is Success -> {
+                        setProfileToLocal(it.data!!)
+                        UIStates(content = getProfileFromLocal()?.locations)
                     }
 
-                    is Error -> {
-                        _userLocation.emit(UIStates(isLoading = false, error = it.message))
-                    }
+                    is Error -> UIStates(error = it.message)
                 }
             }
         }
@@ -78,5 +95,10 @@ class AddressViewModel @Inject constructor(
             return null
         }
         return gson.fromJson(profileJson, ProfileDto::class.java)
+    }
+
+    private fun setProfileToLocal(profileDto: ProfileDto) {
+
+        myPreference.setStoredTag(SharedPreference.PROFILE.name, gson.toJson(profileDto))
     }
 }

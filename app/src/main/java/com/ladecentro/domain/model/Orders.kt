@@ -10,12 +10,12 @@ data class Orders(
 )
 
 data class Store(
-    val image: String,
+    val image: String?,
     val name: String,
     val shortAddress: String
 )
 
-data class Item(val image: String, val quantity: Int, val name: String)
+data class Item(val image: String?, val quantity: Int, val name: String)
 
 data class PaymentAndStatus(
     val createdDate: String,

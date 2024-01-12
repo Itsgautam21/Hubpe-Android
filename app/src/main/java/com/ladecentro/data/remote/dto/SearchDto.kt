@@ -27,7 +27,8 @@ data class Store(
     @SerializedName("is_promoted") val isPromoted: Boolean,
     @SerializedName("promoted_value") val promotedValue: Int?,
     @SerializedName("rating") val rating: Double,
-    @SerializedName("review_count") val reviewCount: Int
+    @SerializedName("review_count") val reviewCount: Int,
+    @SerializedName("promo_products") val promoProducts: List<String>?,
 )
 
 data class Product(
@@ -117,6 +118,9 @@ data class Count(
 data class SearchRequest(
     val term: String? = null,
     val location: String? = null,
-    val page: Int? = null,
-    val size: Int? = null
+    var page: Int? = null,
+    val size: Int,
+    val sector: String? = null,
+    val isPromoted: Boolean? = null,
+    val expectedEntity: String? = null
 )

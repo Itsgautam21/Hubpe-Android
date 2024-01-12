@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.maps.android.compose.CameraPositionState
 import com.ladecentro.common.Intents.ADDRESS
+import com.ladecentro.common.Intents.UPDATE_ADDRESS
 import com.ladecentro.common.customShimmer
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_gray
@@ -117,6 +118,7 @@ fun MapsAddress(cameraPositionState: CameraPositionState, vm: MapsViewModel = hi
                             activityLauncher.launch(
                                 Intent(context, AddAddressActivity::class.java)
                                     .putExtra(ADDRESS.name, it)
+                                    .putExtra(UPDATE_ADDRESS.name, vm.address)
                             )
                         }
                         return@Button
@@ -128,13 +130,13 @@ fun MapsAddress(cameraPositionState: CameraPositionState, vm: MapsViewModel = hi
                 colors = ButtonDefaults.buttonColors(
                     containerColor = primary_orange
                 ),
-                enabled = !address.isLoading && !cameraPositionState.isMoving,
+                enabled = !(address.isLoading || cameraPositionState.isMoving),
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp)
                     .then(
-                        if (cameraPositionState.isMoving && !address.isLoading)
+                        if (cameraPositionState.isMoving || address.isLoading)
                             Modifier.customShimmer() else Modifier
                     )
             ) {

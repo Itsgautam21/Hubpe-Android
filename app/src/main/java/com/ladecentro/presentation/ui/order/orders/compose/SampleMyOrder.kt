@@ -6,6 +6,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -66,6 +68,7 @@ import com.ladecentro.domain.model.Orders
 import com.ladecentro.domain.model.PaymentAndStatus
 import com.ladecentro.domain.model.Store
 import com.ladecentro.presentation.common.HorizontalDashDivider
+import com.ladecentro.presentation.common.LoadImage
 import com.ladecentro.presentation.common.RatingBar
 import com.ladecentro.presentation.theme.card_background
 import com.ladecentro.presentation.theme.card_border
@@ -141,6 +144,7 @@ fun SampleMyOrder(order: Orders, vm: OrdersViewModel = hiltViewModel()) {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun StoreDetails(store: Store) {
     Row(
@@ -152,14 +156,15 @@ fun StoreDetails(store: Store) {
             shape = RoundedCornerShape(12.dp),
             border = BorderStroke(1.dp, card_border),
             elevation = CardDefaults.cardElevation(0.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White, contentColor = Color.Black)
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White,
+                contentColor = Color.Black
+            )
         ) {
             AsyncImage(
                 model = store.image,
                 contentDescription = "store logo",
-                modifier = Modifier
-                    .height(48.dp)
-                    .width(48.dp),
+                modifier = Modifier.size(48.dp),
                 contentScale = ContentScale.Inside
             )
         }
@@ -181,15 +186,13 @@ fun StoreDetails(store: Store) {
                 fontFamily = fontFamilyHind,
                 color = light_gray,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.basicMarquee()
             )
         }
         Icon(
             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = "forward arrow",
-            modifier = Modifier
-                .height(28.dp)
-                .width(28.dp),
+            modifier = Modifier.size(28.dp),
         )
     }
     HorizontalDivider(thickness = 1.dp, color = card_border)
@@ -204,12 +207,9 @@ fun ItemDetails(item: Item) {
                 elevation = CardDefaults.cardElevation(0.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White)
             ) {
-                AsyncImage(
-                    model = item.image,
-                    contentDescription = "item image",
-                    modifier = Modifier
-                        .height(30.dp)
-                        .width(30.dp),
+                LoadImage(
+                    image = item.image,
+                    modifier = Modifier.size(30.dp),
                     contentScale = ContentScale.Crop
                 )
             }
@@ -245,9 +245,7 @@ fun PaymentsAndStatus(paymentAndStatus: PaymentAndStatus) {
                 Image(
                     painter = painterResource(id = paymentAndStatus.statusIcon),
                     contentDescription = "Order Complete",
-                    modifier = Modifier
-                        .height(16.dp)
-                        .width(16.dp)
+                    modifier = Modifier.size(16.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
@@ -306,9 +304,7 @@ fun Rating(rating: String?, onRatingClick: (rating: String) -> Unit) {
             Icon(
                 imageVector = Rounded.Refresh,
                 contentDescription = "Reorder",
-                modifier = Modifier
-                    .height(16.dp)
-                    .width(16.dp)
+                modifier = Modifier.size(16.dp)
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(

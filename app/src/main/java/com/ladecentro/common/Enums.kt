@@ -1,7 +1,7 @@
 package com.ladecentro.common
 
 enum class Intents {
-    Phone, Token, USER_NAME, ORDER_ID, CAMERA, ADD_ADDRESS, ADDRESS
+    Phone, Token, USER_NAME, ORDER_ID, CAMERA, ADD_ADDRESS, UPDATE_ADDRESS, ADDRESS, CATEGORY_NAME
 }
 
 enum class SharedPreference {

@@ -133,7 +133,7 @@ fun LocationOption(vm: LocationViewModel = hiltViewModel()) {
         }
         location.content?.let { locations ->
             items(locations) {
-                SampleSavedAddress(it) { location ->
+                SampleSavedAddress(it, listOf()) { location ->
                     vm.setLocationToLocal(location)
                     context.setResult(ComponentActivity.RESULT_OK)
                     context.finish()

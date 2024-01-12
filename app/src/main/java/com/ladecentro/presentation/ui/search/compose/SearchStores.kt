@@ -6,11 +6,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons.Rounded
 import androidx.compose.material.icons.rounded.DateRange
@@ -23,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,13 +35,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.paging.LoadState
+import androidx.paging.LoadState.Loading
+import androidx.paging.LoadState.NotLoading
+import androidx.paging.compose.LazyPagingItems
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec.RawRes
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.ladecentro.R.drawable
+import com.ladecentro.R.raw
 import com.ladecentro.data.remote.dto.Store
 import com.ladecentro.presentation.common.HorizontalDashDivider
 import com.ladecentro.presentation.common.LoadImage
+import com.ladecentro.presentation.theme.card_background
 import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_gray
+import com.ladecentro.presentation.ui.order.orders.compose.ShimmerContent
 
 @Composable
 fun SampleSearchStore(store: Store) {
@@ -64,7 +78,10 @@ fun SampleSearchStore(store: Store) {
                     shape = RoundedCornerShape(10.dp),
                     color = Color.White
                 ) {
-                    LoadImage(image = store.descriptor.images[0], modifier = Modifier.size(72.dp))
+                    LoadImage(
+                        image = store.descriptor.images.getOrNull(index = 0),
+                        modifier = Modifier.size(72.dp)
+                    )
                 }
                 Column(
                     modifier = Modifier.weight(1f),
@@ -200,15 +217,54 @@ fun SampleSearchStore(store: Store) {
 }
 
 @Composable
-fun SearchStores(stores: List<Store>) {
+fun SearchStores(storeSearch: LazyPagingItems<Store>, onLoad: () -> Unit) {
 
-    LazyColumn(
-        contentPadding = PaddingValues(12.dp),
-        verticalArrangement = Arrangement.spacedBy(0.dp)
-    ) {
-        items(stores) {
-            SampleSearchStore(it)
-            HorizontalDashDivider()
+    val composition by rememberLottieComposition(spec = RawRes(raw.loading))
+    val progress by animateLottieCompositionAsState(
+        composition,
+        iterations = LottieConstants.IterateForever,
+        isPlaying = true,
+        speed = 1f,
+        restartOnPlay = false
+    )
+
+    when (storeSearch.loadState.refresh) {
+        is Loading -> {
+            ShimmerContent()
         }
+
+        is NotLoading -> {
+            LazyColumn(
+                contentPadding = PaddingValues(12.dp),
+                verticalArrangement = Arrangement.spacedBy(0.dp)
+            ) {
+                items(count = storeSearch.itemCount, key = { it }) { index ->
+                    storeSearch[index]?.let { store ->
+                        SampleSearchStore(store)
+                        HorizontalDashDivider()
+                    }
+                }
+                when (storeSearch.loadState.append) {
+                    is Loading -> {
+                        item {
+                            LottieAnimation(
+                                composition = composition,
+                                progress = progress,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(card_background)
+                                    .height(50.dp)
+                            )
+                        }
+                    }
+
+                    is LoadState.Error -> {}
+                    is NotLoading -> {}
+                }
+            }
+            onLoad()
+        }
+
+        is LoadState.Error -> {}
     }
 }

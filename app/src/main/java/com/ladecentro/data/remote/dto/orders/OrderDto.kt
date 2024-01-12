@@ -304,7 +304,7 @@ fun Order.toOrderDetails(): OrderDetails =
         rating = rating,
         deliveryDetails = DeliveryDetails(
             store = com.ladecentro.domain.model.Store(
-                image = store.descriptor.images[0],
+                image = store.descriptor.images.getOrNull(index = 0),
                 name = store.descriptor.name,
                 shortAddress = store.locations[0].descriptor.shortDesc
             ),
@@ -318,7 +318,7 @@ fun Order.toOrderDetails(): OrderDetails =
             totalPrice = quote.price.value,
             items = items.map { item ->
                 ItemDetails(
-                    image = item.descriptor.images[0],
+                    image = item.descriptor.images.getOrNull(index = 0),
                     quantity = item.quantity.selected.count,
                     name = item.descriptor.name,
                     price = item.price.value,

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -31,6 +32,7 @@ import com.ladecentro.domain.model.ItemDetails
 import com.ladecentro.domain.model.OrderDetail
 import com.ladecentro.domain.model.PriceBreakUp
 import com.ladecentro.presentation.common.HorizontalDashDivider
+import com.ladecentro.presentation.common.LoadImage
 import com.ladecentro.presentation.theme.border_light_gray
 import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.doppio_one
@@ -96,12 +98,9 @@ fun SampleItem(item: ItemDetails) {
             elevation = CardDefaults.cardElevation(0.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White)
         ) {
-            AsyncImage(
-                model = item.image,
-                contentDescription = "item image",
-                modifier = Modifier
-                    .height(40.dp)
-                    .width(40.dp),
+            LoadImage(
+                image = item.image,
+                modifier = Modifier.size(40.dp),
                 contentScale = ContentScale.Crop
             )
         }
