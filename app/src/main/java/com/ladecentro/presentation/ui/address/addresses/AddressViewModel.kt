@@ -12,7 +12,6 @@ import com.ladecentro.common.Resource.Loading
 import com.ladecentro.common.Resource.Success
 import com.ladecentro.common.SharedPreference
 import com.ladecentro.data.remote.dto.Location
-import com.ladecentro.data.remote.dto.ProfileDto
 import com.ladecentro.data.remote.dto.mapToLocationRequest
 import com.ladecentro.domain.model.LocationRequest
 import com.ladecentro.domain.model.ProfileRequest
@@ -39,6 +38,8 @@ class AddressViewModel @Inject constructor(
         LocationRequest::class.java
     )
 
+    private val profileData by lazy { myPreference.getProfileFromLocal() }
+
     init {
         getUserProfile()
     }
@@ -46,7 +47,7 @@ class AddressViewModel @Inject constructor(
     fun getUserProfile() {
 
         viewModelScope.launch {
-            getProfileFromLocal()?.let { data ->
+            profileData?.let { data ->
                 _userLocation = UIStates(content = data.locations)
                 return@launch
             }
@@ -79,26 +80,13 @@ class AddressViewModel @Inject constructor(
                 _userLocation = when (it) {
                     is Loading -> UIStates(isLoading = true)
                     is Success -> {
-                        setProfileToLocal(it.data!!)
-                        UIStates(content = getProfileFromLocal()?.locations)
+                        myPreference.setProfileToLocal(it.data!!)
+                        UIStates(content = it.data.locations)
                     }
 
                     is Error -> UIStates(error = it.message)
                 }
             }
         }
-    }
-
-    private fun getProfileFromLocal(): ProfileDto? {
-        val profileJson = myPreference.getStoresTag(SharedPreference.PROFILE.name)
-        if (profileJson.isNullOrBlank()) {
-            return null
-        }
-        return gson.fromJson(profileJson, ProfileDto::class.java)
-    }
-
-    private fun setProfileToLocal(profileDto: ProfileDto) {
-
-        myPreference.setStoredTag(SharedPreference.PROFILE.name, gson.toJson(profileDto))
     }
 }

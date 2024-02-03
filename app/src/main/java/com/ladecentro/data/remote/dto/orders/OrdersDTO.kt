@@ -45,7 +45,8 @@ fun OrdersDTO.toOrders(): List<Orders> {
                 paymentType = order.payment[0].paymentTransaction[0].paymentMethod ?: "COD",
                 totalPrice = order.quote.price.value
             ),
-            rating = order.rating
+            rating = order.rating,
+            type = order.fulfillments.getOrNull(0)?.type ?: ""
         )
     }
 }

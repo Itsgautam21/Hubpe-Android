@@ -13,4 +13,5 @@
     <string name="title_activity_add_address">AddAddressActivity</string>
     <string name="title_activity_addresses">AddressesActivity</string>
     <string name="title_activity_order_details">OrderDetailsActivity</string>
+    <string name="title_activity_store">StoreActivity</string>
 </resources>

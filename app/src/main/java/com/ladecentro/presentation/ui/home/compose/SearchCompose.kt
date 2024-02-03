@@ -23,7 +23,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -49,52 +48,8 @@ import com.ladecentro.presentation.theme.darkBlue
 import com.ladecentro.presentation.theme.dark_gray
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_gray
-import com.ladecentro.presentation.theme.light_text
 import com.ladecentro.presentation.theme.secondary
-import com.ladecentro.presentation.ui.search.SearchActivity
-import com.ladecentro.presentation.ui.stores.StoresActivity
-
-@Composable
-@Preview(showBackground = true)
-@OptIn(ExperimentalMaterial3Api::class)
-fun SearchCompose() {
-
-    val context = LocalContext.current
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(44.dp)
-            .padding(end = 14.dp),
-        colors = CardDefaults.cardColors(
-            contentColor = Color.Black, containerColor = Color.White
-        ),
-        elevation = CardDefaults.cardElevation(4.dp),
-        onClick = {
-            context.startActivity(Intent(context, SearchActivity::class.java))
-        }
-    ) {
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 15.dp)
-        ) {
-            Text(
-                text = "What do you want today?",
-                fontSize = 15.sp,
-                modifier = Modifier.weight(1f),
-                color = light_text,
-                fontFamily = fontFamilyHind
-            )
-            Icon(
-                painter = painterResource(id = drawable.search),
-                contentDescription = "search",
-                tint = darkBlue
-            )
-        }
-    }
-}
+import com.ladecentro.presentation.ui.stores.stores.StoresActivity
 
 @Preview(showBackground = true)
 @Composable

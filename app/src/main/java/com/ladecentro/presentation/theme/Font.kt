@@ -13,6 +13,7 @@ val provider = GoogleFont.Provider(
     certificates = R.array.com_google_android_gms_fonts_certs
 )
 val fontFamilyHind = FontFamily(Font(googleFont = GoogleFont("Hind Madurai"), fontProvider = provider))
+val fontFamilyHindBold = FontFamily(Font(googleFont = GoogleFont("Hind Madurai"), fontProvider = provider, weight = FontWeight.Bold))
 val fontFamilyAverSans = FontFamily(Font(googleFont = GoogleFont("Averia Sans Libre"), fontProvider = provider))
 val fontFamilyFredoka = FontFamily(Font(googleFont = GoogleFont("Fredoka"), fontProvider = provider))
 val signika = FontFamily(Font(googleFont = GoogleFont("Quasimoda"), fontProvider = provider))

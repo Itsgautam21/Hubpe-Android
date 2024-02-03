@@ -6,11 +6,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
 import com.ladecentro.common.Constants.ERROR_TAG
 import com.ladecentro.common.LocationResource
 import com.ladecentro.common.MyPreference
-import com.ladecentro.common.PreferenceUtils
 import com.ladecentro.common.Resource.Error
 import com.ladecentro.common.Resource.Loading
 import com.ladecentro.common.Resource.Success
@@ -34,8 +32,7 @@ class HomeViewModel @Inject constructor(
     private val getLogoutUseCase: GetLogoutUseCase,
     private val getProfileUseCase: GetProfileUseCase,
     private val locationTracker: LocationTracker,
-    private val myPreference: MyPreference,
-    private val preferenceUtils: PreferenceUtils,
+    private val myPreference: MyPreference
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(UIStates<ProfileDto>())
@@ -45,10 +42,10 @@ class HomeViewModel @Inject constructor(
         MutableStateFlow(LocationResource.Loading(null))
     val location: StateFlow<LocationResource> get() = _location
 
-    private var _locationAddress: LocationRequest? by mutableStateOf(preferenceUtils.getLocationFromLocal())
+    private var _locationAddress: LocationRequest? by mutableStateOf(myPreference.getLocationFromLocal())
     val locationAddress: LocationRequest? get() = _locationAddress
 
-    private var localProfile: String? = myPreference.getStoresTag(SharedPreference.PROFILE.name)
+    private var localProfile = myPreference.getProfileFromLocal()
 
     var openBottomSheet by mutableStateOf(false)
 
@@ -59,8 +56,8 @@ class HomeViewModel @Inject constructor(
     private fun userProfile() {
 
         viewModelScope.launch {
-            if (localProfile != null) {
-                setUserProfileFromPreference()
+            localProfile?.let {
+                _state.emit(UIStates(content = it))
                 return@launch
             }
             getProfileUseCase().collect {
@@ -71,10 +68,7 @@ class HomeViewModel @Inject constructor(
 
                     is Success -> {
                         _state.emit(UIStates(isLoading = false, content = it.data))
-                        myPreference.setStoredTag(
-                            SharedPreference.PROFILE.name,
-                            Gson().toJson(it.data)
-                        )
+                        myPreference.setProfileToLocal(it.data!!)
                     }
 
                     is Error -> {
@@ -90,7 +84,9 @@ class HomeViewModel @Inject constructor(
             delay(50)
             locationTracker.getCurrentLocation().collect {
                 when (it) {
-                    is LocationResource.Loading -> {}
+                    is LocationResource.Loading -> {
+                        Log.d(">>> Location", "Location Loading!!")
+                    }
                     is LocationResource.Success -> {
                         _location.emit(LocationResource.Success(it.location))
                     }
@@ -107,7 +103,9 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             getLogoutUseCase(LogoutRequest("LOGOFF")).collect {
                 when (it) {
-                    is Loading -> {}
+                    is Loading -> {
+                        Log.d(">>> Logoff", "Logoff!!")
+                    }
                     is Success -> {
                         myPreference.removeAllTags()
                         clearUI()
@@ -125,15 +123,15 @@ class HomeViewModel @Inject constructor(
     }
 
     fun setUserProfileFromPreference() {
-        localProfile = myPreference.getStoresTag(SharedPreference.PROFILE.name)
+        localProfile = myPreference.getProfileFromLocal()
         viewModelScope.launch {
             localProfile?.let {
-                _state.emit(UIStates(content = Gson().fromJson(it, ProfileDto::class.java)))
+                _state.emit(UIStates(content = it))
             }
         }
     }
 
     fun getLocationFromLocal() {
-        _locationAddress = preferenceUtils.getLocationFromLocal()
+        _locationAddress = myPreference.getLocationFromLocal()
     }
 }

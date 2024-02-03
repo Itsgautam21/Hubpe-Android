@@ -1,5 +1,6 @@
-package com.ladecentro.presentation.ui.stores.compose
+package com.ladecentro.presentation.ui.stores.stores.compose
 
+import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -30,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
@@ -38,18 +40,29 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ladecentro.R.drawable
+import com.ladecentro.common.Intents
+import com.ladecentro.common.bounceClick
 import com.ladecentro.data.remote.dto.Store
 import com.ladecentro.presentation.common.LoadImage
 import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_gray
+import com.ladecentro.presentation.ui.stores.details.StoreActivity
 
 @Composable
 fun SampleStores(store: Store) {
 
+    val context = LocalContext.current
+
     Surface(
         color = Color.White,
-        shadowElevation = 0.dp
+        shadowElevation = 0.dp,
+        modifier = Modifier.bounceClick {
+            context.startActivity(
+                Intent(context, StoreActivity::class.java)
+                    .putExtra(Intents.STORE_ID.name, store.id)
+            )
+        }
     ) {
         Column(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp),

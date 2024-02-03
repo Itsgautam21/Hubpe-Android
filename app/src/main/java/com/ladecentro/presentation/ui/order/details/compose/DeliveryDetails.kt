@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -31,6 +32,7 @@ import com.ladecentro.presentation.common.LoadImage
 import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_gray
+import com.ladecentro.presentation.theme.primary_orange
 
 @Composable
 fun DeliveryDetails(delivery: DeliveryDetails) {
@@ -46,13 +48,32 @@ fun DeliveryDetails(delivery: DeliveryDetails) {
         border = BorderStroke(1.dp, color = card_border)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = "Delivery details",
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
-                fontFamily = fontFamilyHind,
-                color = MaterialTheme.colorScheme.primary
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Delivery details",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    fontFamily = fontFamilyHind,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Surface(
+                    color = primary_orange,
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(
+                        text = delivery.type,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 10.sp,
+                        fontFamily = fontFamilyHind,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 10.dp)
+                    )
+                }
+            }
             Spacer(modifier = Modifier.height(20.dp))
             StoreDetails(delivery.store)
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -103,7 +124,7 @@ fun StoreDetails(store: Store) {
                 color = MaterialTheme.colorScheme.primary,
             )
             Text(
-                text = store.shortAddress,
+                text = store.shortAddress ?: "",
                 fontWeight = FontWeight.Normal,
                 fontSize = 12.sp,
                 fontFamily = fontFamilyHind,

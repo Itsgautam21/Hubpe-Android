@@ -10,7 +10,9 @@ import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.ladecentro.common.Constants
+import com.ladecentro.common.NullOnEmptyConverterFactory
 import com.ladecentro.data.remote.api.AuthAPI
+import com.ladecentro.data.remote.api.CartAPI
 import com.ladecentro.data.remote.api.LookupAPI
 import com.ladecentro.data.remote.api.OrderAPI
 import com.ladecentro.data.remote.api.UserAPI
@@ -35,6 +37,7 @@ class NetworkModule {
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
+            .addConverterFactory(NullOnEmptyConverterFactory())
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
             .build()
     }
@@ -61,6 +64,12 @@ class NetworkModule {
     @Singleton
     fun providesLookupAPI(retrofit: Retrofit): LookupAPI {
         return retrofit.create(LookupAPI::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun providesCartAPI(retrofit: Retrofit): CartAPI {
+        return retrofit.create(CartAPI::class.java)
     }
 
     @Provides

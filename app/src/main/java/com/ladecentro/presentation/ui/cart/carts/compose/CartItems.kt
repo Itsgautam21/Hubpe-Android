@@ -1,5 +1,6 @@
-package com.ladecentro.presentation.ui.cart.compose
+package com.ladecentro.presentation.ui.cart.carts.compose
 
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -30,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -43,10 +45,13 @@ import com.ladecentro.presentation.theme.fontFamilyFredoka
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_gray
 import com.ladecentro.presentation.theme.primary_orange
+import com.ladecentro.presentation.ui.cart.details.CartDetailActivity
 
 @Composable
 @Preview(showBackground = true)
 fun SampleCart() {
+
+    val context = LocalContext.current
 
     Card(
         shape = RoundedCornerShape(15.dp),
@@ -183,7 +188,9 @@ fun SampleCart() {
                     modifier = Modifier.weight(1f)
                 )
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        context.startActivity(Intent(context, CartDetailActivity::class.java))
+                    },
                     colors = ButtonDefaults.buttonColors(containerColor = primary_orange),
                     shape = RoundedCornerShape(8.dp),
                     contentPadding = PaddingValues(horizontal = 16.dp),

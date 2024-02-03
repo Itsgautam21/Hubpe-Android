@@ -3,18 +3,15 @@ package com.ladecentro.presentation.ui.address.add
 import android.location.Address
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
 import com.ladecentro.common.Intents
 import com.ladecentro.common.MyPreference
 import com.ladecentro.common.Resource.Error
 import com.ladecentro.common.Resource.Loading
 import com.ladecentro.common.Resource.Success
-import com.ladecentro.common.SharedPreference
 import com.ladecentro.data.remote.dto.Location
 import com.ladecentro.data.remote.dto.ProfileDto
 import com.ladecentro.domain.model.City
@@ -32,7 +29,6 @@ import javax.inject.Inject
 class AddAddressViewModel @Inject constructor(
     private val getUpdateProfileUseCase: GetUpdateProfileUseCase,
     private val myPreference: MyPreference,
-    private val gson: Gson,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -42,11 +38,13 @@ class AddAddressViewModel @Inject constructor(
     private var _updateState by mutableStateOf(UIStates<ProfileDto>())
     val updateState: UIStates<ProfileDto> get() = _updateState
 
+    private val profileData by lazy { myPreference.getProfileFromLocal() }
+
     var receiverName by mutableStateOf(
-        value = prevAddress?.address?.name ?: getProfileFromLocal()?.name ?: ""
+        value = prevAddress?.address?.name ?: profileData?.name ?: ""
     )
     var phoneNumber by mutableStateOf(
-        value = prevAddress?.mobileNumber ?: getProfileFromLocal()?.phone ?: ""
+        value = prevAddress?.mobileNumber ?: profileData?.phone ?: ""
     )
     var house by mutableStateOf("")
     var area by mutableStateOf(address.subLocality ?: "")
@@ -111,14 +109,8 @@ class AddAddressViewModel @Inject constructor(
         }
     }
 
-    private fun getProfileFromLocal(): ProfileDto? {
-
-        val profileJson = myPreference.getStoresTag(SharedPreference.PROFILE.name) ?: return null
-        return gson.fromJson(profileJson, ProfileDto::class.java)
-    }
-
     fun setProfileToLocal(profileDto: ProfileDto) {
 
-        myPreference.setStoredTag(SharedPreference.PROFILE.name, gson.toJson(profileDto))
+        myPreference.setProfileToLocal(profileDto)
     }
 }

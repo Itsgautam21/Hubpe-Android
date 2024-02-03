@@ -1,4 +1,4 @@
-package com.ladecentro.presentation.ui.cart
+package com.ladecentro.presentation.ui.cart.carts
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -14,8 +14,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.ladecentro.presentation.theme.LadecentroTheme
-import com.ladecentro.presentation.ui.cart.compose.CartItemsList
-import com.ladecentro.presentation.ui.cart.compose.TopAppBarCart
+import com.ladecentro.presentation.ui.cart.carts.compose.CartItemsList
+import com.ladecentro.presentation.ui.cart.carts.compose.TopAppBarCart
 
 @OptIn(ExperimentalMaterial3Api::class)
 class CartActivity : ComponentActivity() {

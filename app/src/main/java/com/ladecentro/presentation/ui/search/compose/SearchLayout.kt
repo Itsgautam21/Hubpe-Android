@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle.Event.ON_DESTROY
 import androidx.lifecycle.LifecycleEventObserver
+import com.ladecentro.presentation.common.TopAppBarSearch
 import com.ladecentro.presentation.ui.search.SearchViewModel
 
 @Composable

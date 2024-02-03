@@ -49,7 +49,7 @@ import com.ladecentro.presentation.theme.light_text
 @Composable
 fun SampleSavedAddress(
     location: Location,
-    list: List<DropdownMenu>,
+    dropDownList: List<DropdownMenu>? = null,
     onLocationClick: (location: Location) -> Unit
 ) {
     var isMenuVisible by rememberSaveable { mutableStateOf(false) }
@@ -110,57 +110,60 @@ fun SampleSavedAddress(
                     overflow = TextOverflow.Ellipsis
                 )
             }
-            Column(
-                modifier = Modifier.fillMaxHeight()
-            ) {
-                Card(
-                    elevation = CardDefaults.cardElevation(0.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color.White,
-                        contentColor = Companion.Black
-                    ),
-                    shape = RoundedCornerShape(16.dp),
-                    border = BorderStroke(2.dp, card_border),
-                    modifier = Modifier.bounceClick {
-                        isMenuVisible = true
-                    }
+            dropDownList?.let { d ->
+
+                Column(
+                    modifier = Modifier.fillMaxHeight()
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.MoreVert,
-                        contentDescription = "",
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .size(12.dp)
-                    )
-                    DropdownMenu(
-                        expanded = isMenuVisible,
-                        onDismissRequest = { isMenuVisible = false },
-                        modifier = Modifier.background(Color.White),
-                        offset = DpOffset(x = (-12).dp, y = 4.dp)
+                    Card(
+                        elevation = CardDefaults.cardElevation(0.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color.White,
+                            contentColor = Companion.Black
+                        ),
+                        shape = RoundedCornerShape(16.dp),
+                        border = BorderStroke(2.dp, card_border),
+                        modifier = Modifier.bounceClick {
+                            isMenuVisible = true
+                        }
                     ) {
-                        list.forEach {
-                            DropdownMenuItem(text = {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = it.vector,
-                                        contentDescription = "",
-                                        modifier = Modifier.size(18.dp)
-                                    )
-                                    Text(
-                                        text = it.name,
-                                        fontSize = 14.sp,
-                                        fontFamily = fontFamilyHind,
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = MaterialTheme.colorScheme.primary
-                                    )
-                                }
-                            }, onClick = {
-                                it.onItemClick(location)
-                                isMenuVisible = false
-                            })
+                        Icon(
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = "",
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .size(12.dp)
+                        )
+                        DropdownMenu(
+                            expanded = isMenuVisible,
+                            onDismissRequest = { isMenuVisible = false },
+                            modifier = Modifier.background(Color.White),
+                            offset = DpOffset(x = (-12).dp, y = 4.dp)
+                        ) {
+                            d.forEach {
+                                DropdownMenuItem(text = {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = it.vector,
+                                            contentDescription = "",
+                                            modifier = Modifier.size(18.dp)
+                                        )
+                                        Text(
+                                            text = it.name,
+                                            fontSize = 14.sp,
+                                            fontFamily = fontFamilyHind,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
+                                }, onClick = {
+                                    it.onItemClick(location)
+                                    isMenuVisible = false
+                                })
+                            }
                         }
                     }
                 }

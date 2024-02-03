@@ -1,4 +1,4 @@
-package com.ladecentro.presentation.ui.stores.compose
+package com.ladecentro.presentation.ui.stores.stores.compose
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image

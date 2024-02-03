@@ -1,4 +1,4 @@
-package com.ladecentro.presentation.ui.stores
+package com.ladecentro.presentation.ui.stores.stores
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -15,8 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import com.ladecentro.presentation.theme.LadecentroTheme
-import com.ladecentro.presentation.ui.stores.compose.StoreComposeUI
-import com.ladecentro.presentation.ui.stores.compose.TopAppBarStores
+import com.ladecentro.presentation.ui.stores.stores.compose.StoreComposeUI
+import com.ladecentro.presentation.ui.stores.stores.compose.TopAppBarStores
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

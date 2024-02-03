@@ -12,6 +12,7 @@ data class OrderDetails(
 )
 
 data class DeliveryDetails(
+    val type: String,
     val store: Store,
     val person: Store
 )
@@ -23,9 +24,12 @@ data class OrderDetail(
 )
 
 data class ItemDetails(
+    val id: String? = null,
     val image: String?,
     val quantity: Int,
     val name: String,
+    val brand: String? = null,
+    val description: String? = null,
     val price: String,
     val mrp: String
 )

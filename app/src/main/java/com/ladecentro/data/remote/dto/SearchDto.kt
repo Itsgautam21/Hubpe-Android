@@ -1,6 +1,8 @@
 package com.ladecentro.data.remote.dto
 
+import androidx.compose.runtime.Stable
 import com.google.gson.annotations.SerializedName
+import com.ladecentro.domain.model.ItemDetails
 
 data class SearchDto(
     @SerializedName("stores") val stores: List<Store>,
@@ -28,7 +30,9 @@ data class Store(
     @SerializedName("promoted_value") val promotedValue: Int?,
     @SerializedName("rating") val rating: Double,
     @SerializedName("review_count") val reviewCount: Int,
+    @SerializedName("home_images") val homeImage: List<String>?,
     @SerializedName("promo_products") val promoProducts: List<String>?,
+    @SerializedName("categories") val categories: List<Category>?,
 )
 
 data class Product(
@@ -55,7 +59,6 @@ data class PageInfo(
     @SerializedName("total") val total: Int
 )
 
-
 data class Distance(
     @SerializedName("distance") val distance: Double,
     @SerializedName("unit") val unit: String
@@ -66,7 +69,6 @@ data class StoreDescriptor(
     @SerializedName("long_desc") val longDesc: String,
     @SerializedName("images") val images: List<String>
 )
-
 
 data class StoreLocation(
     @SerializedName("descriptor") val descriptor: LocationDescriptor,
@@ -92,6 +94,14 @@ data class Timing(
     @SerializedName("days") val days: String
 )
 
+@Stable
+data class Category(
+    @SerializedName("name") val name: String,
+    @SerializedName("code") val code: String,
+    @SerializedName("images") val images: List<String>?,
+    @SerializedName("count") val count: Int
+)
+
 data class ProductDescriptor(
     @SerializedName("name") val name: String,
     @SerializedName("short_desc") val shortDesc: String,
@@ -108,7 +118,8 @@ data class Price(
 
 data class Quantity(
     @SerializedName("maximum") val maximum: Count,
-    @SerializedName("minimum") val minimum: Count
+    @SerializedName("minimum") val minimum: Count,
+    @SerializedName("selected") var selected: Count,
 )
 
 data class Count(
@@ -122,5 +133,26 @@ data class SearchRequest(
     val size: Int,
     val sector: String? = null,
     val isPromoted: Boolean? = null,
-    val expectedEntity: String? = null
+    val expectedEntity: String? = null,
+    val storeId: String? = null,
+    val category: String? = null,
 )
+
+fun Store.toStoreDetail(): com.ladecentro.domain.model.Store =
+    com.ladecentro.domain.model.Store(
+        image = descriptor.images.getOrNull(index = 0),
+        name = descriptor.name,
+        shortAddress = locations[0].descriptor.shortDesc
+    )
+
+fun Product.toProductDetail(): ItemDetails =
+    ItemDetails(
+        id = id,
+        image = descriptor.images.getOrNull(0),
+        quantity = quantity.selected?.count ?: 0,
+        name = descriptor.name,
+        brand = brand,
+        description = descriptor.shortDesc,
+        price = price.value,
+        mrp = price.maximumValue
+    )

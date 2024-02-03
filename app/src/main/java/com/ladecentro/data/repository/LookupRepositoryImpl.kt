@@ -6,6 +6,7 @@ import com.ladecentro.common.MyPreference
 import com.ladecentro.data.remote.api.LookupAPI
 import com.ladecentro.data.remote.dto.SearchDto
 import com.ladecentro.data.remote.dto.SearchRequest
+import com.ladecentro.data.remote.dto.Store
 import com.ladecentro.domain.repository.LookupRepository
 import javax.inject.Inject
 
@@ -26,7 +27,23 @@ class LookupRepositoryImpl @Inject constructor(
                 request.page,
                 request.sector,
                 request.isPromoted,
-                request.expectedEntity
+                request.expectedEntity,
+                request.storeId,
+                request.category
+            )
+            if (response.isSuccessful) {
+                return response.body()!!
+            }
+            throw Exception(GENERIC_ERROR_MESSAGE)
+        } catch (e: Exception) {
+            throw Exception(GENERIC_ERROR_MESSAGE)
+        }
+    }
+
+    override suspend fun getStore(storeId: String): Store {
+        try {
+            val response = lookupAPI.getStore(
+                authToken, storeId
             )
             if (response.isSuccessful) {
                 return response.body()!!

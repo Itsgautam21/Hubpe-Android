@@ -38,13 +38,15 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ladecentro.R.drawable
 import com.ladecentro.common.bounceClick
+import com.ladecentro.presentation.common.SearchCompose
 import com.ladecentro.presentation.theme.darkBlue
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_gray
 import com.ladecentro.presentation.theme.poppins
-import com.ladecentro.presentation.ui.cart.CartActivity
+import com.ladecentro.presentation.ui.cart.carts.CartActivity
 import com.ladecentro.presentation.ui.home.HomeViewModel
 import com.ladecentro.presentation.ui.location.select.LocationActivity
+import com.ladecentro.presentation.ui.search.SearchActivity
 import kotlinx.coroutines.launch
 
 @Composable
@@ -112,7 +114,9 @@ fun TopAppBarHome(
                 title = {
                     Column {
                         Spacer(modifier = Modifier.height(8.dp))
-                        SearchCompose()
+                        SearchCompose(title = "What do you want today?") {
+                            context.startActivity(Intent(context, SearchActivity::class.java))
+                        }
                         Spacer(modifier = Modifier.height(12.dp))
                     }
                 },
@@ -144,7 +148,7 @@ fun SelectedLocationAppBarTitle(title: String, description: String, onLocationSe
         }) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth(0.5f)
+            modifier = Modifier.fillMaxWidth(0.8f)
         ) {
             Text(
                 text = title,
@@ -175,7 +179,7 @@ fun SelectedLocationAppBarTitle(title: String, description: String, onLocationSe
             color = light_gray,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.fillMaxWidth(0.7f),
+            modifier = Modifier.fillMaxWidth(0.9f),
             style = TextStyle(
                 platformStyle = PlatformTextStyle(
                     includeFontPadding = false

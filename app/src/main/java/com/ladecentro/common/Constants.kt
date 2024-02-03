@@ -8,4 +8,5 @@ object Constants {
     const val RATING = "RATING"
     const val GENERIC_ERROR_MESSAGE = "Something Went Wrong!"
     const val ERROR_TAG = ">>>> ERROR TAG"
+    const val DEBUG_TAG = ">>>> DEBUG TAG"
 }

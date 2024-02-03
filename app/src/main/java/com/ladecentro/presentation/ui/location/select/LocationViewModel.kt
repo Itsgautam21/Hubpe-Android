@@ -7,12 +7,9 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.CameraPosition
-import com.google.gson.Gson
 import com.ladecentro.common.LocationResource
 import com.ladecentro.common.MyPreference
-import com.ladecentro.common.SharedPreference
 import com.ladecentro.data.remote.dto.Location
-import com.ladecentro.data.remote.dto.ProfileDto
 import com.ladecentro.data.remote.dto.mapToLocationRequest
 import com.ladecentro.domain.location.LocationTracker
 import com.ladecentro.domain.model.PlacesResult
@@ -30,8 +27,7 @@ import javax.inject.Inject
 class LocationViewModel @Inject constructor(
     private val placesUseCase: MapPlacesUseCase,
     private val myPreference: MyPreference,
-    private val locationTracker: LocationTracker,
-    private val gson: Gson
+    private val locationTracker: LocationTracker
 ) : ViewModel() {
 
     val locationAutofill: List<PlacesResult>
@@ -46,6 +42,8 @@ class LocationViewModel @Inject constructor(
 
     var searchState by mutableStateOf("")
 
+    private val profileData by lazy { myPreference.getProfileFromLocal() }
+
     init {
         getUserAddresses()
         searchPlaces()
@@ -53,7 +51,7 @@ class LocationViewModel @Inject constructor(
 
     private fun getUserAddresses() {
         viewModelScope.launch {
-            getProfileFromLocal()?.let {
+            profileData?.let {
                 _userLocation.emit(UIStates(content = it.locations))
             }
         }
@@ -106,18 +104,7 @@ class LocationViewModel @Inject constructor(
         }
     }
 
-    private fun getProfileFromLocal(): ProfileDto? {
-        val profileJson = myPreference.getStoresTag(SharedPreference.PROFILE.name)
-        if (profileJson.isNullOrBlank()) {
-            return null
-        }
-        return gson.fromJson(profileJson, ProfileDto::class.java)
-    }
-
     fun setLocationToLocal(location: Location) {
-        myPreference.setStoredTag(
-            SharedPreference.LOCATION.name,
-            gson.toJson(location.mapToLocationRequest())
-        )
+        myPreference.setLocationToLocal(location.mapToLocationRequest())
     }
 }

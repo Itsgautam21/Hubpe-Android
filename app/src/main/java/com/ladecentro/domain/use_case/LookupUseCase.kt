@@ -56,3 +56,14 @@ class GetProductSearchPagingUseCase @Inject constructor(private val lookupReposi
         ).flow
     }
 }
+
+class GetStoreUseCase @Inject constructor(private val lookupRepository: LookupRepository) {
+
+    operator fun invoke(storeId: String) = flow {
+        emit(Loading())
+        val store = lookupRepository.getStore(storeId)
+        emit(Success(store))
+    }.catch {
+        emit(Error(it.message!!))
+    }.flowOn(Dispatchers.IO)
+}

@@ -10,12 +10,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.gson.Gson
 import com.ladecentro.common.Intents
 import com.ladecentro.common.LocationResource
 import com.ladecentro.common.MyPreference
 import com.ladecentro.common.Resource
-import com.ladecentro.common.SharedPreference
 import com.ladecentro.data.remote.dto.Location
 import com.ladecentro.domain.location.LocationTracker
 import com.ladecentro.domain.model.City
@@ -27,15 +25,11 @@ import com.ladecentro.domain.use_case.MapPlacesUseCase
 import com.ladecentro.domain.use_case.MapsUseCase
 import com.ladecentro.presentation.common.UIStates
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -44,7 +38,6 @@ class MapsViewModel @Inject constructor(
     private val myPreference: MyPreference,
     private val placesUseCase: MapPlacesUseCase,
     private val locationTracker: LocationTracker,
-    private val gson: Gson,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -94,7 +87,7 @@ class MapsViewModel @Inject constructor(
         }
     }
 
-    fun searchPlaces() {
+    private fun searchPlaces() {
         viewModelScope.launch {
             snapshotFlow { searchText }
                 .collectLatest {
@@ -157,7 +150,7 @@ class MapsViewModel @Inject constructor(
                     code = it.countryCode
                 )
             )
-            myPreference.setStoredTag(SharedPreference.LOCATION.name, gson.toJson(request))
+            myPreference.setLocationToLocal(request)
         }
     }
 }

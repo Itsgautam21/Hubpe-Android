@@ -1,4 +1,4 @@
-package com.ladecentro.presentation.ui.stores
+package com.ladecentro.presentation.ui.stores.stores
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.ladecentro.common.Intents
-import com.ladecentro.common.PreferenceUtils
+import com.ladecentro.common.MyPreference
 import com.ladecentro.common.Resource.Error
 import com.ladecentro.common.Resource.Loading
 import com.ladecentro.common.Resource.Success
@@ -29,13 +29,13 @@ import javax.inject.Inject
 @HiltViewModel
 class StoresViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val preferenceUtils: PreferenceUtils,
     private val searchUseCase: GetSearchUseCase,
+    private val myPreference: MyPreference,
     private val storeSearchPagingUseCase: GetStoreSearchPagingUseCase
 ) :
     ViewModel() {
 
-    private var _locationState by mutableStateOf(preferenceUtils.getLocationFromLocal())
+    private var _locationState by mutableStateOf(myPreference.getLocationFromLocal()!!)
     val locationState: LocationRequest get() = _locationState
 
     private var _storeState by mutableStateOf(UIStates<SearchDto>())
@@ -48,7 +48,7 @@ class StoresViewModel @Inject constructor(
     private val categoryName = savedStateHandle[Intents.CATEGORY_NAME.name] ?: ""
 
     fun getLocationFromLocal() {
-        _locationState = preferenceUtils.getLocationFromLocal()
+        _locationState = myPreference.getLocationFromLocal()!!
     }
 
     init {

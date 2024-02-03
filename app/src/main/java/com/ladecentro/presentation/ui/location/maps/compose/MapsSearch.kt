@@ -18,8 +18,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ladecentro.R.drawable
+import com.ladecentro.presentation.common.SearchMainCompose
 import com.ladecentro.presentation.ui.location.maps.MapsViewModel
-import com.ladecentro.presentation.ui.search.compose.SearchMainCompose
 
 @Composable
 fun MapsSearch(vm: MapsViewModel = hiltViewModel()) {

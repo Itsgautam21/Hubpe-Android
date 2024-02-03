@@ -6,13 +6,14 @@ data class Orders(
     val store: Store,
     val items: List<Item>,
     val paymentAndStatus: PaymentAndStatus,
-    val rating: String?
+    val rating: String?,
+    val type: String
 )
 
 data class Store(
     val image: String?,
     val name: String,
-    val shortAddress: String
+    val shortAddress: String?
 )
 
 data class Item(val image: String?, val quantity: Int, val name: String)

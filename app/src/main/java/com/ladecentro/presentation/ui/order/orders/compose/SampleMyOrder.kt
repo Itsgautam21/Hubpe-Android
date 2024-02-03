@@ -180,7 +180,7 @@ fun StoreDetails(store: Store) {
             )
             Spacer(modifier = Modifier.height(2.dp))
             Text(
-                text = store.shortAddress,
+                text = store.shortAddress ?: "",
                 fontWeight = FontWeight.Normal,
                 fontSize = 12.sp,
                 fontFamily = fontFamilyHind,

@@ -1,4 +1,4 @@
-package com.ladecentro.presentation.ui.stores.compose
+package com.ladecentro.presentation.ui.stores.stores.compose
 
 import android.app.Activity
 import android.content.Intent
@@ -21,10 +21,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ladecentro.R.drawable
-import com.ladecentro.presentation.ui.cart.CartActivity
-import com.ladecentro.presentation.ui.home.compose.SearchCompose
+import com.ladecentro.presentation.common.SearchCompose
+import com.ladecentro.presentation.ui.cart.carts.CartActivity
 import com.ladecentro.presentation.ui.home.compose.SelectedLocationAppBarTitle
-import com.ladecentro.presentation.ui.stores.StoresViewModel
+import com.ladecentro.presentation.ui.search.SearchActivity
+import com.ladecentro.presentation.ui.stores.stores.StoresViewModel
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -87,7 +88,9 @@ fun TopAppBarStores(
                 title = {
                     Column {
                         Spacer(modifier = Modifier.height(8.dp))
-                        SearchCompose()
+                        SearchCompose(title = "What do you want today?") {
+                            context.startActivity(Intent(context, SearchActivity::class.java))
+                        }
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                 },

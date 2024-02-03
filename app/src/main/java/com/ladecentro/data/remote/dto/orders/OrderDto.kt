@@ -71,9 +71,15 @@ data class Sector(
 )
 
 data class Fulfillment(
+    @SerializedName("id") val id: String,
     @SerializedName("type") val type: String,
     @SerializedName("turn_around_time") val turnAroundTime: String,
-    @SerializedName("tracking") val tracking: Boolean
+    @SerializedName("tracking") val tracking: Boolean,
+    @SerializedName("end") val end: FulfillmentEnd
+)
+
+data class FulfillmentEnd(
+    @SerializedName("location") val location: Location
 )
 
 data class Location(
@@ -162,8 +168,8 @@ data class Billing(
     @SerializedName("name") val name: String,
     @SerializedName("address") val address: Address,
     @SerializedName("phone") val phone: String,
-    @SerializedName("created_at") val createdAt: String,
-    @SerializedName("updated_at") val updatedAt: String
+    @SerializedName("created_at") val createdAt: String?,
+    @SerializedName("updated_at") val updatedAt: String?
 )
 
 data class Address(
@@ -312,7 +318,8 @@ fun Order.toOrderDetails(): OrderDetails =
                 image = "",
                 name = billing.name,
                 shortAddress = billing.address.building
-            )
+            ),
+            type = fulfillments.getOrNull(0)?.type ?: ""
         ),
         orderDetails = OrderDetail(
             totalPrice = quote.price.value,
@@ -325,17 +332,7 @@ fun Order.toOrderDetails(): OrderDetails =
                     mrp = item.price.maximumValue
                 )
             },
-            priceBreakUp = quote.breakup.groupBy { br -> br.titleType }
-                .mapValues { br ->
-                    br.value.map { it.price.value.toDouble() }.sumOf { it }.toString()
-                }
-                .map {
-                    PriceBreakUp(
-                        name = it.key,
-                        mrp = "",
-                        price = it.value
-                    )
-                }
+            priceBreakUp = quote.toPriceBreakup()
         ),
         paymentDetails = PaymentDetails(
             date = payment[0].timestamp,
@@ -346,3 +343,18 @@ fun Order.toOrderDetails(): OrderDetails =
         ),
         lastUpdateOrderTrack = getFormattedDateTime(orderTrack.lastUpdatedAt)
     )
+
+fun Quote.toPriceBreakup(): List<PriceBreakUp> {
+
+    return breakup.groupBy { br -> br.titleType }
+        .mapValues { br ->
+            br.value.map { it.price.value.toDouble() }.sumOf { it }.toString()
+        }
+        .map {
+            PriceBreakUp(
+                name = it.key,
+                mrp = "",
+                price = it.value
+            )
+        }
+}

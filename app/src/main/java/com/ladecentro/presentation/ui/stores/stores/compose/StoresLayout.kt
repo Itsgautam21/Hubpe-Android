@@ -1,4 +1,4 @@
-package com.ladecentro.presentation.ui.stores.compose
+package com.ladecentro.presentation.ui.stores.stores.compose
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -37,7 +37,7 @@ import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.fontFamilyAverSans
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.ui.order.orders.compose.ShimmerContent
-import com.ladecentro.presentation.ui.stores.StoresViewModel
+import com.ladecentro.presentation.ui.stores.stores.StoresViewModel
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
