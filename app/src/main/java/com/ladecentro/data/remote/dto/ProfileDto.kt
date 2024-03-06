@@ -12,7 +12,8 @@ data class Location(
     @SerializedName("gps") val gps: String,
     @SerializedName("address") val address: Address,
     @SerializedName("city") val city: City,
-    @SerializedName("country") val country: Country
+    @SerializedName("country") val country: Country,
+    @SerializedName("selected") val selected: Boolean = false
 ): Serializable
 
 data class Descriptor(

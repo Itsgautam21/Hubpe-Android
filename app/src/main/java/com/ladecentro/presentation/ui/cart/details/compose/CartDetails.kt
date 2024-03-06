@@ -1,18 +1,24 @@
 package com.ladecentro.presentation.ui.cart.details.compose
 
 import android.app.Activity
+import android.content.Intent
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize.Max
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons.AutoMirrored.Filled
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.Icons.Rounded
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -28,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -35,17 +42,23 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ladecentro.R.drawable
+import com.ladecentro.common.Intents
+import com.ladecentro.common.bounceClick
 import com.ladecentro.data.remote.dto.toProductDetail
 import com.ladecentro.data.remote.dto.toStoreDetail
 import com.ladecentro.domain.model.ItemDetails
 import com.ladecentro.domain.model.Store
 import com.ladecentro.presentation.common.HorizontalDashDivider
 import com.ladecentro.presentation.common.LoadImage
+import com.ladecentro.presentation.theme.Typography
 import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.fontFamilyHindBold
 import com.ladecentro.presentation.theme.light_gray
+import com.ladecentro.presentation.theme.light_text
 import com.ladecentro.presentation.ui.cart.details.CartDetailViewModel
+import com.ladecentro.presentation.ui.stores.details.StoreActivity
 
 @Composable
 fun CartDetails(vm: CartDetailViewModel = hiltViewModel()) {
@@ -66,6 +79,29 @@ fun CartDetails(vm: CartDetailViewModel = hiltViewModel()) {
                         p.toProductDetail(),
                         onMinusClick = { vm.updateCart(p, operation = "-") },
                         onPlusClick = { vm.updateCart(p, operation = "+") }
+                    )
+                }
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .bounceClick {
+                            context.startActivity(
+                                Intent(context, StoreActivity::class.java).putExtra(
+                                    Intents.STORE_ID.name, cart.store.id
+                                )
+                            )
+                            context.finish()
+                        }
+                ) {
+                    Icon(
+                        imageVector = Rounded.Add, contentDescription = null, tint = light_text,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Text(
+                        text = "Add more items",
+                        style = Typography.bodyLarge.copy(color = light_text)
                     )
                 }
             }
@@ -153,19 +189,50 @@ fun CartItems(product: ItemDetails, onPlusClick: () -> Unit, onMinusClick: () ->
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
                 maxLines = 2,
-
                 overflow = TextOverflow.Ellipsis,
                 style = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false))
 
             )
             Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = "₹${product.price}",
-                fontFamily = fontFamilyHindBold,
-                fontSize = 14.sp,
-                color = light_gray,
-                fontWeight = FontWeight.Bold
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "₹${product.price}",
+                    style = Typography.bodyLarge.copy(
+                        color = light_gray,
+                        fontFamily = fontFamilyHindBold
+                    ),
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                if (product.price.toDouble() != product.mrp.toDouble()) {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.width(Max)) {
+                        Text(
+                            text = "₹${product.mrp}",
+                            style = Typography.bodyMedium.copy(color = light_text),
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                        HorizontalDivider(
+                            thickness = 1.dp,
+                            color = light_text,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+            }
+            if (product.quantity < 1) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Item out of stock",
+                    style = Typography.bodySmall.copy(color = MaterialTheme.colorScheme.error),
+                    modifier = Modifier
+                        .border(
+                            1.dp,
+                            MaterialTheme.colorScheme.error,
+                            RoundedCornerShape(8.dp)
+                        )
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                )
+            }
         }
         Surface(
             color = Companion.White,
@@ -177,28 +244,39 @@ fun CartItems(product: ItemDetails, onPlusClick: () -> Unit, onMinusClick: () ->
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                IconButton(onClick = { onMinusClick() }, modifier = Modifier.size(32.dp)) {
-                    Icon(
-                        imageVector = Filled.ArrowBack,
-                        contentDescription = null,
-                        modifier = Modifier.size(14.dp),
-                        tint = MaterialTheme.colorScheme.primary
+                if (product.quantity > 0) {
+                    IconButton(onClick = { onMinusClick() }, modifier = Modifier.size(32.dp)) {
+                        Icon(
+                            painter = painterResource(id = drawable.icons_minus),
+                            contentDescription = null,
+                            modifier = Modifier.size(12.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    Text(
+                        text = product.quantity.toString(),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = fontFamilyHindBold,
+                        color = MaterialTheme.colorScheme.primary
                     )
-                }
-                Text(
-                    text = product.quantity.toString(),
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = fontFamilyHindBold,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                IconButton(onClick = { onPlusClick() }, modifier = Modifier.size(32.dp)) {
-                    Icon(
-                        imageVector = Rounded.Add,
-                        contentDescription = null,
-                        modifier = Modifier.size(14.dp),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
+                    IconButton(onClick = { onPlusClick() }, modifier = Modifier.size(32.dp)) {
+                        Icon(
+                            imageVector = Rounded.Add,
+                            contentDescription = null,
+                            modifier = Modifier.size(14.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                } else {
+                    IconButton(onClick = { onMinusClick() }, modifier = Modifier.size(32.dp)) {
+                        Icon(
+                            imageVector = Icons.Outlined.Delete,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
             }
         }

@@ -13,11 +13,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ladecentro.presentation.common.SimpleTopAppBar
-import com.ladecentro.presentation.theme.card_background
+import com.ladecentro.presentation.theme.background
+import com.ladecentro.presentation.ui.cart.details.CartDetailViewModel
 
 @Composable
-fun CartLayout() {
+fun CartLayout(vm: CartDetailViewModel = hiltViewModel()) {
 
     Scaffold(
         topBar = { SimpleTopAppBar(title = "View Cart") }
@@ -26,16 +28,18 @@ fun CartLayout() {
             modifier = Modifier
                 .padding(it)
                 .fillMaxSize(),
-            color = card_background
+            color = background
         ) {
             Column {
-                //CartLoading()
+                if (vm.userCart.isLoading) {
+                    CartLoading()
+                }
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
                         .weight(1f),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
-                    contentPadding = PaddingValues(12.dp)
+                    contentPadding = PaddingValues(8.dp)
                 ) {
                     item {
                         CartDetails()

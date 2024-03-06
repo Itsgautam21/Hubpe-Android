@@ -19,8 +19,8 @@ fun LoadImage(
 
     val painter = rememberAsyncImagePainter(
         Builder(LocalContext.current)
-            .data(data = image ?: "https://propertywiselaunceston.com.au/wp-content/themes/property-wise/images/no-image.png")
-            .error(R.drawable.default_profile)
+            .data(data = image ?: "https://ndh.imgix.net/ndh-assets/img/no_image.png")
+            .error(R.drawable.no_image)
             .apply {}
             .build()
     )

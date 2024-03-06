@@ -1,5 +1,6 @@
 package com.ladecentro.data.repository
 
+import com.google.gson.Gson
 import com.ladecentro.common.Constants.GENERIC_ERROR_MESSAGE
 import com.ladecentro.common.Intents
 import com.ladecentro.common.MyPreference
@@ -8,10 +9,12 @@ import com.ladecentro.data.remote.dto.SearchDto
 import com.ladecentro.data.remote.dto.SearchRequest
 import com.ladecentro.data.remote.dto.Store
 import com.ladecentro.domain.repository.LookupRepository
+import com.orhanobut.logger.Logger
 import javax.inject.Inject
 
 class LookupRepositoryImpl @Inject constructor(
     private val lookupAPI: LookupAPI,
+    private val gson: Gson,
     myPreference: MyPreference
 ) : LookupRepository {
 
@@ -19,6 +22,7 @@ class LookupRepositoryImpl @Inject constructor(
 
     override suspend fun search(request: SearchRequest): SearchDto {
         try {
+            Logger.i(gson.toJson(request))
             val response = lookupAPI.search(
                 authToken,
                 request.term,

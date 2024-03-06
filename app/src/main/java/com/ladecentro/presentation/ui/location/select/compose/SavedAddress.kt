@@ -44,7 +44,11 @@ import com.ladecentro.domain.model.DropdownMenu
 import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_gray
+import com.ladecentro.presentation.theme.light_green
+import com.ladecentro.presentation.theme.light_orange
 import com.ladecentro.presentation.theme.light_text
+import com.ladecentro.presentation.theme.primary_green
+import com.ladecentro.presentation.theme.primary_orange
 
 @Composable
 fun SampleSavedAddress(
@@ -55,12 +59,13 @@ fun SampleSavedAddress(
     var isMenuVisible by rememberSaveable { mutableStateOf(false) }
 
     Card(
-        colors = CardDefaults.cardColors(Color.White),
+        colors = CardDefaults.cardColors(if (location.selected) light_orange else Companion.White),
         elevation = CardDefaults.cardElevation(0.dp),
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier.bounceClick {
             onLocationClick(location)
-        }
+        },
+        border = BorderStroke(1.dp, if (location.selected) primary_orange else Companion.White)
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),

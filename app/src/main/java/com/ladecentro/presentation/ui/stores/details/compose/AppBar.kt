@@ -41,12 +41,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ladecentro.R.drawable
 import com.ladecentro.data.remote.dto.Store
 import com.ladecentro.presentation.common.LoadImage
 import com.ladecentro.presentation.common.SearchCompose
+import com.ladecentro.presentation.theme.Typography
 import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.fontFamilyHindBold
@@ -108,7 +110,7 @@ fun TopBarStore(image: String?, storeName: String) {
     val context = LocalContext.current as Activity
 
     Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
+
         verticalAlignment = Alignment.Top,
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -122,7 +124,7 @@ fun TopBarStore(image: String?, storeName: String) {
                 modifier = Modifier.size(20.dp)
             )
         }
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
             Surface(
                 color = Companion.White,
                 shape = MaterialTheme.shapes.small,
@@ -141,10 +143,12 @@ fun TopBarStore(image: String?, storeName: String) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = storeName,
-                fontWeight = FontWeight.W800,
-                fontSize = 16.sp,
-                fontFamily = fontFamilyHindBold,
-                color = MaterialTheme.colorScheme.primary
+                style = Typography.titleMedium.copy(
+                    fontFamily = fontFamilyHindBold,
+                    fontWeight = FontWeight.Bold
+                ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
         IconButton(
@@ -215,40 +219,42 @@ fun SearchStoreCompose(storeName: String) {
 fun BannerPager(store: Store) {
 
     store.homeImage?.let { images ->
-        val pagerState = rememberPagerState(pageCount = { images.size })
-        Column {
-            HorizontalPager(
-                state = pagerState,
-                contentPadding = PaddingValues(12.dp),
-                pageSpacing = 16.dp
-            ) {
-                Surface(shape = MaterialTheme.shapes.medium) {
-                    LoadImage(
-                        image = images[it],
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(180.dp),
-                        contentScale = ContentScale.Crop
-                    )
+        if (images.isNotEmpty()) {
+            val pagerState = rememberPagerState(pageCount = { images.size })
+            Column {
+                HorizontalPager(
+                    state = pagerState,
+                    contentPadding = PaddingValues(12.dp),
+                    pageSpacing = 16.dp
+                ) {
+                    Surface(shape = MaterialTheme.shapes.medium) {
+                        LoadImage(
+                            image = images[it],
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(180.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
                 }
-            }
-            Row(
-                Modifier
-                    .wrapContentHeight()
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                repeat(pagerState.pageCount) { iteration ->
-                    val color =
-                        if (pagerState.currentPage == iteration) Color.DarkGray else Color.LightGray
-                    Box(
-                        modifier = Modifier
-                            .padding(2.dp)
-                            .clip(CircleShape)
-                            .background(color)
-                            .size(6.dp)
-                    )
+                Row(
+                    Modifier
+                        .wrapContentHeight()
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    repeat(pagerState.pageCount) { iteration ->
+                        val color =
+                            if (pagerState.currentPage == iteration) Color.DarkGray else Color.LightGray
+                        Box(
+                            modifier = Modifier
+                                .padding(2.dp)
+                                .clip(CircleShape)
+                                .background(color)
+                                .size(6.dp)
+                        )
+                    }
                 }
             }
         }

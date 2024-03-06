@@ -5,6 +5,7 @@ import com.ladecentro.data.remote.dto.orders.Payment
 import com.ladecentro.data.remote.dto.orders.Quote
 import com.ladecentro.domain.model.Address
 import com.ladecentro.domain.model.LocationRequest
+import java.util.Objects
 
 data class CartDto(
     @SerializedName("id") val id: String? = null,
@@ -19,13 +20,18 @@ data class CartDto(
     @SerializedName("location") val location: LocationRequest? = null,
     @SerializedName("billing") val billing: BillingRequest? = null,
     @SerializedName("fulfillments") val fulfillment: List<FulfillmentRequest>? = null,
-    @SerializedName("payments") val payments: Payment? = null
+    @SerializedName("payments") val payments: Payment? = null,
+    @SerializedName("error") val error: CartError? = null
 )
 
 data class FulfillmentRequest(
     @SerializedName("id") val id: String? = null,
     @SerializedName("type") val type: String? = null,
     @SerializedName("tracking") val tracking: Boolean? = null,
+    @SerializedName("@ondc/org/category") val category: String? = null,
+    @SerializedName("@ondc/org/TAT") val tat: String? = null,
+    @SerializedName("@ondc/org/provider_name") val providerName: String? = null,
+    @SerializedName("state") val state: Objects? = null,
     @SerializedName("end") val end: FulfillmentEndRequest? = null,
 )
 
@@ -54,4 +60,10 @@ data class Contact(
 
 data class Person(
     @SerializedName("name") val name: String
+)
+
+data class CartError(
+    @SerializedName("type") val type: String,
+    @SerializedName("code") val code: String,
+    @SerializedName("message") val message: String,
 )

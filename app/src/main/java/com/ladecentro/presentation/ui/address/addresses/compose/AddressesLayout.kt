@@ -33,7 +33,7 @@ import com.ladecentro.data.remote.dto.Location
 import com.ladecentro.domain.model.DropdownMenu
 import com.ladecentro.domain.model.LocationRequest
 import com.ladecentro.presentation.common.SimpleTopAppBar
-import com.ladecentro.presentation.theme.card_background
+import com.ladecentro.presentation.theme.background
 import com.ladecentro.presentation.ui.address.addresses.AddressViewModel
 import com.ladecentro.presentation.ui.location.maps.MapsActivity
 import com.ladecentro.presentation.ui.location.select.compose.SampleSavedAddress
@@ -85,7 +85,7 @@ fun AddressesLayout(vm: AddressViewModel = hiltViewModel()) {
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(card_background),
+                        .background(background),
                     contentPadding = PaddingValues(
                         top = 12.dp,
                         start = 12.dp,

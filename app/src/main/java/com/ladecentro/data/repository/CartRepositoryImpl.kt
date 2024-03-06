@@ -9,7 +9,7 @@ import com.ladecentro.data.remote.api.CartAPI
 import com.ladecentro.data.remote.dto.CartDto
 import com.ladecentro.data.remote.dto.CartResponse
 import com.ladecentro.domain.repository.CartRepository
-import java.util.*
+import com.orhanobut.logger.Logger
 import javax.inject.Inject
 
 class CartRepositoryImpl @Inject constructor(
@@ -23,14 +23,14 @@ class CartRepositoryImpl @Inject constructor(
     override suspend fun createCart(cartDto: CartDto): CartResponse {
 
         try {
-            Log.d(DEBUG_TAG, gson.toJson(cartDto))
+            Log.i("create cart", gson.toJson(cartDto))
             val response = cartAPI.createCart(token = authToken, cartRequest = cartDto)
             if (response.isSuccessful) {
                 return response.body()!!
             }
             throw Exception(Constants.GENERIC_ERROR_MESSAGE)
         } catch (e: Exception) {
-            Log.d(ERROR_TAG, e.message!!)
+            Logger.e(e.message!!)
             throw Exception(Constants.GENERIC_ERROR_MESSAGE)
         }
     }
@@ -38,14 +38,14 @@ class CartRepositoryImpl @Inject constructor(
     override suspend fun getCart(cartId: String): CartDto? {
 
         try {
-            Log.d(DEBUG_TAG, cartId)
+            Logger.d(cartId)
             val response = cartAPI.getCart(token = authToken, cartId = cartId)
             if (response.isSuccessful) {
                 return response.body()
             }
             throw Exception(Constants.GENERIC_ERROR_MESSAGE)
         } catch (e: Exception) {
-            Log.d(ERROR_TAG, e.message!!)
+            Logger.e(e.message!!)
             throw Exception(Constants.GENERIC_ERROR_MESSAGE)
         }
     }
@@ -53,14 +53,14 @@ class CartRepositoryImpl @Inject constructor(
     override suspend fun deleteCartById(cartId: String): Any {
 
         try {
-            Log.d(DEBUG_TAG, cartId)
+            Logger.d(cartId)
             val response = cartAPI.deleteCartById(token = authToken, cartId = cartId)
             if (response.isSuccessful) {
                 return response.body()!!
             }
             throw Exception(Constants.GENERIC_ERROR_MESSAGE)
         } catch (e: Exception) {
-            Log.d(ERROR_TAG, e.message!!)
+            Logger.e(e.message!!)
             throw Exception(Constants.GENERIC_ERROR_MESSAGE)
         }
     }
@@ -74,7 +74,7 @@ class CartRepositoryImpl @Inject constructor(
             }
             throw Exception(Constants.GENERIC_ERROR_MESSAGE)
         } catch (e: Exception) {
-            Log.d(ERROR_TAG, e.message!!)
+            Logger.e(e.message!!)
             throw Exception(Constants.GENERIC_ERROR_MESSAGE)
         }
     }

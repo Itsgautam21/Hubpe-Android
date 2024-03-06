@@ -1,5 +1,6 @@
 package com.ladecentro.presentation.ui.search.compose
 
+import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
@@ -46,6 +48,8 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.ladecentro.R.drawable
 import com.ladecentro.R.raw
+import com.ladecentro.common.Intents
+import com.ladecentro.common.bounceClick
 import com.ladecentro.data.remote.dto.Store
 import com.ladecentro.presentation.common.HorizontalDashDivider
 import com.ladecentro.presentation.common.LoadImage
@@ -54,16 +58,24 @@ import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_gray
 import com.ladecentro.presentation.ui.order.orders.compose.ShimmerContent
+import com.ladecentro.presentation.ui.stores.details.StoreActivity
 
 @Composable
 fun SampleSearchStore(store: Store) {
 
+    val context = LocalContext.current
     Card(
         elevation = CardDefaults.cardElevation(0.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color.White,
             contentColor = Color.Black
-        )
+        ),
+        modifier = Modifier.bounceClick {
+            context.startActivity(
+                Intent(context, StoreActivity::class.java)
+                    .putExtra(Intents.STORE_ID.name, store.id)
+            )
+        }
     ) {
         Column(
             modifier = Modifier.padding(horizontal = 4.dp, vertical = 20.dp),

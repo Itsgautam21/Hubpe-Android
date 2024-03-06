@@ -15,12 +15,11 @@ import com.ladecentro.common.Resource.Loading
 import com.ladecentro.common.Resource.Success
 import com.ladecentro.data.remote.dto.BillingRequest
 import com.ladecentro.data.remote.dto.CartDto
-import com.ladecentro.data.remote.dto.Contact
 import com.ladecentro.data.remote.dto.Count
 import com.ladecentro.data.remote.dto.FulfillmentEndRequest
 import com.ladecentro.data.remote.dto.FulfillmentRequest
-import com.ladecentro.data.remote.dto.Person
 import com.ladecentro.data.remote.dto.Product
+import com.ladecentro.domain.model.LocationRequest
 import com.ladecentro.domain.use_case.CreateCartUseCase
 import com.ladecentro.domain.use_case.DeleteCartByIdUseCase
 import com.ladecentro.domain.use_case.GetCartUseCase
@@ -53,6 +52,8 @@ class CartDetailViewModel @Inject constructor(
     private var _deleteCart by mutableStateOf(UIStates<Any>())
     val deleteCart: UIStates<Any> get() = _deleteCart
 
+    var selectFulfillment by mutableStateOf(userCart.content?.fulfillment?.get(0))
+
     init {
         _userCart = UIStates(content = getCartFromLocal())
         createCart()
@@ -70,22 +71,35 @@ class CartDetailViewModel @Inject constructor(
         viewModelScope.launch {
             snapshotFlow { userLocation }.collectLatest { location ->
                 if (location.mobileNumber != null) {
+                    selectAddress(location)
                     getCartRequest()?.let {
                         cartUseCase(it).collect { resource ->
                             when (resource) {
-                                is Loading -> {}
+                                is Loading -> {
+                                    _userCart = userCart.copy(isLoading = true)
+                                }
+
                                 is Success -> {
                                     Log.d(DEBUG_TAG, resource.data!!.cartId)
                                     getCartDetails(resource.data.cartId)
                                 }
 
-                                is Error -> {}
+                                is Error -> {
+                                    _userCart = userCart.copy(error = resource.message, isLoading = false)
+                                }
                             }
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun selectAddress(location: LocationRequest) {
+        userAddress = userAddress
+            .map { add -> add.copy(selected = false) }
+            .map { add -> if (location.id == add.id) add.copy(selected = true) else add }
+
     }
 
     private fun updateCartForQuantity() {
@@ -117,11 +131,13 @@ class CartDetailViewModel @Inject constructor(
             getCartUseCase(cartId).collect { resource ->
                 when (resource) {
                     is Loading -> {
+                        _userCart = userCart.copy(isLoading = true)
                     }
 
                     is Success -> {
                         resource.data?.let { cart ->
-                            _userCart = UIStates(content = cart)
+                            selectFulfillment = cart.fulfillment?.getOrNull(0)
+                            _userCart = UIStates(content = cart, error = cart.error?.type)
                             val list = myPreference.getCartFromLocal().toMutableList()
                             getCartFromLocal()?.let {
                                 list.removeIf { c -> c.store.id == it.store.id }
@@ -132,6 +148,7 @@ class CartDetailViewModel @Inject constructor(
                     }
 
                     is Error -> {
+                        _userCart = userCart.copy(error = resource.message, isLoading = false)
                     }
                 }
             }
@@ -156,8 +173,10 @@ class CartDetailViewModel @Inject constructor(
         try {
             val phone = userLocation.mobileNumber!!
             val name = userLocation.address?.name!!
+//            if (userCart.content?.items?.find { item -> item.quantity.selected.count <= 0 } != null) {
+//                return null
+//            }
             return userCart.content?.copy(
-                location = userLocation,
                 billing = BillingRequest(
                     name = name,
                     phone = phone,
@@ -165,17 +184,12 @@ class CartDetailViewModel @Inject constructor(
                 ),
                 fulfillment = listOf(
                     FulfillmentRequest(
-                        id = "1",
-                        type = "Delivery",
-                        tracking = false,
                         end = FulfillmentEndRequest(
                             location = userLocation.copy(
                                 descriptor = null,
                                 city = null,
                                 country = null
-                            ),
-                            contact = Contact(phone),
-                            person = Person(name)
+                            )
                         )
                     )
                 )

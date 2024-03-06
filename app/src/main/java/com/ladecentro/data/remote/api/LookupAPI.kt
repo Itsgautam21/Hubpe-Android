@@ -22,7 +22,7 @@ interface LookupAPI {
         @Query("is_promoted") isPromoted: Boolean?,
         @Query("expected_entity") expectedEntity: String?,
         @Query("store_id") storeId: String?,
-        @Query("category") category: String?,
+        @Query("category") category: List<String>?,
     ): Response<SearchDto>
 
     @GET("/v1/stores/{storeId}")

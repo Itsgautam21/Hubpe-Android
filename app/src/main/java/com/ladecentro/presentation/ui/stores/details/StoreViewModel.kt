@@ -16,10 +16,12 @@ import com.ladecentro.data.remote.dto.Count
 import com.ladecentro.data.remote.dto.Product
 import com.ladecentro.data.remote.dto.SearchRequest
 import com.ladecentro.data.remote.dto.Store
+import com.ladecentro.domain.use_case.DeleteCartByIdUseCase
 import com.ladecentro.domain.use_case.GetSearchUseCase
 import com.ladecentro.domain.use_case.GetStoreUseCase
 import com.ladecentro.presentation.common.UIStates
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,7 +30,8 @@ class StoreViewModel @Inject constructor(
     private val storeUseCase: GetStoreUseCase,
     private val searchUseCase: GetSearchUseCase,
     private val myPreference: MyPreference,
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
+    private val deleteCartByIdUseCase: DeleteCartByIdUseCase
 ) : ViewModel() {
 
     private var _store by mutableStateOf(UIStates<Store>())
@@ -39,6 +42,9 @@ class StoreViewModel @Inject constructor(
 
     private var _cartState by mutableStateOf(UIStates<CartDto?>())
     val cartState: UIStates<CartDto?> get() = _cartState
+
+    private var _deleteCart by mutableStateOf(UIStates<Any>())
+    val deleteCart: UIStates<Any> get() = _deleteCart
 
     val storeId: String = savedStateHandle[Intents.STORE_ID.name] ?: ""
 
@@ -85,6 +91,19 @@ class StoreViewModel @Inject constructor(
         val cart = myPreference.getCartFromLocal().find { it.store.id == storeId }
         _cartState = UIStates(content = cart)
         return cart
+    }
+
+    private fun deleteCartById(cartId: String) {
+
+        viewModelScope.launch {
+            deleteCartByIdUseCase(cartId).collectLatest {
+                _deleteCart = when (it) {
+                    is Loading -> UIStates(isLoading = true)
+                    is Success -> UIStates(content = it.data)
+                    is Error -> UIStates(error = it.message)
+                }
+            }
+        }
     }
 
     fun getItemCount(cart: CartDto, itemId: String): Int {
@@ -135,6 +154,11 @@ class StoreViewModel @Inject constructor(
                 carts.add(cart)
                 cart
             } else {
+                if (cart.id != null) {
+                    deleteCartById(cart.id!!)
+                } else {
+                    _deleteCart = UIStates(content = "")
+                }
                 null
             }
         )

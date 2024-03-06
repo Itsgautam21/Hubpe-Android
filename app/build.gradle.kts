@@ -118,8 +118,8 @@ dependencies {
     implementation("com.airbnb.android:lottie:$lottieVersion")
     implementation("com.airbnb.android:lottie-compose:$lottieComposeVersion")
 
-    val coilVersion = "1.3.2"
-    implementation("io.coil-kt:coil-compose:2.0.0-rc01")
+    val coilVersion = "2.0.0-rc01"
+    implementation("io.coil-kt:coil-compose:$coilVersion")
 
     val googleFontVersion = "1.5.4"
     implementation("androidx.compose.ui:ui-text-google-fonts:$googleFontVersion")
@@ -132,6 +132,9 @@ dependencies {
 
     val swipeRefreshVersion = "0.27.0"
     implementation("com.google.accompanist:accompanist-swiperefresh:$swipeRefreshVersion")
+
+    val loggerVersion = "2.2.0"
+    implementation("com.orhanobut:logger:$loggerVersion")
 
     implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation("com.google.accompanist:accompanist-permissions:0.31.1-alpha")

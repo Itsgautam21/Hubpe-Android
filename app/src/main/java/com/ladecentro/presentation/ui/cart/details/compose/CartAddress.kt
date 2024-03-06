@@ -41,7 +41,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ladecentro.common.Intents
 import com.ladecentro.common.bounceClick
 import com.ladecentro.data.remote.dto.mapToLocationRequest
-import com.ladecentro.presentation.theme.card_background
+import com.ladecentro.presentation.theme.background
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.primary_orange
 import com.ladecentro.presentation.ui.address.addresses.compose.getCameraPosition
@@ -68,7 +68,7 @@ fun CartAddresses(vm: CartDetailViewModel = hiltViewModel()) {
                 vm.openSheet = false
             },
             sheetState = sheetState,
-            containerColor = card_background,
+            containerColor = background,
             contentColor = Color.Black
         ) {
             LazyColumn(
@@ -88,7 +88,7 @@ fun CartAddresses(vm: CartDetailViewModel = hiltViewModel()) {
                     }
                 }
                 item { Spacer(modifier = Modifier.height(16.dp)) }
-                items(vm.userAddress.reversed()) {
+                items(vm.userAddress) {
                     SampleSavedAddress(location = it) { loc ->
                         vm.userLocation = loc.mapToLocationRequest()
                         vm.openSheet = false

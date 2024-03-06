@@ -39,6 +39,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle.Event.ON_START
 import androidx.lifecycle.LifecycleEventObserver
 import com.ladecentro.common.Intents
+import com.ladecentro.data.remote.dto.CartDto
 import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.fontFamilyHindBold
@@ -79,7 +80,7 @@ fun StoreLayout(vm: StoreViewModel = hiltViewModel()) {
                                 Spacer(modifier = Modifier.height(12.dp))
                             }
                             item {
-                                StoreCategories(categories)
+                                StoreCategories(categories, store.id)
                             }
                             items(categories) { category ->
                                 StoreProducts(category)
@@ -93,8 +94,7 @@ fun StoreLayout(vm: StoreViewModel = hiltViewModel()) {
                         AnimatedVisibility(visible = vm.cartState.content != null) {
                             vm.cartState.content?.let { cart ->
                                 CartCompose(
-                                    price = cart.items.sumOf { p -> p.price.value.toDouble() * p.quantity.selected.count }
-                                        .toString(),
+                                    price = getItemTotal(cart),
                                     itemCount = cart.items.sumOf { p -> p.quantity.selected.count }
                                         .toString()
                                 ) {
@@ -124,6 +124,10 @@ fun StoreLayout(vm: StoreViewModel = hiltViewModel()) {
         }
     })
 }
+
+fun getItemTotal(cart: CartDto): String = cart.items
+    .sumOf { p -> p.price.value.toDouble() * p.quantity.selected.count }
+    .toString()
 
 @Composable
 fun CartCompose(price: String, itemCount: String, onButtonClick: () -> Unit) {

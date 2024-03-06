@@ -135,7 +135,7 @@ data class SearchRequest(
     val isPromoted: Boolean? = null,
     val expectedEntity: String? = null,
     val storeId: String? = null,
-    val category: String? = null,
+    val category: List<String>? = null,
 )
 
 fun Store.toStoreDetail(): com.ladecentro.domain.model.Store =

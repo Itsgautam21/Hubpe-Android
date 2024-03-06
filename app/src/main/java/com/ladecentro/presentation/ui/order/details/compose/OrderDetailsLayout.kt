@@ -18,7 +18,7 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.ladecentro.common.OrderStatus
 import com.ladecentro.presentation.common.SimpleTopAppBar
-import com.ladecentro.presentation.theme.card_background
+import com.ladecentro.presentation.theme.background
 import com.ladecentro.presentation.ui.order.details.OrderDetailsViewModel
 import com.ladecentro.presentation.ui.order.orders.compose.ShimmerContent
 
@@ -38,7 +38,7 @@ fun OrderDetailsLayout(vm: OrderDetailsViewModel = hiltViewModel()) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(card_background)
+                    .background(background)
                     .verticalScroll(rememberScrollState())
             ) {
                 if (orderState.isLoading) {
