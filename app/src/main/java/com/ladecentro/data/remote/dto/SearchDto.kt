@@ -3,6 +3,7 @@ package com.ladecentro.data.remote.dto
 import androidx.compose.runtime.Stable
 import com.google.gson.annotations.SerializedName
 import com.ladecentro.domain.model.ItemDetails
+import javax.annotation.concurrent.Immutable
 
 data class SearchDto(
     @SerializedName("stores") val stores: List<Store>,
@@ -35,6 +36,7 @@ data class Store(
     @SerializedName("categories") val categories: List<Category>?,
 )
 
+@Immutable
 data class Product(
     @SerializedName("brand") val brand: String,
     @SerializedName("id") val id: String,
@@ -154,5 +156,6 @@ fun Product.toProductDetail(): ItemDetails =
         brand = brand,
         description = descriptor.shortDesc,
         price = price.value,
-        mrp = price.maximumValue
+        mrp = price.maximumValue,
+        categoryId = categoryId
     )

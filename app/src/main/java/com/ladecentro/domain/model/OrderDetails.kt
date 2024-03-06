@@ -1,5 +1,7 @@
 package com.ladecentro.domain.model
 
+import javax.annotation.concurrent.Immutable
+
 data class OrderDetails(
     val orderId: String,
     val displayOrderId: String,
@@ -23,6 +25,7 @@ data class OrderDetail(
     val priceBreakUp: List<PriceBreakUp>
 )
 
+@Immutable
 data class ItemDetails(
     val id: String? = null,
     val image: String?,
@@ -31,7 +34,8 @@ data class ItemDetails(
     val brand: String? = null,
     val description: String? = null,
     val price: String,
-    val mrp: String
+    val mrp: String,
+    val categoryId: String? = null
 )
 
 data class PriceBreakUp(val name: String, val mrp: String, val price: String)

@@ -22,11 +22,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,7 +34,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ladecentro.data.remote.dto.Category
-import com.ladecentro.data.remote.dto.toProductDetail
 import com.ladecentro.domain.model.ItemDetails
 import com.ladecentro.presentation.common.LoadImage
 import com.ladecentro.presentation.theme.card_border
@@ -54,21 +48,8 @@ fun SampleGeneralProduct(
     product: ItemDetails,
     onPlusClick: () -> Unit,
     onMinusClick: () -> Unit,
-    onClick: () -> Unit,
-    vm: StoreViewModel = hiltViewModel()
+    onClick: () -> Unit
 ) {
-    var countState by rememberSaveable { mutableIntStateOf(product.quantity) }
-
-    LaunchedEffect(key1 = vm.cartState.content) {
-        vm.cartState.content?.let { cart ->
-            vm.getItemCount(cart, product.id!!).let { count ->
-                countState = count
-            }
-        }
-        if (vm.cartState.content == null) {
-            countState = 0
-        }
-    }
     Surface(
         color = Color.White,
         modifier = Modifier.width(140.dp)
@@ -137,7 +118,7 @@ fun SampleGeneralProduct(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            AnimatedVisibility(visible = countState != 0) {
+                            AnimatedVisibility(visible = product.quantity != 0) {
                                 Text(
                                     text = "-",
                                     fontSize = 16.sp,
@@ -153,7 +134,7 @@ fun SampleGeneralProduct(
                                 )
                             }
                             Text(
-                                text = if (countState == 0) "ADD" else countState.toString(),
+                                text = if (product.quantity == 0) "ADD" else product.quantity.toString(),
                                 fontSize = 14.sp,
                                 fontFamily = fontFamilyHindBold,
                                 fontWeight = FontWeight.ExtraBold,
@@ -164,7 +145,7 @@ fun SampleGeneralProduct(
                                     )
                                 )
                             )
-                            AnimatedVisibility(visible = countState != 0) {
+                            AnimatedVisibility(visible = product.quantity != 0) {
                                 Text(
                                     text = "+",
                                     fontSize = 16.sp,
@@ -217,10 +198,10 @@ fun StoreProducts(category: Category, vm: StoreViewModel = hiltViewModel()) {
             contentPadding = PaddingValues(16.dp)
         ) {
             items(list) {
-                SampleGeneralProduct(it.toProductDetail(),
-                    onPlusClick = { vm.createCart(it, operation = "+") },
-                    onMinusClick = { vm.createCart(it, operation = "-") },
-                    onClick = { vm.createCart(it, operation = "+") }
+                SampleGeneralProduct(it,
+                    onPlusClick = { vm.createCart(it, vm.getItemCount(it.id!!).plus(1)) },
+                    onMinusClick = { vm.createCart(it, vm.getItemCount(it.id!!).minus(1)) },
+                    onClick = { vm.createCart(it, vm.getItemCount(it.id!!).plus(1)) }
                 )
             }
         }
