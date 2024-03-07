@@ -89,9 +89,12 @@ class StoreViewModel @Inject constructor(
                     is Loading -> UIStates(isLoading = true)
                     is Success -> {
                         _productDetails = UIStates(content = it.data?.products)
-                        val productList = it.data?.products?.map { pr -> pr.toProductDetail().copy(quantity = getItemCount(pr.id)) }
+                        val productList = it.data?.products?.map { pr ->
+                            pr.toProductDetail().copy(quantity = getItemCount(pr.id))
+                        }
                         UIStates(content = productList)
                     }
+
                     is Error -> UIStates(error = it.message)
                 }
             }
@@ -129,7 +132,7 @@ class StoreViewModel @Inject constructor(
         return 0
     }
 
-    private fun updateQuantityForItem(item: ItemDetails, quantity: Int) {
+    fun updateQuantityForItem(item: ItemDetails, quantity: Int) {
         _products = _products.copy(content =
         _products.content?.map { p -> if (p.id == item.id) p.copy(quantity = quantity) else p })
     }

@@ -22,8 +22,8 @@ class ProductsViewModel @Inject constructor(
     private val getProductSearchPagingUseCase: GetProductSearchPagingUseCase,
 ) : ViewModel() {
 
-    val storeId: String? = savedStateHandle[Intents.STORE_ID.name]
-    val category: String? = savedStateHandle[Intents.CATEGORY_NAME.name]
+    val storeId: String = savedStateHandle[Intents.STORE_ID.name] ?: ""
+    val category: String = savedStateHandle[Intents.CATEGORY_NAME.name] ?: ""
 
     private val _productSearch: MutableStateFlow<PagingData<Product>> =
         MutableStateFlow(PagingData.empty())
@@ -37,7 +37,7 @@ class ProductsViewModel @Inject constructor(
 
         viewModelScope.launch {
             val search = SearchRequest(
-                category = listOf(category ?: ""),
+                category = listOf(category),
                 size = 20,
                 expectedEntity = "product",
                 storeId = storeId

@@ -40,6 +40,7 @@ import androidx.lifecycle.Lifecycle.Event.ON_START
 import androidx.lifecycle.LifecycleEventObserver
 import com.ladecentro.common.Intents
 import com.ladecentro.data.remote.dto.CartDto
+import com.ladecentro.data.remote.dto.toProductDetail
 import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.fontFamilyHindBold
@@ -115,7 +116,12 @@ fun StoreLayout(vm: StoreViewModel = hiltViewModel()) {
     DisposableEffect(key1 = lifecycleOwner, effect = {
         val observer = LifecycleEventObserver { _, event ->
             if (event == ON_START) {
-                vm.getCartFromLocal()
+                vm.getCartFromLocal()?.let { cart ->
+                    cart.items.forEach {
+                        val item = it.toProductDetail()
+                        vm.updateQuantityForItem(item, item.quantity)
+                    }
+                }
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
