@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -54,8 +55,8 @@ import com.ladecentro.presentation.theme.light_text
 import com.ladecentro.presentation.theme.primary_orange
 import com.ladecentro.presentation.ui.cart.details.CartDetailViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 fun CartDeliveryOptions(vm: CartDetailViewModel = hiltViewModel()) {
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -96,17 +97,24 @@ fun CartDeliveryOptions(vm: CartDetailViewModel = hiltViewModel()) {
             if (vm.userCart.isLoading) {
                 CartLoadingAnimate()
             }
+            if (vm.userOrder.isLoading) {
+                OrderLoadingAnimate()
+            }
             vm.userCart.content?.let {
                 if (!vm.userCart.isLoading && vm.userCart.error == null) {
-                    DeliveryOptionContent(it, vm.selectFulfillment) { request ->
+                    DeliveryOptionContent(
+                        it, vm.selectFulfillment, onToPayClick = vm::createOrder
+                    ) { request ->
                         vm.selectFulfillment = request
                     }
                 }
             }
             vm.userCart.error?.let {
-                Box(modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(.5f), contentAlignment = Alignment.Center) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(.5f), contentAlignment = Alignment.Center
+                ) {
                     Text(
                         text = it,
                         style = Typography.titleMedium.copy(fontFamily = fontFamilyHindBold)
@@ -121,7 +129,8 @@ fun CartDeliveryOptions(vm: CartDetailViewModel = hiltViewModel()) {
 fun DeliveryOptionContent(
     cart: CartDto,
     selected: FulfillmentRequest?,
-    onFulfillmentClick: (request: FulfillmentRequest) -> Unit
+    onToPayClick: () -> Unit,
+    onFulfillmentClick: (request: FulfillmentRequest) -> Unit,
 ) {
     LazyColumn(
         contentPadding = PaddingValues(12.dp),
@@ -129,7 +138,8 @@ fun DeliveryOptionContent(
     ) {
         cart.fulfillment?.let { f ->
             items(f) {
-                SampleDeliveryOption(it, selected,
+                SampleDeliveryOption(
+                    it, selected,
                     cart.quote!!.breakup.find { br -> br.itemId == it.id && br.titleType == "delivery" }!!.price.value
                 )
                 { id -> onFulfillmentClick(id) }
@@ -141,7 +151,7 @@ fun DeliveryOptionContent(
             }
             item {
                 Button(
-                    onClick = { },
+                    onClick = onToPayClick,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp)
@@ -231,15 +241,38 @@ fun CartLoadingAnimate() {
         restartOnPlay = false
     )
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.7f)
-            .background(Companion.White), contentAlignment = Alignment.Center
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center
     ) {
         LottieAnimation(
             composition = composition,
             progress = progress,
-            modifier = Modifier.size(200.dp)
+            modifier = Modifier.fillMaxSize(0.7f)
+        )
+    }
+}
+
+@Composable
+fun OrderLoadingAnimate() {
+
+    val composition by rememberLottieComposition(spec = RawRes(raw.order_loading))
+    val progress by animateLottieCompositionAsState(
+        composition,
+        iterations = LottieConstants.IterateForever,
+        isPlaying = true,
+        speed = 1f,
+        restartOnPlay = false
+    )
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Companion.White),
+        contentAlignment = Alignment.Center
+    ) {
+        LottieAnimation(
+            composition = composition,
+            progress = progress,
+            modifier = Modifier.fillMaxSize(0.5f)
         )
     }
 }

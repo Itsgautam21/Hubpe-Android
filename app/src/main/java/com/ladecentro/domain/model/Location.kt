@@ -7,7 +7,9 @@ data class ProfileRequest(
     @SerializedName("name") val name: String? = null,
     @SerializedName("type") val type: List<String>? = null,
     @SerializedName("operation") val operation: String? = null,
-    @SerializedName("locations") val locations: List<LocationRequest>? = null
+    @SerializedName("locations") val locations: List<LocationRequest>? = null,
+    @SerializedName("favourites") val favourites: List<String>? = null,
+    @SerializedName("history") val history: List<String>? = null
 )
 
 data class LocationRequest(

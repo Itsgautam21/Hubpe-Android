@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle.Event.ON_CREATE
+import androidx.lifecycle.Lifecycle.Event.ON_START
 import androidx.lifecycle.LifecycleEventObserver
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
@@ -56,6 +57,9 @@ fun LocationPermission(vm: HomeViewModel = hiltViewModel()) {
                 } else {
                     vm.getUserLocation()
                 }
+            }
+            if (event == ON_START) {
+                vm.getProfileFromLocal()
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)

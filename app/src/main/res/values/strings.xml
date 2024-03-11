@@ -15,4 +15,6 @@
     <string name="title_activity_order_details">OrderDetailsActivity</string>
     <string name="title_activity_store">StoreActivity</string>
     <string name="title_activity_products">ProductsActivity</string>
+    <string name="title_activity_product_search">ProductSearchActivity</string>
+    <string name="title_activity_favourite">FavourateActivity</string>
 </resources>

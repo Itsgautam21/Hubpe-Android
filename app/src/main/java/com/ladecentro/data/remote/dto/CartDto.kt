@@ -51,7 +51,8 @@ data class FulfillmentEndRequest(
 
 data class CartResponse(
     @SerializedName("status") val status: String,
-    @SerializedName("cartId") val cartId: String
+    @SerializedName("cartId") val cartId: String,
+    @SerializedName("orderId") val orderId: String
 )
 
 data class Contact(

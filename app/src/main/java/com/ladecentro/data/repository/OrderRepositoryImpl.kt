@@ -13,6 +13,7 @@ import com.ladecentro.data.remote.dto.orders.OrderStatus
 import com.ladecentro.data.remote.dto.orders.UpdateOrderRequest
 import com.ladecentro.domain.model.Orders
 import com.ladecentro.domain.repository.OrderRepository
+import com.orhanobut.logger.Logger
 import kotlinx.coroutines.flow.Flow
 import java.io.IOException
 import java.util.*
@@ -54,6 +55,7 @@ class OrderRepositoryImpl @Inject constructor(
     override suspend fun getOrderById(orderId: String): Order {
 
         try {
+            Logger.d("get order by Id : $orderId")
             val response = orderAPI.getOrderById(orderId, authToken)
             if (response.isSuccessful) {
                 return response.body()!!

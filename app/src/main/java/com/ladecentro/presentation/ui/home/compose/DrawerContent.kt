@@ -47,12 +47,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ladecentro.R.drawable
+import com.ladecentro.common.Constants.MY_FAVOURITES
 import com.ladecentro.common.Intents
 import com.ladecentro.common.bounceClick
 import com.ladecentro.presentation.common.SimpleAlertDialog
 import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.ui.address.addresses.AddressesActivity
+import com.ladecentro.presentation.ui.favourite.FavouriteActivity
 import com.ladecentro.presentation.ui.home.HomeViewModel
 import com.ladecentro.presentation.ui.order.orders.MyOrdersActivity
 import com.ladecentro.presentation.ui.profile.ProfileActivity
@@ -263,7 +265,14 @@ fun DrawerContent(
                     )
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(14.dp)
+                        modifier = Modifier
+                            .padding(14.dp)
+                            .bounceClick {
+                                context.startActivity(
+                                    Intent(context, FavouriteActivity::class.java
+                                    ).putExtra(Intents.TYPE_FAV.name, MY_FAVOURITES)
+                                )
+                            }
                     ) {
                         Image(
                             painter = painterResource(id = drawable.bag),

@@ -357,21 +357,3 @@ fun Quote.toPriceBreakup(): List<PriceBreakUp> {
             )
         }
 }
-
-//fun CartQuote.toPriceBreakup(): List<PriceBreakUp> {
-//
-//    if (breakup == null) {
-//        return listOf()
-//    }
-//    return breakup.groupBy { br -> br.titleType }
-//        .mapValues { br ->
-//            br.value.map { it.price.value.toDouble() }.sumOf { it }.toString()
-//        }
-//        .map {
-//            PriceBreakUp(
-//                name = it.key,
-//                mrp = "",
-//                price = it.value
-//            )
-//        }
-//}

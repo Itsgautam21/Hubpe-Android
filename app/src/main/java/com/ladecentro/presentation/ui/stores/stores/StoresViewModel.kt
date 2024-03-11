@@ -16,8 +16,10 @@ import com.ladecentro.data.remote.dto.SearchDto
 import com.ladecentro.data.remote.dto.SearchRequest
 import com.ladecentro.data.remote.dto.Store
 import com.ladecentro.domain.model.LocationRequest
+import com.ladecentro.domain.model.ProfileRequest
 import com.ladecentro.domain.use_case.GetSearchUseCase
 import com.ladecentro.domain.use_case.GetStoreSearchPagingUseCase
+import com.ladecentro.domain.use_case.GetUpdateProfileUseCase
 import com.ladecentro.presentation.common.UIStates
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,6 +33,7 @@ class StoresViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val searchUseCase: GetSearchUseCase,
     private val myPreference: MyPreference,
+    private val getUpdateProfileUseCase: GetUpdateProfileUseCase,
     private val storeSearchPagingUseCase: GetStoreSearchPagingUseCase
 ) :
     ViewModel() {
@@ -40,6 +43,9 @@ class StoresViewModel @Inject constructor(
 
     private var _storeState by mutableStateOf(UIStates<SearchDto>())
     val storeState: UIStates<SearchDto> get() = _storeState
+
+    private var _favourite by mutableStateOf(false)
+    val favourite get() = _favourite
 
     private val _nonPromotedStores: MutableStateFlow<PagingData<Store>> =
         MutableStateFlow(PagingData.empty())
@@ -89,6 +95,29 @@ class StoresViewModel @Inject constructor(
                     is Loading -> UIStates(isLoading = true)
                     is Success -> UIStates(content = it.data)
                     is Error -> UIStates(error = it.message)
+                }
+            }
+        }
+    }
+
+    fun saveFavourites(storeId: String) {
+
+        _favourite = !favourite
+        viewModelScope.launch {
+            val request = ProfileRequest(
+                type = listOf("FAVOURITES"),
+                operation = if (favourite) "ADD" else "REMOVE",
+                favourites = listOf(storeId)
+            )
+            getUpdateProfileUseCase(request).collectLatest {
+                when (it) {
+                    is Error -> {}
+                    is Loading -> {}
+                    is Success -> {
+                        it.data?.let { profile ->
+                            myPreference.setProfileToLocal(profile)
+                        }
+                    }
                 }
             }
         }

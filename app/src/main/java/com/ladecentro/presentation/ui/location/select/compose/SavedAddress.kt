@@ -95,7 +95,7 @@ fun SampleSavedAddress(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = location.descriptor.longDesc,
+                    text = location.descriptor.longDesc ?: "",
                     fontSize = 12.sp,
                     fontFamily = fontFamilyHind,
                     fontWeight = FontWeight.SemiBold,

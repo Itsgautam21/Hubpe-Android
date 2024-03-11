@@ -1,8 +1,9 @@
-package com.ladecentro.presentation.ui.stores.product
+package com.ladecentro.presentation.ui.stores.search
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,7 +24,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ProductsViewModel @Inject constructor(
+class ProductSearchViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val myPreference: MyPreference,
     private val getProductSearchPagingUseCase: GetProductSearchPagingUseCase,
@@ -32,13 +33,12 @@ class ProductsViewModel @Inject constructor(
     private var _cartState by mutableStateOf(UIStates<CartDto?>())
     val cartState: UIStates<CartDto?> get() = _cartState
 
-    val storeId: String = savedStateHandle[Intents.STORE_ID.name] ?: ""
-    val category: String = savedStateHandle[Intents.CATEGORY_NAME.name] ?: ""
-    val storeName: String = savedStateHandle[Intents.STORE_NAME.name] ?: ""
-
     private val _productSearch: MutableStateFlow<PagingData<Product>> =
         MutableStateFlow(PagingData.empty())
     val productSearch = _productSearch.asStateFlow()
+
+    var searchText by mutableStateOf("")
+    val storeId: String = savedStateHandle[Intents.STORE_ID.name] ?: ""
 
     init {
         getCartFromLocal()
@@ -48,16 +48,20 @@ class ProductsViewModel @Inject constructor(
     private fun getProductByCategory() {
 
         viewModelScope.launch {
-            val search = SearchRequest(
-                category = listOf(category),
-                size = 20,
-                expectedEntity = "product",
-                storeId = storeId
-            )
-            getProductSearchPagingUseCase(search).cachedIn(viewModelScope)
-                .collectLatest {
-                    _productSearch.emit(it)
+            snapshotFlow { searchText }.collectLatest { text ->
+                if (text.length > 2) {
+                    val search = SearchRequest(
+                        term = text,
+                        size = 20,
+                        expectedEntity = "product",
+                        storeId = storeId
+                    )
+                    getProductSearchPagingUseCase(search).cachedIn(viewModelScope)
+                        .collectLatest {
+                            _productSearch.emit(it)
+                        }
                 }
+            }
         }
     }
 

@@ -16,6 +16,11 @@ import java.util.Objects
 
 interface CartAPI {
 
+    @GET("/v1/carts")
+    suspend fun getAllCarts(
+        @Header(Constants.Authorization) token: String?
+    ): Response<List<CartDto>>
+
     @POST("/v1/cart")
     suspend fun createCart(
         @Header(Constants.Authorization) token: String?,

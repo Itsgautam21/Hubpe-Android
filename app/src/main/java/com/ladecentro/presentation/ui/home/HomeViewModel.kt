@@ -45,13 +45,14 @@ class HomeViewModel @Inject constructor(
     private var _locationAddress: LocationRequest? by mutableStateOf(myPreference.getLocationFromLocal())
     val locationAddress: LocationRequest? get() = _locationAddress
 
-    private var localProfile = myPreference.getProfileFromLocal()
-
+    var localProfile by mutableStateOf(myPreference.getProfileFromLocal())
     var openBottomSheet by mutableStateOf(false)
 
     init {
         userProfile()
     }
+
+    fun getProfileFromLocal() { localProfile = myPreference.getProfileFromLocal() }
 
     private fun userProfile() {
 

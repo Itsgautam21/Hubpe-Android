@@ -77,7 +77,7 @@ fun TopAppBarSearch(
         colors = TopAppBarDefaults.topAppBarColors(containerColor = color),
         title = {
             Column {
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 SearchMainCompose(value, placeHolder, isFocus, searchAction, changeValue, textValue)
             }
         }

@@ -1,6 +1,7 @@
 package com.ladecentro.presentation.ui.stores.details.compose
 
 import android.app.Activity
+import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -23,6 +24,9 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons.Rounded
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -45,6 +49,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ladecentro.R.drawable
+import com.ladecentro.common.Intents
 import com.ladecentro.data.remote.dto.Store
 import com.ladecentro.presentation.common.LoadImage
 import com.ladecentro.presentation.common.SearchCompose
@@ -54,9 +59,10 @@ import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.fontFamilyHindBold
 import com.ladecentro.presentation.theme.light_orange
 import com.ladecentro.presentation.theme.light_text
+import com.ladecentro.presentation.ui.stores.search.ProductSearchActivity
 
 @Composable
-fun StoreTopCompose(store: Store) {
+fun StoreTopCompose(store: Store, fav: Boolean, onFavClick: () -> Unit) {
 
     Surface(color = light_orange) {
         Column(
@@ -65,7 +71,7 @@ fun StoreTopCompose(store: Store) {
         ) {
             TopBarStore(
                 image = store.descriptor.images.getOrNull(0),
-                storeName = store.descriptor.name
+                storeName = store.descriptor.name, fav, onFavClick
             )
             Surface(
                 color = Companion.White,
@@ -105,12 +111,11 @@ fun StoreTopCompose(store: Store) {
 }
 
 @Composable
-fun TopBarStore(image: String?, storeName: String) {
+fun TopBarStore(image: String?, storeName: String, fav: Boolean, onFavClick: () -> Unit) {
 
     val context = LocalContext.current as Activity
 
     Row(
-
         verticalAlignment = Alignment.Top,
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -152,13 +157,14 @@ fun TopBarStore(image: String?, storeName: String) {
             )
         }
         IconButton(
-            onClick = { },
+            onClick = onFavClick,
             colors = IconButtonDefaults.iconButtonColors(containerColor = Companion.White)
         ) {
-            Image(
-                painter = painterResource(id = drawable.icons8_heart),
+            Icon(
+                imageVector = if (fav) Rounded.Favorite else Rounded.FavoriteBorder,
                 contentDescription = "Heart",
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(20.dp),
+                tint = if (fav) Companion.Red else Companion.Gray,
             )
         }
     }
@@ -195,7 +201,9 @@ fun SampleStoreInfo(imageId: Int, text: String, value: String) {
 }
 
 @Composable
-fun SearchStoreCompose(storeName: String) {
+fun SearchStoreCompose(storeName: String, storeId: String) {
+
+    val context = LocalContext.current
 
     Box(
         modifier = Modifier
@@ -208,7 +216,12 @@ fun SearchStoreCompose(storeName: String) {
             height = 48.dp,
             borderStroke = BorderStroke(1.dp, card_border)
         ) {
-
+            context.startActivity(
+                Intent(context, ProductSearchActivity::class.java)
+                    .putExtra(
+                        Intents.STORE_ID.name, storeId
+                    )
+            )
         }
         Spacer(modifier = Modifier.height(8.dp))
     }

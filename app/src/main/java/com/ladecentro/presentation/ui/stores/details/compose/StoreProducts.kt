@@ -1,5 +1,6 @@
 package com.ladecentro.presentation.ui.stores.details.compose
 
+import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -26,13 +27,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ladecentro.common.Intents
+import com.ladecentro.common.bounceClick
 import com.ladecentro.data.remote.dto.Category
 import com.ladecentro.domain.model.ItemDetails
 import com.ladecentro.presentation.common.LoadImage
@@ -42,6 +47,7 @@ import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.fontFamilyHindBold
 import com.ladecentro.presentation.theme.primary_orange
 import com.ladecentro.presentation.ui.stores.details.StoreViewModel
+import com.ladecentro.presentation.ui.stores.product.ProductsActivity
 
 @Composable
 fun SampleGeneralProduct(
@@ -169,7 +175,9 @@ fun SampleGeneralProduct(
 }
 
 @Composable
-fun StoreProducts(category: Category, vm: StoreViewModel = hiltViewModel()) {
+fun StoreProducts(category: Category, storeId: String, storeName: String, vm: StoreViewModel = hiltViewModel()) {
+
+    val context = LocalContext.current
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -187,7 +195,16 @@ fun StoreProducts(category: Category, vm: StoreViewModel = hiltViewModel()) {
             fontSize = 12.sp,
             color = primary_orange,
             fontFamily = fontFamilyHindBold,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
+            textDecoration = TextDecoration.Underline,
+            modifier = Modifier.bounceClick {
+                context.startActivity(
+                    Intent(context, ProductsActivity::class.java)
+                        .putExtra(Intents.STORE_ID.name, storeId)
+                        .putExtra(Intents.CATEGORY_NAME.name, category.name)
+                        .putExtra(Intents.STORE_NAME.name, storeName)
+                )
+            }
         )
     }
     vm.products.content?.let { products ->

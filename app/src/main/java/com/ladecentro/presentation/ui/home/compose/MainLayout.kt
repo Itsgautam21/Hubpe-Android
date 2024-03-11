@@ -33,6 +33,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ladecentro.data.remote.dto.toFavouriteStore
 import com.ladecentro.presentation.theme.darkBlue
 import com.ladecentro.presentation.ui.authentication.login.LoginActivity
 import com.ladecentro.presentation.ui.home.HomeViewModel
@@ -93,7 +94,7 @@ fun MainLayout(vm: HomeViewModel = hiltViewModel()) {
                             .verticalScroll(rememberScrollState())
                     ) {
                         Column(modifier = Modifier.padding(vertical = 20.dp)) {
-                            YourFavourite()
+                            YourFavourite(vm.localProfile!!.favourites.map { fav -> fav.toFavouriteStore() })
                             Spotlight()
                             ShopCategory()
                             FooterCompose()

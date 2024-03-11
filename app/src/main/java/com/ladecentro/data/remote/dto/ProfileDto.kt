@@ -1,6 +1,7 @@
 package com.ladecentro.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
+import com.ladecentro.domain.model.FavouriteStore
 import com.ladecentro.domain.model.LocationRequest
 import java.io.Serializable
 
@@ -14,12 +15,14 @@ data class Location(
     @SerializedName("city") val city: City,
     @SerializedName("country") val country: Country,
     @SerializedName("selected") val selected: Boolean = false
-): Serializable
+) : Serializable
 
 data class Descriptor(
     @SerializedName("name") val name: String,
-    @SerializedName("long_desc") val longDesc: String
-): Serializable
+    @SerializedName("images") val images: List<String>?,
+    @SerializedName("short_desc") val shortDesc: String?,
+    @SerializedName("long_desc") val longDesc: String?,
+) : Serializable
 
 data class Address(
     @SerializedName("name") val name: String,
@@ -29,16 +32,16 @@ data class Address(
     @SerializedName("state") val state: String,
     @SerializedName("country") val country: String,
     @SerializedName("area_code") val areaCode: String
-): Serializable
+) : Serializable
 
 data class City(
     @SerializedName("name") val name: String
-): Serializable
+) : Serializable
 
 data class Country(
     @SerializedName("name") val name: String,
     @SerializedName("code") val code: String
-): Serializable
+) : Serializable
 
 data class Favourite(
     @SerializedName("id") val id: String,
@@ -79,28 +82,6 @@ data class Fulfillment(
     @SerializedName("delivery-time") val deliveryTime: String
 )
 
-data class History(
-    @SerializedName("id") val id: String,
-    @SerializedName("type") val type: String,
-    @SerializedName("phone_number") val phoneNumber: String,
-    @SerializedName("email") val email: String,
-    @SerializedName("returnable") val returnable: Boolean,
-    @SerializedName("cancellable") val cancellable: Boolean,
-    @SerializedName("bpp_details") val bppDetails: BppDetails,
-    @SerializedName("preferred_inventory") val preferredInventory: String,
-    @SerializedName("descriptor") val descriptor: Descriptor,
-    @SerializedName("category_id") val categoryId: String,
-    @SerializedName("sector") val sector: Sector,
-    @SerializedName("fulfillments") val fulfillments: List<Fulfillment>,
-    @SerializedName("locations") val locations: List<Location>,
-    @SerializedName("is_promoted") val isPromoted: Boolean,
-    @SerializedName("promoted_value") val promotedValue: Int,
-    @SerializedName("home_images") val homeImages: List<String>,
-    @SerializedName("promo_products") val promoProducts: List<String>,
-    @SerializedName("rating") val rating: Double,
-    @SerializedName("review_count") val reviewCount: Int
-)
-
 data class ProfileDto(
     @SerializedName("id") val id: String,
     @SerializedName("token") val token: String,
@@ -108,7 +89,7 @@ data class ProfileDto(
     @SerializedName("phone") val phone: String,
     @SerializedName("locations") val locations: List<Location>,
     @SerializedName("favourites") val favourites: List<Favourite>,
-    @SerializedName("history") val history: List<History>
+    @SerializedName("history") val history: List<Favourite>
 )
 
 fun Location.mapToLocationRequest(): LocationRequest {
@@ -120,7 +101,10 @@ fun Location.mapToLocationRequest(): LocationRequest {
         mobileNumber = mobileNumber,
         primary = primary,
         gps = changeGps,
-        descriptor = com.ladecentro.domain.model.Descriptor(name = descriptor.name, longDesc = descriptor.longDesc),
+        descriptor = com.ladecentro.domain.model.Descriptor(
+            name = descriptor.name,
+            longDesc = descriptor.longDesc
+        ),
         address = com.ladecentro.domain.model.Address(
             name = address.name,
             building = address.building,
@@ -134,3 +118,12 @@ fun Location.mapToLocationRequest(): LocationRequest {
         country = com.ladecentro.domain.model.Country(name = country.name, code = country.code)
     )
 }
+
+fun Favourite.toFavouriteStore() =
+    FavouriteStore(
+        id = id,
+        name = descriptor.name,
+        image = descriptor.images?.getOrNull(0),
+        shortAddress = locations.getOrNull(0)?.descriptor?.shortDesc ?: "",
+        deliveryTime = fulfillments.getOrNull(0)?.turnAroundTime ?: ""
+    )

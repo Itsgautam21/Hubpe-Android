@@ -109,8 +109,5 @@ class AddAddressViewModel @Inject constructor(
         }
     }
 
-    fun setProfileToLocal(profileDto: ProfileDto) {
-
-        myPreference.setProfileToLocal(profileDto)
-    }
+    fun setProfileToLocal(profileDto: ProfileDto) = myPreference.setProfileToLocal(profileDto)
 }

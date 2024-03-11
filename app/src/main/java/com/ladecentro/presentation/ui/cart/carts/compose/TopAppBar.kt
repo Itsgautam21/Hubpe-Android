@@ -1,10 +1,9 @@
 package com.ladecentro.presentation.ui.cart.carts.compose
 
 import android.app.Activity
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -19,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ladecentro.common.bounceClick
 import com.ladecentro.presentation.theme.doppio_one
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.primary_orange
@@ -26,14 +26,14 @@ import com.ladecentro.presentation.theme.primary_orange
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun TopAppBarCart() {
+fun TopAppBarCart(onButtonClick: () -> Unit) {
 
     val context = LocalContext.current as Activity
 
     Surface(shadowElevation = 4.dp) {
 
         TopAppBar(
-            colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White),
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White),
             title = {
                 Text(
                     text = "All Carts",
@@ -49,9 +49,7 @@ fun TopAppBarCart() {
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(end = 12.dp)
-                        .clickable {
-
-                        }
+                        .bounceClick { onButtonClick() }
                 )
             },
             navigationIcon = {
@@ -62,7 +60,7 @@ fun TopAppBarCart() {
                     modifier = Modifier.padding(start = 0.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = null
                     )
                 }

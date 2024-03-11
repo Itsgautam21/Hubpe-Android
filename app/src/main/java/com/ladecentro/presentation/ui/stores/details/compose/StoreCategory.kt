@@ -66,7 +66,7 @@ fun SampleStoreCategory(category: Category, onClick: () -> Unit) {
 }
 
 @Composable
-fun StoreCategories(categories: List<Category>, storeId: String) {
+fun StoreCategories(categories: List<Category>, storeId: String, storeName: String) {
 
     val context = LocalContext.current
 
@@ -85,6 +85,7 @@ fun StoreCategories(categories: List<Category>, storeId: String) {
                         Intent(context, ProductsActivity::class.java)
                             .putExtra(Intents.STORE_ID.name, storeId)
                             .putExtra(Intents.CATEGORY_NAME.name, it.name)
+                            .putExtra(Intents.STORE_NAME.name, storeName)
                     )
                 }
             }

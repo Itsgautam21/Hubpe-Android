@@ -6,7 +6,9 @@ import java.util.Objects
 
 interface CartRepository {
 
-    suspend fun createCart(cartDto: CartDto): CartResponse
+    suspend fun getAllCarts(): List<CartDto>
+
+    suspend fun createCart(cartDto: CartDto, checkout: Boolean? = null, cartId: String? = null): CartResponse
 
     suspend fun getCart(cartId: String): CartDto?
 

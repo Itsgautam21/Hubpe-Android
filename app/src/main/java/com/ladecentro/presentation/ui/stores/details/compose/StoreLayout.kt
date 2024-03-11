@@ -71,20 +71,22 @@ fun StoreLayout(vm: StoreViewModel = hiltViewModel()) {
                     LazyColumn(modifier = Modifier.fillMaxSize()) {
                         store.categories?.let { categories ->
                             item {
-                                StoreTopCompose(store)
+                                StoreTopCompose(store, vm.favourite) {
+                                    vm.saveFavourites()
+                                }
                             }
                             stickyHeader {
-                                SearchStoreCompose(store.descriptor.name)
+                                SearchStoreCompose(store.descriptor.name, store.id)
                             }
                             item {
                                 BannerPager(store = store)
                                 Spacer(modifier = Modifier.height(12.dp))
                             }
                             item {
-                                StoreCategories(categories, store.id)
+                                StoreCategories(categories, store.id, store.descriptor.name)
                             }
                             items(categories) { category ->
-                                StoreProducts(category)
+                                StoreProducts(category, store.id, store.descriptor.name)
                             }
                             item {
                                 Spacer(modifier = Modifier.height(100.dp))
@@ -117,11 +119,8 @@ fun StoreLayout(vm: StoreViewModel = hiltViewModel()) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == ON_START) {
                 vm.getCartFromLocal()?.let { cart ->
-                    cart.items.forEach {
-                        val item = it.toProductDetail()
-                        vm.updateQuantityForItem(item, item.quantity)
-                    }
-                }
+                    vm.updateQuantityForItem(cart.items.map { it.toProductDetail() })
+                } ?: vm.updateQuantityForItem(listOf())
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)

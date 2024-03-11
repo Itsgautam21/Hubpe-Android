@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,6 +18,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons.Rounded
 import androidx.compose.material.icons.rounded.DateRange
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.Card
@@ -50,7 +53,7 @@ import com.ladecentro.presentation.theme.light_gray
 import com.ladecentro.presentation.ui.stores.details.StoreActivity
 
 @Composable
-fun SampleStores(store: Store) {
+fun SampleStores(store: Store, fav: Boolean, onFavIconClick: () -> Unit) {
 
     val context = LocalContext.current
 
@@ -78,7 +81,7 @@ fun SampleStores(store: Store) {
                     color = Color.White
                 ) {
                     LoadImage(
-                        image = store.descriptor.images?.get(0) ?: "",
+                        image = store.descriptor.images.getOrNull(0),
                         modifier = Modifier.size(72.dp)
                     )
                 }
@@ -205,10 +208,10 @@ fun SampleStores(store: Store) {
                     }
                 }
                 Icon(
-                    painter = painterResource(id = drawable.icons8_heart),
-                    contentDescription = "forward arrow",
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(24.dp)
+                    imageVector = if (fav) Rounded.Favorite else Rounded.FavoriteBorder,
+                    contentDescription = "Heart",
+                    modifier = Modifier.size(20.dp).clickable { onFavIconClick() },
+                    tint = if (fav) Companion.Red else Companion.Gray,
                 )
             }
             if (!store.promoProducts.isNullOrEmpty()) {

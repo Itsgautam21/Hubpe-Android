@@ -18,9 +18,11 @@ import com.ladecentro.data.remote.dto.SearchRequest
 import com.ladecentro.data.remote.dto.Store
 import com.ladecentro.data.remote.dto.toProductDetail
 import com.ladecentro.domain.model.ItemDetails
+import com.ladecentro.domain.model.ProfileRequest
 import com.ladecentro.domain.use_case.DeleteCartByIdUseCase
 import com.ladecentro.domain.use_case.GetSearchUseCase
 import com.ladecentro.domain.use_case.GetStoreUseCase
+import com.ladecentro.domain.use_case.GetUpdateProfileUseCase
 import com.ladecentro.presentation.common.UIStates
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -31,11 +33,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StoreViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val storeUseCase: GetStoreUseCase,
     private val searchUseCase: GetSearchUseCase,
     private val myPreference: MyPreference,
-    savedStateHandle: SavedStateHandle,
-    private val deleteCartByIdUseCase: DeleteCartByIdUseCase
+    private val deleteCartByIdUseCase: DeleteCartByIdUseCase,
+    private val getUpdateProfileUseCase: GetUpdateProfileUseCase
 ) : ViewModel() {
 
     private var _store by mutableStateOf(UIStates<Store>())
@@ -50,15 +53,18 @@ class StoreViewModel @Inject constructor(
     private var _cartState by mutableStateOf(UIStates<CartDto?>())
     val cartState: UIStates<CartDto?> get() = _cartState
 
-    private var _deleteCart by mutableStateOf(UIStates<Any>())
-    val deleteCart: UIStates<Any> get() = _deleteCart
+    private var _favourite by mutableStateOf(false)
+    val favourite get() = _favourite
 
+    private var _deleteCart by mutableStateOf(UIStates<Any>())
     val storeId: String = savedStateHandle[Intents.STORE_ID.name] ?: ""
 
     init {
-        getCartFromLocal()
         getStores()
+        getCartFromLocal()
         getStoreProducts()
+        saveRecentlyViewed()
+        getFavouriteFromLocal()
     }
 
     private fun getStores() {
@@ -107,6 +113,11 @@ class StoreViewModel @Inject constructor(
         return cart
     }
 
+    private fun getFavouriteFromLocal() {
+        _favourite = myPreference.getProfileFromLocal()!!.favourites.stream()
+            .anyMatch { f -> f.id == storeId }
+    }
+
     private fun deleteCartById(cartId: String) {
 
         viewModelScope.launch {
@@ -132,16 +143,20 @@ class StoreViewModel @Inject constructor(
         return 0
     }
 
-    fun updateQuantityForItem(item: ItemDetails, quantity: Int) {
+    fun updateQuantityForItem(item: List<ItemDetails>) {
+        val itemMap = item.groupBy { p -> p.id }.mapValues { p -> p.value[0] }
         _products = _products.copy(content =
-        _products.content?.map { p -> if (p.id == item.id) p.copy(quantity = quantity) else p })
+        _products.content?.map { p ->
+            if (p.id == itemMap[p.id]?.id) p.copy(
+                quantity = itemMap[p.id]?.quantity ?: 0
+            ) else p.copy(quantity = 0)
+        })
     }
 
     fun createCart(itemDetails: ItemDetails, quantity: Int) {
 
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                updateQuantityForItem(itemDetails, quantity)
                 val product = productDetail.content?.find { pd -> pd.id == itemDetails.id }!!
                 var cart = getCartFromLocal()
                 if (cart == null) {
@@ -159,6 +174,7 @@ class StoreViewModel @Inject constructor(
                         cart.items.add(product)
                     }
                 }
+                updateQuantityForItem(cart.items.map { it.toProductDetail() })
                 updateCart(cart)
             }
         }
@@ -182,5 +198,50 @@ class StoreViewModel @Inject constructor(
             }
         )
         myPreference.setCartToLocal(carts)
+    }
+
+    private fun saveRecentlyViewed() {
+
+        viewModelScope.launch {
+            val request = ProfileRequest(
+                type = listOf("HISTORY"),
+                operation = "ADD",
+                history = listOf(storeId)
+            )
+            getUpdateProfileUseCase(request).collect {
+                when (it) {
+                    is Error -> {}
+                    is Loading -> {}
+                    is Success -> {
+                        it.data?.let { profile ->
+                            myPreference.setProfileToLocal(profile)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun saveFavourites() {
+
+        _favourite = !favourite
+        viewModelScope.launch {
+            val request = ProfileRequest(
+                type = listOf("FAVOURITES"),
+                operation = if (favourite) "ADD" else "REMOVE",
+                favourites = listOf(storeId)
+            )
+            getUpdateProfileUseCase(request).collectLatest {
+                when (it) {
+                    is Error -> {}
+                    is Loading -> {}
+                    is Success -> {
+                        it.data?.let { profile ->
+                            myPreference.setProfileToLocal(profile)
+                        }
+                    }
+                }
+            }
+        }
     }
 }

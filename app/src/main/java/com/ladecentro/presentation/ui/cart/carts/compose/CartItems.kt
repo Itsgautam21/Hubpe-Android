@@ -41,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ladecentro.common.Intents
 import com.ladecentro.common.bounceClick
 import com.ladecentro.data.remote.dto.CartDto
@@ -53,12 +54,13 @@ import com.ladecentro.presentation.common.LoadImage
 import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.fontFamilyHindBold
 import com.ladecentro.presentation.theme.light_gray
+import com.ladecentro.presentation.ui.cart.carts.CartViewModel
 import com.ladecentro.presentation.ui.cart.details.CartDetailActivity
 import com.ladecentro.presentation.ui.stores.details.StoreActivity
 import com.ladecentro.presentation.ui.stores.details.compose.getItemTotal
 
 @Composable
-fun SampleCart(cartDto: CartDto) {
+fun SampleCart(cartDto: CartDto, onDeleteClick: () -> Unit) {
 
     val context = LocalContext.current
 
@@ -71,7 +73,7 @@ fun SampleCart(cartDto: CartDto) {
         border = BorderStroke(1.dp, card_border),
         elevation = CardDefaults.cardElevation(0.dp)
     ) {
-        CartsSampleStore(cartDto.store.toStoreDetail()) {
+        CartsSampleStore(cartDto.store.toStoreDetail(), onDeleteClick = onDeleteClick) {
             context.startActivity(
                 Intent(context, StoreActivity::class.java)
                     .putExtra(Intents.STORE_ID.name, cartDto.store.id)
@@ -95,7 +97,7 @@ fun SampleCart(cartDto: CartDto) {
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
-fun CartsSampleStore(store: Store, onClick: () -> Unit) {
+fun CartsSampleStore(store: Store, onDeleteClick: () -> Unit, onClick: () -> Unit) {
 
     Column(modifier = Modifier.bounceClick {
         onClick()
@@ -131,7 +133,7 @@ fun CartsSampleStore(store: Store, onClick: () -> Unit) {
                     modifier = Modifier.basicMarquee()
                 )
             }
-            IconButton(onClick = { }) {
+            IconButton(onClick = onDeleteClick) {
                 Icon(
                     imageVector = Icons.Outlined.Delete,
                     contentDescription = "delete cart",
@@ -239,14 +241,16 @@ fun CartsGrandTotal(price: String, onViewCart: () -> Unit) {
 }
 
 @Composable
-fun CartItemsList(carts: List<CartDto>) {
+fun CartItemsList(carts: List<CartDto>, vm: CartViewModel = hiltViewModel()) {
 
     LazyColumn(
         contentPadding = PaddingValues(8.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(carts.reversed()) {
-            SampleCart(it)
+            SampleCart(it) {
+                vm.deleteSingleCart(it)
+            }
         }
         item {
             Spacer(modifier = Modifier.height(100.dp))

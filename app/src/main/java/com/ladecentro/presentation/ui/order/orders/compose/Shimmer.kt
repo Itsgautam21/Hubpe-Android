@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.ladecentro.common.customShimmer
-import com.ladecentro.presentation.theme.card_background
+import com.ladecentro.presentation.theme.background
 import com.ladecentro.presentation.theme.shimmer_gray
 
 @Composable
@@ -191,7 +191,7 @@ fun ShimmerContent() {
         verticalArrangement = Arrangement.spacedBy(16.dp),
         userScrollEnabled = false,
         modifier = Modifier
-            .background(card_background)
+            .background(background)
             .height(1000.dp)
     ) {
         items(5) {

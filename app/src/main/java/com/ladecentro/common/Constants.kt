@@ -9,4 +9,6 @@ object Constants {
     const val GENERIC_ERROR_MESSAGE = "Something Went Wrong!"
     const val ERROR_TAG = ">>>> ERROR TAG"
     const val DEBUG_TAG = ">>>> DEBUG TAG"
+    const val MY_FAVOURITES = "My Favourites"
+    const val RECENTLY_VIEWED = "Recently viewed"
 }

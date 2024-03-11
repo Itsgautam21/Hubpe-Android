@@ -12,6 +12,7 @@ import com.ladecentro.data.remote.dto.VerifyOptRequest
 import com.ladecentro.data.remote.dto.VerifyOtpResponse
 import com.ladecentro.domain.model.ProfileRequest
 import com.ladecentro.domain.repository.AuthRepository
+import com.orhanobut.logger.Logger
 import java.io.IOException
 import java.util.*
 import javax.inject.Inject
@@ -84,8 +85,9 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun updateUser(request: ProfileRequest): ProfileDto {
         try {
+            Logger.i(">>>> update user $request")
             val response = authAPI.updateProfile(request, authToken)
-            Log.d("response body", response.body()?.toString() ?: "")
+            Logger.d("update response ${response.body()?.toString() ?: ""}")
             if (response.isSuccessful) {
                 return response.body()!!
             }

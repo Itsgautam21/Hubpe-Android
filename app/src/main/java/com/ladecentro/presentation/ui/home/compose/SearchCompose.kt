@@ -4,7 +4,6 @@ import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells.Fixed
@@ -25,6 +25,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -36,12 +37,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ladecentro.R.drawable
+import com.ladecentro.common.Constants.MY_FAVOURITES
+import com.ladecentro.common.Constants.RECENTLY_VIEWED
 import com.ladecentro.common.Intents
 import com.ladecentro.common.bounceClick
+import com.ladecentro.domain.model.FavouriteStore
+import com.ladecentro.presentation.common.LoadImage
 import com.ladecentro.presentation.theme.card_background
 import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.darkBlue
@@ -49,16 +54,16 @@ import com.ladecentro.presentation.theme.dark_gray
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_gray
 import com.ladecentro.presentation.theme.secondary
+import com.ladecentro.presentation.ui.favourite.FavouriteActivity
+import com.ladecentro.presentation.ui.stores.details.StoreActivity
 import com.ladecentro.presentation.ui.stores.stores.StoresActivity
 
-@Preview(showBackground = true)
 @Composable
-fun YourFavourite() {
+fun YourFavourite(favourites: List<FavouriteStore>) {
 
+    val context = LocalContext.current
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-
         Spacer(modifier = Modifier.height(0.dp))
-
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = "Your Favourite",
@@ -73,79 +78,62 @@ fun YourFavourite() {
                 fontSize = 12.sp,
                 color = secondary,
                 fontFamily = fontFamilyHind,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                textDecoration = TextDecoration.Underline,
+                modifier = Modifier.bounceClick {
+                    context.startActivity(
+                        Intent(context, FavouriteActivity::class.java).putExtra(
+                            Intents.TYPE_FAV.name, MY_FAVOURITES
+                        )
+                    )
+                }
             )
         }
-
         Spacer(modifier = Modifier.height(12.dp))
-
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Box(
-                modifier = Modifier
-                    .weight(.1f)
-                    .clip(RoundedCornerShape(16.dp))
-            ) {
-
-                Image(
-                    painter = painterResource(id = drawable.category5),
-                    contentDescription = "",
-                    modifier = Modifier.height(90.dp)
-
-                )
-            }
-            Box(
-                modifier = Modifier
-                    .weight(.1f)
-                    .clip(RoundedCornerShape(16.dp))
-            ) {
-                Image(
-                    painter = painterResource(id = drawable.category2),
-                    contentDescription = "",
-                    modifier = Modifier
-                        .height(90.dp)
-                        .width(90.dp)
-
-                )
-            }
-            Box(
-                modifier = Modifier
-                    .weight(.1f)
-                    .clip(RoundedCornerShape(16.dp))
-            ) {
-                Image(
-                    painter = painterResource(id = drawable.category3),
-                    contentDescription = "",
-                    modifier = Modifier.height(90.dp)
-
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .weight(.1f)
-                    .clip(RoundedCornerShape(16.dp))
-            ) {
-                Image(
-                    painter = painterResource(id = drawable.category4),
-                    contentDescription = "",
-                    modifier = Modifier.height(90.dp)
-
-                )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            for (index in 0..3) {
+                Surface(
+                    color = Color.White,
+                    border = BorderStroke(1.dp, card_border),
+                    shape = MaterialTheme.shapes.medium
+                ) {
+                    favourites.getOrNull(index)?.let { fav ->
+                        LoadImage(
+                            image = fav.image,
+                            modifier = Modifier
+                                .weight(1f)
+                                .size(72.dp)
+                                .bounceClick {
+                                    context.startActivity(
+                                        Intent(context, StoreActivity::class.java)
+                                            .putExtra(Intents.STORE_ID.name, fav.id)
+                                    )
+                                }
+                        )
+                    }
+                }
             }
         }
-
         Spacer(modifier = Modifier.height(30.dp))
-
         Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(10.dp))
-                .height(50.dp),
+                .height(50.dp)
+                .bounceClick {
+                    context.startActivity(
+                        Intent(
+                            context, FavouriteActivity::class.java
+                        ).putExtra(Intents.TYPE_FAV.name, RECENTLY_VIEWED)
+                    )
+                },
             elevation = CardDefaults.cardElevation(0.dp),
             colors = CardDefaults.cardColors(containerColor = card_background),
             border = BorderStroke(1.dp, card_border)
         ) {
-
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -201,7 +189,6 @@ fun YourFavourite() {
     }
 }
 
-@Preview(showBackground = true)
 @Composable
 fun Spotlight() {
 

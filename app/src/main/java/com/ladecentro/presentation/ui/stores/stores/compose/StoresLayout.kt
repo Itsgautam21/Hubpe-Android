@@ -76,7 +76,9 @@ fun StoreComposeUI(vm: StoresViewModel = hiltViewModel()) {
                 )
             }
             items(content.stores.filter { it.isPromoted }) { store ->
-                SampleStores(store)
+                SampleStores(store, vm.favourite) {
+                    //vm.saveFavourites(store.id)
+                }
                 HorizontalDashDivider()
             }
             item {
@@ -114,7 +116,9 @@ fun StoreComposeUI(vm: StoresViewModel = hiltViewModel()) {
             }
             items(nonPromotedStore.itemCount, key = { it }) { index ->
                 nonPromotedStore[index]?.let { store ->
-                    SampleStores(store)
+                    SampleStores(store, vm.favourite) {
+                        //vm.saveFavourites(store.id)
+                    }
                     HorizontalDashDivider()
                 }
             }
