@@ -21,6 +21,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -32,6 +36,7 @@ import com.ladecentro.common.Intents
 import com.ladecentro.data.remote.dto.Location
 import com.ladecentro.domain.model.DropdownMenu
 import com.ladecentro.domain.model.LocationRequest
+import com.ladecentro.presentation.common.SimpleDialog
 import com.ladecentro.presentation.common.SimpleTopAppBar
 import com.ladecentro.presentation.theme.background
 import com.ladecentro.presentation.ui.address.addresses.AddressViewModel
@@ -43,16 +48,14 @@ import com.ladecentro.presentation.ui.order.orders.compose.ShimmerContent
 fun AddressesLayout(vm: AddressViewModel = hiltViewModel()) {
 
     val context = LocalContext.current as Activity
+    var dialogState: Location? by rememberSaveable { mutableStateOf(null) }
     val activityLauncher = rememberLauncherForActivityResult(StartActivityForResult()) {
         if (it.resultCode == Activity.RESULT_OK) {
             vm.getUserProfile()
         }
     }
-
     Scaffold(
-        topBar = {
-            SimpleTopAppBar(title = "My Addresses")
-        },
+        topBar = { SimpleTopAppBar(title = "My Addresses") },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
@@ -107,7 +110,7 @@ fun AddressesLayout(vm: AddressViewModel = hiltViewModel()) {
                                 )
                             },
                             DropdownMenu("Delete", Rounded.Delete) { loc ->
-                                vm.deleteAddress(loc)
+                                dialogState = loc
                             }
                         )
                         SampleSavedAddress(location, dropdownList) {
@@ -119,6 +122,17 @@ fun AddressesLayout(vm: AddressViewModel = hiltViewModel()) {
             if (vm.userLocation.isLoading) {
                 ShimmerContent()
             }
+        }
+        dialogState?.let {
+            SimpleDialog(
+                dismissRequest = { dialogState = null },
+                negativeClick = { dialogState = null },
+                body = "Are you sure want to delete this Address?",
+                positiveClick = {
+                    vm.deleteAddress(it)
+                    dialogState = null
+                }
+            )
         }
     }
 }

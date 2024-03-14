@@ -21,7 +21,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -48,7 +47,6 @@ import com.ladecentro.presentation.ui.location.maps.MapsActivity
 import com.ladecentro.presentation.ui.location.select.LocationViewModel
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 fun SamplePlaces(placesResult: PlacesResult, vm: LocationViewModel = hiltViewModel()) {
 
     val context = LocalContext.current as Activity

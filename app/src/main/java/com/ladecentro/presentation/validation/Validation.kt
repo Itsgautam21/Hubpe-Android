@@ -2,18 +2,12 @@ package com.ladecentro.presentation.validation
 
 fun validatePhoneNumber(string: String?) : Boolean {
 
-    if (string.isNullOrEmpty() || string.length != 10) {
-        return false
-    }
-    return true
+    return !(string.isNullOrEmpty() || string.length != 10)
 }
 
 fun validateOTP(string: String?) : Boolean {
 
-    if (string.isNullOrEmpty() || string.length != 4) {
-        return false
-    }
-    return true
+    return !(string.isNullOrEmpty() || string.length != 4)
 }
 
 fun validateName(string: String?) : String? {

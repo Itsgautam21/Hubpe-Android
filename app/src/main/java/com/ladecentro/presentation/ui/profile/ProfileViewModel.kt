@@ -15,7 +15,6 @@ import com.ladecentro.common.Resource.Loading
 import com.ladecentro.common.Resource.Success
 import com.ladecentro.common.SharedPreference
 import com.ladecentro.data.remote.dto.ProfileDto
-import com.ladecentro.data.remote.dto.UpdateProfileRequest
 import com.ladecentro.domain.model.ProfileRequest
 import com.ladecentro.domain.use_case.GetUpdateProfileUseCase
 import com.ladecentro.presentation.common.UIStates
@@ -32,6 +31,7 @@ class ProfileViewModel @Inject constructor(
 
     var phoneNumber: String? = savedStateHandle[Intents.Phone.name]
     var userName: String by mutableStateOf(savedStateHandle[Intents.USER_NAME.name] ?: "")
+    var photo: String? by mutableStateOf(savedStateHandle[Intents.USER_PHOTO.name])
     var nameErrorText by mutableStateOf("")
     var isNameError by mutableStateOf(false)
 

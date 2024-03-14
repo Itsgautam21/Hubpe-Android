@@ -35,8 +35,8 @@ class HomeViewModel @Inject constructor(
     private val myPreference: MyPreference
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(UIStates<ProfileDto>())
-    val state: StateFlow<UIStates<ProfileDto>> get() = _state
+    private val _profileState = MutableStateFlow(UIStates<ProfileDto>())
+    val profileState: StateFlow<UIStates<ProfileDto>> get() = _profileState
 
     private val _location: MutableStateFlow<LocationResource> =
         MutableStateFlow(LocationResource.Loading(null))
@@ -45,35 +45,32 @@ class HomeViewModel @Inject constructor(
     private var _locationAddress: LocationRequest? by mutableStateOf(myPreference.getLocationFromLocal())
     val locationAddress: LocationRequest? get() = _locationAddress
 
-    var localProfile by mutableStateOf(myPreference.getProfileFromLocal())
     var openBottomSheet by mutableStateOf(false)
 
     init {
         userProfile()
     }
 
-    fun getProfileFromLocal() { localProfile = myPreference.getProfileFromLocal() }
-
     private fun userProfile() {
 
         viewModelScope.launch {
-            localProfile?.let {
-                _state.emit(UIStates(content = it))
+            myPreference.getProfileFromLocal()?.let {
+                _profileState.emit(UIStates(content = it))
                 return@launch
             }
             getProfileUseCase().collect {
                 when (it) {
                     is Loading -> {
-                        _state.emit(UIStates(isLoading = true))
+                        _profileState.emit(UIStates(isLoading = true))
                     }
 
                     is Success -> {
-                        _state.emit(UIStates(isLoading = false, content = it.data))
+                        _profileState.emit(UIStates(isLoading = false, content = it.data))
                         myPreference.setProfileToLocal(it.data!!)
                     }
 
                     is Error -> {
-                        _state.emit(UIStates(isLoading = false, error = it.message))
+                        _profileState.emit(UIStates(isLoading = false, error = it.message))
                     }
                 }
             }
@@ -124,10 +121,10 @@ class HomeViewModel @Inject constructor(
     }
 
     fun setUserProfileFromPreference() {
-        localProfile = myPreference.getProfileFromLocal()
+        val localProfile = myPreference.getProfileFromLocal()
         viewModelScope.launch {
             localProfile?.let {
-                _state.emit(UIStates(content = it))
+                _profileState.emit(UIStates(content = it))
             }
         }
     }

@@ -6,7 +6,6 @@ import androidx.paging.PagingData
 import com.ladecentro.common.Resource.Error
 import com.ladecentro.common.Resource.Loading
 import com.ladecentro.common.Resource.Success
-import com.ladecentro.data.paging.OrdersPagingSource
 import com.ladecentro.data.paging.ProductPagingSource
 import com.ladecentro.data.paging.StoresPagingSource
 import com.ladecentro.data.remote.dto.Product

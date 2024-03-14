@@ -1,7 +1,7 @@
 package com.ladecentro.presentation.ui.cart.details.compose
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,13 +24,14 @@ import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ladecentro.common.bounceClick
+import com.ladecentro.domain.model.LocationRequest
 import com.ladecentro.presentation.common.HorizontalDashDivider
+import com.ladecentro.presentation.theme.Typography
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.fontFamilyHindBold
 import com.ladecentro.presentation.theme.light_orange
@@ -40,7 +41,6 @@ import com.ladecentro.presentation.ui.cart.details.CartDetailViewModel
 import com.ladecentro.presentation.ui.stores.details.compose.getItemTotal
 
 @Composable
-@Preview(showBackground = true)
 fun CartFooter(vm: CartDetailViewModel = hiltViewModel()) {
 
     vm.userCart.content?.let {
@@ -73,10 +73,7 @@ fun CartFooter(vm: CartDetailViewModel = hiltViewModel()) {
             ) {
                 AnimatedVisibility(visible = !vm.userLocation.mobileNumber.isNullOrBlank()) {
                     Column {
-                        CartDelivery(
-                            name = vm.userLocation.descriptor?.name ?: "",
-                            shortAdd = vm.userLocation.descriptor?.longDesc ?: ""
-                        ) { vm.openSheet = true }
+                        CartDelivery(vm.userLocation) { vm.openSheet = true }
                         HorizontalDashDivider()
                         ViewDeliveryOptions(
                             price = getItemTotal(it),
@@ -100,57 +97,48 @@ fun CartFooter(vm: CartDetailViewModel = hiltViewModel()) {
 }
 
 @Composable
-fun CartDelivery(name: String, shortAdd: String, onChangeClick: () -> Unit) {
+fun CartDelivery(location: LocationRequest, onChangeClick: () -> Unit) {
 
-    Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
+    Row(
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.Top
+    ) {
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
-                text = "Delivery at $name",
-                fontSize = 16.sp,
-                fontFamily = fontFamilyHind,
-                fontWeight = FontWeight.ExtraBold,
-                color = MaterialTheme.colorScheme.primary,
-                style = TextStyle(
-                    platformStyle = PlatformTextStyle(
-                        includeFontPadding = true
-                    )
-                )
+                text = "Delivery at ${location.descriptor?.name}",
+                style = Typography.titleSmall.copy(fontFamily = fontFamilyHindBold)
             )
             Text(
-                text = "Change",
-                fontSize = 14.sp,
-                fontFamily = fontFamilyHind,
-                fontWeight = FontWeight.SemiBold,
-                color = primary_orange,
-                style = TextStyle(
-                    platformStyle = PlatformTextStyle(
-                        includeFontPadding = true
-                    )
-                ),
-                textDecoration = TextDecoration.Underline,
-                modifier = Modifier.clickable {
-                    onChangeClick()
-                }
+                text = location.descriptor?.longDesc ?: "",
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = Typography.bodySmall.copy(fontWeight = FontWeight.Normal)
             )
-        }
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = shortAdd,
-            fontSize = 13.sp,
-            fontFamily = fontFamilyHind,
-            fontWeight = FontWeight.Medium,
-            color = light_text,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            style = TextStyle(
-                platformStyle = PlatformTextStyle(
-                    includeFontPadding = true
+            Text(
+                text = "${location.address?.name} (${location.mobileNumber})",
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = Typography.bodySmall.copy(
+                    color = light_text,
+                    fontWeight = FontWeight.Normal
                 )
             )
+        }
+        Text(
+            text = "Change",
+            style = Typography.bodySmall.copy(color = primary_orange),
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .border(
+                    1.dp,
+                    primary_orange,
+                    RoundedCornerShape(20.dp)
+                )
+                .padding(horizontal = 12.dp, vertical = 6.dp)
+                .bounceClick { onChangeClick() }
         )
     }
 }

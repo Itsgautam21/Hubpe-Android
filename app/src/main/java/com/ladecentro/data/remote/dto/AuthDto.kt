@@ -9,5 +9,3 @@ data class VerifyOptRequest(val otp: String, val profile: Profile)
 data class VerifyOtpResponse(val token: String)
 
 data class LogoutRequest(val action: String)
-
-data class UpdateProfileRequest(val name: String, val type: List<String>)

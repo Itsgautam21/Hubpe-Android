@@ -17,6 +17,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,9 +37,9 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.ladecentro.R
+import com.ladecentro.presentation.common.SimpleDialog
 import com.ladecentro.presentation.theme.Typography
 import com.ladecentro.presentation.theme.background
-import com.ladecentro.presentation.theme.fontFamilyHindBold
 import com.ladecentro.presentation.theme.light_gray
 import com.ladecentro.presentation.theme.poppins
 import com.ladecentro.presentation.theme.primary_orange
@@ -46,10 +49,14 @@ import com.ladecentro.presentation.ui.order.orders.compose.ShimmerContent
 @Composable
 fun CartsLayout(vm: CartViewModel = hiltViewModel()) {
 
+    var dialogState by rememberSaveable { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
-            TopAppBarCart {
-                vm.deleteAllCarts()
+            TopAppBarCart(
+                enabled = vm.userCart.content?.isNotEmpty() ?: false
+            ) {
+                dialogState = true
             }
         }
     ) { padding ->
@@ -68,6 +75,17 @@ fun CartsLayout(vm: CartViewModel = hiltViewModel()) {
                 } else {
                     CartItemsList(carts)
                 }
+            }
+            if (dialogState) {
+                SimpleDialog(
+                    dismissRequest = { dialogState = false },
+                    negativeClick = { dialogState = false },
+                    body = "Are you sure want to delete all carts?",
+                    positiveClick = {
+                        vm.deleteAllCarts()
+                        dialogState = false
+                    }
+                )
             }
         }
     }
@@ -120,7 +138,11 @@ fun EmptyCartAnimation() {
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = "You have no items in your shopping cart. Browse the store and items to cart before continuing",
-            style = Typography.bodyMedium.copy(color = light_gray, fontWeight = FontWeight.Normal, lineHeight = 20.sp),
+            style = Typography.bodyMedium.copy(
+                color = light_gray,
+                fontWeight = FontWeight.Normal,
+                lineHeight = 20.sp
+            ),
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(20.dp))
@@ -137,7 +159,10 @@ fun EmptyCartAnimation() {
         ) {
             Text(
                 text = "Start Shopping",
-                style = Typography.titleMedium.copy(color = Color.White, fontWeight = FontWeight.Normal)
+                style = Typography.titleMedium.copy(
+                    color = Color.White,
+                    fontWeight = FontWeight.Normal
+                )
             )
         }
     }

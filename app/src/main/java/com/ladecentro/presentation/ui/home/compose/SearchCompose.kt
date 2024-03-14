@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -59,7 +60,7 @@ import com.ladecentro.presentation.ui.stores.details.StoreActivity
 import com.ladecentro.presentation.ui.stores.stores.StoresActivity
 
 @Composable
-fun YourFavourite(favourites: List<FavouriteStore>) {
+fun YourFavourite(favourites: List<FavouriteStore>, histories: List<FavouriteStore>) {
 
     val context = LocalContext.current
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
@@ -136,6 +137,7 @@ fun YourFavourite(favourites: List<FavouriteStore>) {
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 15.dp)
@@ -148,6 +150,26 @@ fun YourFavourite(favourites: List<FavouriteStore>) {
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.weight(1f)
                 )
+                val size = 30.dp
+                Box(modifier = Modifier) {
+                    for (index in 0..3) {
+                        val history = histories.getOrNull(index)
+                        history?.let { his ->
+                            Surface(
+                                shape = MaterialTheme.shapes.small,
+                                color = Color.White,
+                                shadowElevation = 8.dp,
+                                tonalElevation = 8.dp,
+                                modifier = Modifier.padding(start = ((size / 2) * index + 8.dp))
+                            ) {
+                                LoadImage(
+                                    image = his.image,
+                                    modifier = Modifier.height(30.dp).width(size),
+                                )
+                            }
+                        }
+                    }
+                }
                 Icon(
                     imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
                     contentDescription = ""

@@ -59,7 +59,7 @@ fun LocationPermission(vm: HomeViewModel = hiltViewModel()) {
                 }
             }
             if (event == ON_START) {
-                vm.getProfileFromLocal()
+                vm.setUserProfileFromPreference()
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)

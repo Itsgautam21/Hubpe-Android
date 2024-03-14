@@ -15,7 +15,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -72,72 +71,73 @@ fun ProductsLayout(vm: ProductsViewModel = hiltViewModel()) {
                 .padding(it)
                 .background(background)
         ) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
-                LazyColumn(
-                    modifier = Modifier
-                        .nestedScroll(scrollBehaviourTop.nestedScrollConnection)
-                        .nestedScroll(scrollBehaviour.nestedScrollConnection)
-                ) {
-                    when (productSearch.loadState.refresh) {
-                        is Loading -> {
-                            item {
-                                ShimmerContent()
-                            }
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .nestedScroll(scrollBehaviourTop.nestedScrollConnection)
+                    .nestedScroll(scrollBehaviour.nestedScrollConnection)
+            ) {
+                when (productSearch.loadState.refresh) {
+                    is Loading -> {
+                        item {
+                            ShimmerContent()
                         }
-
-                        is NotLoading -> {
-                            items(count = productSearch.itemCount, key = { d -> d }) { index ->
-                                productSearch[index]?.let { product ->
-                                    Box(
-                                        modifier = Modifier
-                                            .background(Color.White)
-                                            .padding(horizontal = 12.dp)
-                                    ) {
-                                        SampleSearchProduct(product)
-                                        HorizontalDashDivider()
-                                    }
-                                }
-                            }
-
-                            when (productSearch.loadState.append) {
-                                is Loading -> {
-                                    item {
-                                        LottieAnimation(
-                                            composition = composition,
-                                            progress = progress,
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .background(card_background)
-                                                .height(50.dp)
-                                        )
-                                    }
-                                }
-
-                                is LoadState.Error -> {}
-                                is NotLoading -> {}
-                            }
-                        }
-
-                        is LoadState.Error -> {}
                     }
-                }
-                Column {
-                    AnimatedVisibility(visible = vm.cartState.content != null) {
-                        vm.cartState.content?.let { cart ->
-                            CartCompose(
-                                price = getItemTotal(cart),
-                                itemCount = cart.items.sumOf { p -> p.quantity.selected.count }
-                                    .toString()
-                            ) {
-                                context.startActivity(
-                                    Intent(context, CartDetailActivity::class.java)
-                                        .putExtra(Intents.STORE_ID.name, vm.storeId)
-                                )
+
+                    is NotLoading -> {
+                        items(count = productSearch.itemCount, key = { d -> d }) { index ->
+                            productSearch[index]?.let { product ->
+                                Box(
+                                    modifier = Modifier
+                                        .background(Color.White)
+                                        .padding(horizontal = 12.dp)
+                                ) {
+                                    SampleSearchProduct(product)
+                                    HorizontalDashDivider()
+                                }
                             }
+                        }
+
+                        when (productSearch.loadState.append) {
+                            is Loading -> {
+                                item {
+                                    LottieAnimation(
+                                        composition = composition,
+                                        progress = progress,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .background(card_background)
+                                            .height(50.dp)
+                                    )
+                                }
+                            }
+
+                            is LoadState.Error -> {}
+                            is NotLoading -> {}
+                        }
+                    }
+
+                    is LoadState.Error -> {}
+                }
+            }
+            Column {
+                AnimatedVisibility(visible = vm.cartState.content != null) {
+                    vm.cartState.content?.let { cart ->
+                        CartCompose(
+                            price = getItemTotal(cart),
+                            itemCount = cart.items.sumOf { p -> p.quantity.selected.count }
+                                .toString()
+                        ) {
+                            context.startActivity(
+                                Intent(context, CartDetailActivity::class.java)
+                                    .putExtra(Intents.STORE_ID.name, vm.storeId)
+                            )
                         }
                     }
                 }
             }
+
         }
     }
 }

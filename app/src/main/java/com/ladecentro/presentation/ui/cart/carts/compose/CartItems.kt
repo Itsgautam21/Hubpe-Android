@@ -32,6 +32,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,6 +55,7 @@ import com.ladecentro.domain.model.ItemDetails
 import com.ladecentro.domain.model.Store
 import com.ladecentro.presentation.common.HorizontalDashDivider
 import com.ladecentro.presentation.common.LoadImage
+import com.ladecentro.presentation.common.SimpleDialog
 import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.fontFamilyHindBold
 import com.ladecentro.presentation.theme.light_gray
@@ -243,17 +248,27 @@ fun CartsGrandTotal(price: String, onViewCart: () -> Unit) {
 @Composable
 fun CartItemsList(carts: List<CartDto>, vm: CartViewModel = hiltViewModel()) {
 
+    var dialogState: CartDto? by rememberSaveable { mutableStateOf(null) }
     LazyColumn(
         contentPadding = PaddingValues(8.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(carts.reversed()) {
-            SampleCart(it) {
-                vm.deleteSingleCart(it)
-            }
+            SampleCart(it) { dialogState = it }
         }
         item {
             Spacer(modifier = Modifier.height(100.dp))
         }
+    }
+    dialogState?.let {
+        SimpleDialog(
+            dismissRequest = { dialogState = null },
+            negativeClick = { dialogState = null },
+            body = "Are you sure want to delete this cart?",
+            positiveClick = {
+                vm.deleteSingleCart(it)
+                dialogState = null
+            }
+        )
     }
 }

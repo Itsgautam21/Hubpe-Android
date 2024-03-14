@@ -14,13 +14,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.Icons.AutoMirrored.Filled
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerState
@@ -50,7 +49,8 @@ import com.ladecentro.R.drawable
 import com.ladecentro.common.Constants.MY_FAVOURITES
 import com.ladecentro.common.Intents
 import com.ladecentro.common.bounceClick
-import com.ladecentro.presentation.common.SimpleAlertDialog
+import com.ladecentro.presentation.common.LoadImage
+import com.ladecentro.presentation.common.SimpleDialog
 import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.ui.address.addresses.AddressesActivity
@@ -68,11 +68,11 @@ fun DrawerContent(
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val state = vm.state.collectAsState().value
+    val state = vm.profileState.collectAsState().value
     var dialog by remember { mutableStateOf(false) }
     val result = rememberLauncherForActivityResult(StartActivityForResult()) {
         if (it.resultCode == ComponentActivity.RESULT_OK) {
-            vm.setUserProfileFromPreference()
+            //vm.setUserProfileFromPreference()
         }
     }
 
@@ -114,6 +114,7 @@ fun DrawerContent(
                                         ProfileActivity::class.java
                                     ).putExtra(Intents.USER_NAME.name, state.content?.name)
                                         .putExtra(Intents.Phone.name, state.content?.phone)
+                                        .putExtra(Intents.USER_PHOTO.name, state.content?.photo)
                                 )
                             }) {
                             Card(
@@ -121,13 +122,10 @@ fun DrawerContent(
                                 elevation = CardDefaults.cardElevation(0.dp),
                                 colors = CardDefaults.cardColors(containerColor = Color.White)
                             ) {
-                                Image(
-                                    painter = painterResource(id = drawable.default_profile),
-                                    contentScale = ContentScale.FillWidth,
-                                    contentDescription = "profile",
-                                    modifier = Modifier
-                                        .height(50.dp)
-                                        .width(50.dp)
+                                LoadImage(
+                                    image = state.content?.photo ?: "",
+                                    modifier = Modifier.size(50.dp),
+                                    contentScale = ContentScale.Crop
                                 )
                             }
                             Column(
@@ -269,7 +267,8 @@ fun DrawerContent(
                             .padding(14.dp)
                             .bounceClick {
                                 context.startActivity(
-                                    Intent(context, FavouriteActivity::class.java
+                                    Intent(
+                                        context, FavouriteActivity::class.java
                                     ).putExtra(Intents.TYPE_FAV.name, MY_FAVOURITES)
                                 )
                             }
@@ -381,12 +380,11 @@ fun DrawerContent(
         }
     }
     if (dialog) {
-        SimpleAlertDialog(
-            onDismissRequest = { dialog = false },
-            onConfirmation = { logout() },
-            dialogTitle = "Confirmation",
-            dialogText = "Are you sure want to logout?",
-            icon = Icons.Rounded.Warning
+        SimpleDialog(
+            dismissRequest = { dialog = false },
+            negativeClick = { dialog = false },
+            body = "Are you sure want to logout?",
+            positiveClick = { logout() }
         )
     }
 }

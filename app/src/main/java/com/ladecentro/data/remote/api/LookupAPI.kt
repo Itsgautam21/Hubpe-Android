@@ -1,6 +1,6 @@
 package com.ladecentro.data.remote.api
 
-import com.ladecentro.common.Constants.Authorization
+import com.ladecentro.common.Constants.AUTHORIZATION
 import com.ladecentro.data.remote.dto.SearchDto
 import com.ladecentro.data.remote.dto.Store
 import retrofit2.Response
@@ -13,7 +13,7 @@ interface LookupAPI {
 
     @GET("/v1/search")
     suspend fun search(
-        @Header(Authorization) token: String?,
+        @Header(AUTHORIZATION) token: String?,
         @Query("term") term: String?,
         @Query("location") location: String?,
         @Query("size") size: Int?,

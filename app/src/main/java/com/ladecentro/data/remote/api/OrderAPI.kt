@@ -20,25 +20,25 @@ interface OrderAPI {
     suspend fun getOrders(
         @Query("page") page: Int,
         @Query("size") size: Int,
-        @Header(Constants.Authorization) authorization: String?
+        @Header(Constants.AUTHORIZATION) authorization: String?
     ): Response<OrdersDTO>
 
     @POST("/v1/orders/{id}")
     suspend fun updateOrder(
         @Body request: UpdateOrderRequest,
         @Path("id") orderId: String,
-        @Header(Constants.Authorization) authorization: String?
+        @Header(Constants.AUTHORIZATION) authorization: String?
     ): Response<Objects>
 
     @GET("/v1/orders/{id}")
     suspend fun getOrderById(
         @Path("id") orderId: String,
-        @Header(Constants.Authorization) authorization: String?
+        @Header(Constants.AUTHORIZATION) authorization: String?
     ): Response<Order>
 
     @GET("/v1/order-track/{id}")
     suspend fun getOrderTrack(
         @Path("id") orderId: String,
-        @Header(Constants.Authorization) authorization: String?
+        @Header(Constants.AUTHORIZATION) authorization: String?
     ): Response<List<OrderStatus>>
 }

@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -110,15 +111,26 @@ fun CartDeliveryOptions(vm: CartDetailViewModel = hiltViewModel()) {
                 }
             }
             vm.userCart.error?.let {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(.5f), contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = it,
-                        style = Typography.titleMedium.copy(fontFamily = fontFamilyHindBold)
-                    )
+                if (!vm.userCart.isLoading) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(.5f),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = it,
+                            style = Typography.titleMedium.copy(fontFamily = fontFamilyHindBold)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        TextButton(onClick = { vm.createCartServer() }) {
+                            Text(
+                                text = "Try again",
+                                style = Typography.bodyLarge.copy(color = primary_orange)
+                            )
+                        }
+                    }
                 }
             }
         }

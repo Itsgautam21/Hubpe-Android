@@ -87,6 +87,7 @@ data class ProfileDto(
     @SerializedName("token") val token: String,
     @SerializedName("name") val name: String,
     @SerializedName("phone") val phone: String,
+    @SerializedName("photo") val photo: String,
     @SerializedName("locations") val locations: List<Location>,
     @SerializedName("favourites") val favourites: List<Favourite>,
     @SerializedName("history") val history: List<Favourite>

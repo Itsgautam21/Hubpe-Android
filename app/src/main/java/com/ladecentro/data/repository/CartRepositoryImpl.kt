@@ -102,9 +102,4 @@ class CartRepositoryImpl @Inject constructor(
             throw Exception(Constants.GENERIC_ERROR_MESSAGE)
         }
     }
-
-    companion object {
-
-        private const val TAG = "CartRepositoryImpl"
-    }
 }

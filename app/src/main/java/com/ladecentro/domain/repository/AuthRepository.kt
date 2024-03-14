@@ -3,7 +3,6 @@ package com.ladecentro.domain.repository
 import com.ladecentro.data.remote.dto.LogoutRequest
 import com.ladecentro.data.remote.dto.ProfileDto
 import com.ladecentro.data.remote.dto.SendOtpRequest
-import com.ladecentro.data.remote.dto.UpdateProfileRequest
 import com.ladecentro.data.remote.dto.VerifyOptRequest
 import com.ladecentro.data.remote.dto.VerifyOtpResponse
 import com.ladecentro.domain.model.ProfileRequest

@@ -71,12 +71,12 @@ fun MainLayout(vm: HomeViewModel = hiltViewModel()) {
             val scrollBehaviour = TopAppBarDefaults.pinnedScrollBehavior()
             val scrollBehaviourTop =
                 TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-            val state = vm.state.collectAsState()
+            val state = vm.profileState.collectAsState()
 
             if (state.value.isLoading) {
                 ShimmerContent()
             }
-            if (state.value.content != null) {
+            state.value.content?.let { profile ->
 
                 Scaffold(modifier = Modifier
                     .fillMaxSize()
@@ -94,7 +94,10 @@ fun MainLayout(vm: HomeViewModel = hiltViewModel()) {
                             .verticalScroll(rememberScrollState())
                     ) {
                         Column(modifier = Modifier.padding(vertical = 20.dp)) {
-                            YourFavourite(vm.localProfile!!.favourites.map { fav -> fav.toFavouriteStore() })
+                            YourFavourite(
+                                profile.favourites.map { fav -> fav.toFavouriteStore() },
+                                profile.history.map { his -> his.toFavouriteStore() }
+                            )
                             Spotlight()
                             ShopCategory()
                             FooterCompose()

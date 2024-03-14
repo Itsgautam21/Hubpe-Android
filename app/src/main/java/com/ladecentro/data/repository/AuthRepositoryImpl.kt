@@ -7,14 +7,13 @@ import com.ladecentro.data.remote.api.AuthAPI
 import com.ladecentro.data.remote.dto.LogoutRequest
 import com.ladecentro.data.remote.dto.ProfileDto
 import com.ladecentro.data.remote.dto.SendOtpRequest
-import com.ladecentro.data.remote.dto.UpdateProfileRequest
 import com.ladecentro.data.remote.dto.VerifyOptRequest
 import com.ladecentro.data.remote.dto.VerifyOtpResponse
 import com.ladecentro.domain.model.ProfileRequest
 import com.ladecentro.domain.repository.AuthRepository
 import com.orhanobut.logger.Logger
 import java.io.IOException
-import java.util.*
+import java.util.Objects
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(

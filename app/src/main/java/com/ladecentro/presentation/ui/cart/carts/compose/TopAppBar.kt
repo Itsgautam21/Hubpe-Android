@@ -9,6 +9,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -18,15 +19,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ladecentro.common.bounceClick
 import com.ladecentro.presentation.theme.doppio_one
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.primary_orange
 
-
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun TopAppBarCart(onButtonClick: () -> Unit) {
+fun TopAppBarCart(enabled: Boolean = true, onButtonClick: () -> Unit) {
 
     val context = LocalContext.current as Activity
 
@@ -41,16 +40,17 @@ fun TopAppBarCart(onButtonClick: () -> Unit) {
                 )
             },
             actions = {
-                Text(
-                    text = "Empty",
-                    fontFamily = fontFamilyHind,
-                    fontSize = 16.sp,
-                    color = primary_orange,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(end = 12.dp)
-                        .bounceClick { onButtonClick() }
-                )
+                TextButton(
+                    enabled = enabled,
+                    onClick = { onButtonClick() }) {
+                    Text(
+                        text = "Empty",
+                        fontFamily = fontFamilyHind,
+                        fontSize = 16.sp,
+                        color = primary_orange,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             },
             navigationIcon = {
                 IconButton(

@@ -21,6 +21,7 @@ import com.ladecentro.data.remote.dto.FulfillmentRequest
 import com.ladecentro.data.remote.dto.Person
 import com.ladecentro.data.remote.dto.Product
 import com.ladecentro.data.remote.dto.orders.Order
+import com.ladecentro.domain.model.Address
 import com.ladecentro.domain.model.LocationRequest
 import com.ladecentro.domain.use_case.CreateCartUseCase
 import com.ladecentro.domain.use_case.DeleteCartByIdUseCase
@@ -47,7 +48,6 @@ class CartDetailViewModel @Inject constructor(
     var deliveryOptionsSheet by mutableStateOf(false)
     var userAddress by mutableStateOf(myPreference.getProfileFromLocal()?.locations!!)
     var userLocation by mutableStateOf(myPreference.getLocationFromLocal()!!)
-    private var incrementState by mutableStateOf(false)
 
     private var _userCart: UIStates<CartDto?> by mutableStateOf(UIStates())
     val userCart: UIStates<CartDto?> get() = _userCart
@@ -63,7 +63,6 @@ class CartDetailViewModel @Inject constructor(
     init {
         _userCart = UIStates(content = getCartFromLocal())
         createCartForChangeLocation()
-        updateCartForQuantity()
     }
 
     fun getAddressFromLocal() {
@@ -96,6 +95,12 @@ class CartDetailViewModel @Inject constructor(
         }
     }
 
+    fun createCartServer() {
+        viewModelScope.launch {
+            createCart()
+        }
+    }
+
     private fun createCartForChangeLocation() {
 
         viewModelScope.launch {
@@ -117,10 +122,8 @@ class CartDetailViewModel @Inject constructor(
     private fun updateCartForQuantity() {
 
         viewModelScope.launch {
-            snapshotFlow { incrementState }.collectLatest {
-                if (userLocation.mobileNumber != null) {
-                    createCart()
-                }
+            if (userLocation.mobileNumber != null) {
+                createCart()
             }
         }
     }
@@ -143,6 +146,7 @@ class CartDetailViewModel @Inject constructor(
         try {
             val phone = userLocation.mobileNumber!!
             val name = userLocation.address?.name!!
+            // TODO ( handle 0 count products)
 //            if (userCart.content?.items?.find { item -> item.quantity.selected.count <= 0 } != null) {
 //                return null
 //            }
@@ -155,11 +159,9 @@ class CartDetailViewModel @Inject constructor(
                 fulfillment = listOf(
                     FulfillmentRequest(
                         end = FulfillmentEndRequest(
-                            location = userLocation.copy(
-                                id = null,
-                                descriptor = null,
-                                city = null,
-                                country = null
+                            location = LocationRequest(
+                                gps = userLocation.gps,
+                                address = Address(areaCode = userLocation.address?.areaCode)
                             )
                         )
                     )
@@ -209,7 +211,7 @@ class CartDetailViewModel @Inject constructor(
                 }
             )
             myPreference.setCartToLocal(carts)
-            incrementState = !incrementState
+            updateCartForQuantity()
         }
     }
 

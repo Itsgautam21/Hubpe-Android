@@ -1,14 +1,15 @@
 package com.ladecentro.presentation.ui.search.compose
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,6 +29,7 @@ import com.ladecentro.presentation.theme.light_text
 import com.ladecentro.presentation.theme.primary_orange
 import com.ladecentro.presentation.ui.search.SearchViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchTabCompose(vm: SearchViewModel = hiltViewModel()) {
 
@@ -43,7 +45,7 @@ fun SearchTabCompose(vm: SearchViewModel = hiltViewModel()) {
         containerColor = Color.White,
         indicator = {
             TabRowDefaults.PrimaryIndicator(
-                modifier = Modifier.tabIndicatorOffset(it[tabIndex]),
+                modifier = Modifier.tabIndicatorOffset(tabIndex),
                 width = 130.dp,
                 color = primary_orange,
                 shape = RoundedCornerShape(
@@ -74,15 +76,17 @@ fun SearchTabCompose(vm: SearchViewModel = hiltViewModel()) {
             }
         }
     }
-    when (tabIndex) {
-        0 -> SearchProducts(productSearch) {
-            vm.addPastSearch()
-        }
+    AnimatedContent(targetState = tabIndex, label = "animate search tabs") { index ->
+        when (index) {
+            0 -> SearchProducts(productSearch) {
+                vm.addPastSearch()
+            }
 
-        1 -> SearchStores(storeSearch) {
-            vm.addPastSearch()
-        }
+            1 -> SearchStores(storeSearch) {
+                vm.addPastSearch()
+            }
 
-        else -> {}
+            else -> {}
+        }
     }
 }

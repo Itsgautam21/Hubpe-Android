@@ -25,13 +25,13 @@ interface AuthAPI {
     @POST("/v1/logoff")
     suspend fun logout(
         @Body request: LogoutRequest,
-        @Header(Constants.Authorization) authorization: String?
+        @Header(Constants.AUTHORIZATION) authorization: String?
     ): Response<Objects>
 
     @POST("/v1/profile")
     suspend fun updateProfile(
         @Body request: ProfileRequest,
-        @Header(Constants.Authorization) authorization: String?
+        @Header(Constants.AUTHORIZATION) authorization: String?
     ): Response<ProfileDto>
 
     @GET("/v1/profile")

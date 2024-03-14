@@ -50,13 +50,12 @@ fun SearchStoreProducts(vm: ProductSearchViewModel = hiltViewModel()) {
         speed = 1f,
         restartOnPlay = false
     )
-
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+    Column(modifier = Modifier.fillMaxSize()) {
 
         if (vm.searchText.length < 3) {
             EmptySearchAnimation()
         } else {
-            LazyColumn(modifier = Modifier) {
+            LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f)) {
 
                 when (productSearch.loadState.refresh) {
                     is LoadState.Loading -> {
