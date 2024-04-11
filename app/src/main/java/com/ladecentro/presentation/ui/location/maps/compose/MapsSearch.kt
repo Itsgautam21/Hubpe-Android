@@ -1,5 +1,6 @@
 package com.ladecentro.presentation.ui.location.maps.compose
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,8 +38,10 @@ fun MapsSearch(vm: MapsViewModel = hiltViewModel()) {
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.BottomEnd
         ) {
-            if (vm.searchText.isNotBlank()) {
-                PlacesMapCompose()
+            AnimatedContent(targetState = vm.searchText.isNotBlank(), label = "Animate places ui") {
+                if (it) {
+                    PlacesMapCompose()
+                }
             }
             FloatingActionButton(
                 onClick = { vm.getUserLocation() },

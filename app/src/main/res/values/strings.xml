@@ -17,4 +17,5 @@
     <string name="title_activity_products">ProductsActivity</string>
     <string name="title_activity_product_search">ProductSearchActivity</string>
     <string name="title_activity_favourite">FavourateActivity</string>
+    <string name="title_activity_onboarding">OnboardingActivity</string>
 </resources>

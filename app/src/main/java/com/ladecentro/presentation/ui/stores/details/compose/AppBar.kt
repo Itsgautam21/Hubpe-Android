@@ -7,6 +7,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +35,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -60,6 +63,9 @@ import com.ladecentro.presentation.theme.fontFamilyHindBold
 import com.ladecentro.presentation.theme.light_orange
 import com.ladecentro.presentation.theme.light_text
 import com.ladecentro.presentation.ui.stores.search.ProductSearchActivity
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun StoreTopCompose(store: Store, fav: Boolean, onFavClick: () -> Unit) {
@@ -232,8 +238,26 @@ fun SearchStoreCompose(storeName: String, storeId: String) {
 fun BannerPager(store: Store) {
 
     store.homeImage?.let { images ->
+
         if (images.isNotEmpty()) {
+
             val pagerState = rememberPagerState(pageCount = { images.size })
+            val isDraggedState = pagerState.interactionSource.collectIsDraggedAsState()
+
+            LaunchedEffect(isDraggedState) {
+                snapshotFlow { isDraggedState.value }
+                    .collectLatest { isDragged ->
+                        if (!isDragged) {
+                            while (true) {
+                                delay(2000)
+                                coroutineScope {
+                                    pagerState.animateScrollToPage(pagerState.currentPage.inc() % pagerState.pageCount)
+                                }
+                            }
+                        }
+                    }
+            }
+
             Column {
                 HorizontalPager(
                     state = pagerState,

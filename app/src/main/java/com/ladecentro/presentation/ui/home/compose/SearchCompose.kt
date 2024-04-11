@@ -164,6 +164,8 @@ fun YourFavourite(favourites: List<FavouriteStore>, histories: List<FavouriteSto
                             ) {
                                 LoadImage(
                                     image = his.image,
+                                    contentDescription = "history store image",
+                                    contentScale = ContentScale.Inside,
                                     modifier = Modifier.height(30.dp).width(size),
                                 )
                             }

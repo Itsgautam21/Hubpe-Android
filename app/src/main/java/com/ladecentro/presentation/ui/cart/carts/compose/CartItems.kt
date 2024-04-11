@@ -41,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion
 import androidx.compose.ui.text.style.TextOverflow
@@ -56,6 +57,7 @@ import com.ladecentro.domain.model.Store
 import com.ladecentro.presentation.common.HorizontalDashDivider
 import com.ladecentro.presentation.common.LoadImage
 import com.ladecentro.presentation.common.SimpleDialog
+import com.ladecentro.presentation.theme.Typography
 import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.fontFamilyHindBold
 import com.ladecentro.presentation.theme.light_gray
@@ -84,8 +86,8 @@ fun SampleCart(cartDto: CartDto, onDeleteClick: () -> Unit) {
                     .putExtra(Intents.STORE_ID.name, cartDto.store.id)
             )
         }
-        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-            Spacer(modifier = Modifier.height(16.dp))
+        Column(modifier = Modifier.padding(horizontal = 12.dp)) {
+            Spacer(modifier = Modifier.height(12.dp))
             cartDto.items.forEach {
                 CartsSampleItem(it.toProductDetail())
             }
@@ -116,7 +118,7 @@ fun CartsSampleStore(store: Store, onDeleteClick: () -> Unit, onClick: () -> Uni
                 color = Color.White,
                 border = BorderStroke(1.dp, card_border)
             ) {
-                LoadImage(image = store.image, modifier = Modifier.size(54.dp))
+                LoadImage(image = store.image, modifier = Modifier.size(48.dp))
             }
             Column(
                 modifier = Modifier
@@ -125,14 +127,14 @@ fun CartsSampleStore(store: Store, onDeleteClick: () -> Unit, onClick: () -> Uni
             ) {
                 Text(
                     text = store.name,
-                    style = MaterialTheme.typography.titleMedium.copy(fontFamily = fontFamilyHindBold),
+                    style = Typography.titleMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = store.shortAddress ?: "",
-                    style = MaterialTheme.typography.bodySmall.copy(color = light_gray),
+                    style = Typography.bodySmall.copy(color = light_gray),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.basicMarquee()
@@ -164,31 +166,36 @@ fun CartsSampleItem(item: ItemDetails) {
         ) {
             LoadImage(
                 image = item.image,
-                modifier = Modifier.size(47.dp),
+                modifier = Modifier.size(42.dp),
                 contentScale = ContentScale.Crop
             )
         }
-        Column(
-            modifier = Modifier
-                .weight(1f)
-        ) {
+        Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = "${item.quantity} x ${item.name}",
-                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Normal),
+                buildAnnotatedString {
+                    pushStyle(
+                        Typography.bodyLarge.copy(
+                            fontWeight = FontWeight.Bold
+                        ).toSpanStyle()
+                    )
+                    append("${item.quantity}")
+                    pop()
+                    pushStyle(
+                        Typography.bodyLarge.copy(fontWeight = Companion.Medium).toSpanStyle()
+                    )
+                    append(" x ${item.name}")
+                },
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(6.dp))
             Text(
                 text = "₹${item.price}",
-                color = light_gray,
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    fontFamily = fontFamilyHindBold, color = light_gray
-                )
+                style = MaterialTheme.typography.bodyMedium
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             HorizontalDashDivider()
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }
@@ -197,13 +204,15 @@ fun CartsSampleItem(item: ItemDetails) {
 fun CartsGrandTotal(price: String, onViewCart: () -> Unit) {
 
     Row(
-        modifier = Modifier.padding(horizontal = 0.dp, vertical = 0.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(4.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
             text = "Total :",
-            style = MaterialTheme.typography.titleMedium.copy(
+            style = Typography.titleSmall.copy(
                 fontFamily = fontFamilyHindBold,
                 fontWeight = Companion.Bold
             )
@@ -211,27 +220,27 @@ fun CartsGrandTotal(price: String, onViewCart: () -> Unit) {
         Spacer(modifier = Modifier.width(4.dp))
         Text(
             text = "₹$price",
-            style = MaterialTheme.typography.titleMedium.copy(
+            style = Typography.titleSmall.copy(
                 fontFamily = fontFamilyHindBold,
                 fontWeight = Companion.Bold
             ),
             modifier = Modifier.weight(1f)
         )
         Button(
-            onClick = {
-                onViewCart()
-            },
+            onClick = onViewCart,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = Color.White
             ),
             shape = MaterialTheme.shapes.medium,
             contentPadding = PaddingValues(horizontal = 12.dp),
-            modifier = Modifier.defaultMinSize(minHeight = 32.dp)
+            modifier = Modifier
+                .defaultMinSize(minHeight = 32.dp)
+                .height(32.dp)
         ) {
             Text(
                 text = "View Cart",
-                style = MaterialTheme.typography.bodyMedium.copy(
+                style = Typography.bodyMedium.copy(
                     color = Color.White,
                     fontWeight = Companion.Normal
                 )
@@ -242,6 +251,7 @@ fun CartsGrandTotal(price: String, onViewCart: () -> Unit) {
                 modifier = Modifier.size(16.dp)
             )
         }
+        Spacer(modifier = Modifier.height(4.dp))
     }
 }
 
@@ -251,7 +261,7 @@ fun CartItemsList(carts: List<CartDto>, vm: CartViewModel = hiltViewModel()) {
     var dialogState: CartDto? by rememberSaveable { mutableStateOf(null) }
     LazyColumn(
         contentPadding = PaddingValues(8.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(carts.reversed()) {
             SampleCart(it) { dialogState = it }

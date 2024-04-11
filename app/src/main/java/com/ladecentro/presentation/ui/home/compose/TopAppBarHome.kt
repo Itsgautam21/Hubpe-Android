@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -39,10 +41,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ladecentro.R.drawable
 import com.ladecentro.common.bounceClick
 import com.ladecentro.presentation.common.SearchCompose
+import com.ladecentro.presentation.theme.Typography
 import com.ladecentro.presentation.theme.darkBlue
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_gray
 import com.ladecentro.presentation.theme.poppins
+import com.ladecentro.presentation.theme.primary_orange
 import com.ladecentro.presentation.ui.cart.carts.CartActivity
 import com.ladecentro.presentation.ui.home.HomeViewModel
 import com.ladecentro.presentation.ui.location.select.LocationActivity
@@ -68,30 +72,41 @@ fun TopAppBarHome(
                     scrolledContainerColor = Companion.White
                 ),
                 title = {
-                    vm.locationAddress?.let {
-                        SelectedLocationAppBarTitle(
-                            title = it.descriptor?.name ?: "",
-                            description = it.descriptor?.longDesc ?: ""
-                        ) {
-                            vm.getLocationFromLocal()
-                        }
-                    }
-
+                    SelectedLocationAppBarTitle(
+                        title = vm.locationAddress?.descriptor?.name ?: "Select an address",
+                        description = vm.locationAddress?.descriptor?.longDesc ?: ""
+                    ) { vm.getLocationFromLocal() }
                 },
                 scrollBehavior = scrollBehaviourTop,
                 actions = {
-                    IconButton(onClick = {
-                        context.startActivity(
-                            Intent(
-                                context,
-                                CartActivity::class.java
+                    BadgedBox(badge = {
+                        vm.cartSize.let {  size ->
+                            if (size > 0) {
+                                Badge(
+                                    modifier = Modifier.padding(end = 14.dp),
+                                    containerColor = primary_orange
+                                ) {
+                                    Text(
+                                        text = size.toString(),
+                                        style = Typography.labelMedium.copy(color = Companion.White, fontWeight = FontWeight.Bold)
+                                    )
+                                }
+                            }
+                        }
+                    }) {
+                        IconButton(onClick = {
+                            context.startActivity(
+                                Intent(
+                                    context,
+                                    CartActivity::class.java
+                                )
                             )
-                        )
-                    }, modifier = Modifier.padding(end = 8.dp)) {
-                        Image(
-                            painter = painterResource(id = drawable.bag),
-                            contentDescription = "Bag",
-                        )
+                        }, modifier = Modifier.padding(end = 8.dp)) {
+                            Image(
+                                painter = painterResource(id = drawable.bag),
+                                contentDescription = "Bag",
+                            )
+                        }
                     }
                 },
                 navigationIcon = {
@@ -170,7 +185,7 @@ fun SelectedLocationAppBarTitle(title: String, description: String, onLocationSe
                 tint = darkBlue
             )
         }
-        Spacer(modifier = Modifier.height(2.dp))
+        Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = description,
             fontFamily = fontFamilyHind,

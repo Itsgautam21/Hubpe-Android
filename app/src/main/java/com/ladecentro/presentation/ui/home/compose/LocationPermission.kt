@@ -8,6 +8,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.StartIntentSenderForResult
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -60,6 +61,7 @@ fun LocationPermission(vm: HomeViewModel = hiltViewModel()) {
             }
             if (event == ON_START) {
                 vm.setUserProfileFromPreference()
+                vm.getCartFromLocal()
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -88,11 +90,11 @@ fun LocationPermission(vm: HomeViewModel = hiltViewModel()) {
 
     if (vm.openBottomSheet) {
         ModalBottomSheet(
-            onDismissRequest = {
-                vm.openBottomSheet = false
-            },
             sheetState = sheetState,
-            containerColor = Color.White
+            containerColor = Color.White,
+            contentColor = Color.Black,
+            onDismissRequest = { vm.openBottomSheet = false },
+            properties = ModalBottomSheetDefaults.properties(shouldDismissOnBackPress = false)
         ) {
             LocationBottomSheet(
                 onEnableLocation = {

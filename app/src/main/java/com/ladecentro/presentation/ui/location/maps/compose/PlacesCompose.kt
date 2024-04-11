@@ -1,7 +1,6 @@
 package com.ladecentro.presentation.ui.location.maps.compose
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -33,7 +32,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ladecentro.R.drawable
 import com.ladecentro.domain.model.PlacesResult
-import com.ladecentro.presentation.theme.card_background
 import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_gray
@@ -45,10 +43,8 @@ fun PlacesMapCompose(vm: MapsViewModel = hiltViewModel()) {
     LazyColumn(
         contentPadding = PaddingValues(top = 0.dp, start = 14.dp, end = 14.dp, bottom = 14.dp),
         modifier = Modifier
-            .padding(top = 12.dp)
-            .background(card_background)
-            .padding(bottom = 12.dp)
             .fillMaxSize()
+            .padding(vertical = 8.dp)
             .animateContentSize()
     ) {
         items(vm.locationAutofill) {

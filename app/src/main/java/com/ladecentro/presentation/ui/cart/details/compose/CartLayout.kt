@@ -38,11 +38,14 @@ fun CartLayout(vm: CartDetailViewModel = hiltViewModel()) {
                     modifier = Modifier
                         .fillMaxSize()
                         .weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                     contentPadding = PaddingValues(8.dp)
                 ) {
                     item {
                         CartDetails()
+                    }
+                    item {
+                        CartInfo()
                     }
                     item {
                         Spacer(modifier = Modifier.height(32.dp))

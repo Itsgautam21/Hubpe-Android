@@ -25,6 +25,7 @@ data class LocationRequest(
 
 data class Descriptor(
     @SerializedName("name") val name: String? = null,
+    @SerializedName("code") val code: String? = null,
     @SerializedName("long_desc") val longDesc: String? = null
 )
 

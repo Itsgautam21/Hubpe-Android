@@ -183,7 +183,7 @@ fun DrawerContent(
                             }
                     ) {
                         Image(
-                            painter = painterResource(id = drawable.bag),
+                            painter = painterResource(id = drawable.my_orders),
                             contentDescription = "",
                             modifier = Modifier
                                 .height(30.dp)
@@ -229,7 +229,7 @@ fun DrawerContent(
                             }
                     ) {
                         Image(
-                            painter = painterResource(id = drawable.bag),
+                            painter = painterResource(id = drawable.saved_address),
                             contentDescription = "",
                             modifier = Modifier
                                 .height(30.dp)
@@ -274,7 +274,7 @@ fun DrawerContent(
                             }
                     ) {
                         Image(
-                            painter = painterResource(id = drawable.bag),
+                            painter = painterResource(id = drawable.fav_store),
                             contentDescription = "",
                             modifier = Modifier
                                 .height(30.dp)
@@ -311,7 +311,7 @@ fun DrawerContent(
                         modifier = Modifier.padding(14.dp)
                     ) {
                         Image(
-                            painter = painterResource(id = drawable.bag),
+                            painter = painterResource(id = drawable.my_rewards),
                             contentDescription = "",
                             modifier = Modifier
                                 .height(30.dp)
@@ -350,7 +350,7 @@ fun DrawerContent(
                             .clickable { dialog = true }
                     ) {
                         Image(
-                            painter = painterResource(id = drawable.bag),
+                            painter = painterResource(id = drawable.my_orders),
                             contentDescription = "",
                             modifier = Modifier
                                 .height(30.dp)

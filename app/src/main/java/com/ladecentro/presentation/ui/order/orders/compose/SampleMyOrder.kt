@@ -31,6 +31,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -51,7 +52,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.LoadState.Loading
 import androidx.paging.compose.collectAsLazyPagingItems
-import coil.compose.AsyncImage
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec.RawRes
 import com.airbnb.lottie.compose.LottieConstants
@@ -59,7 +59,7 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import com.ladecentro.R.raw.*
+import com.ladecentro.R.raw.loading
 import com.ladecentro.common.Intents
 import com.ladecentro.common.OrderStatus
 import com.ladecentro.common.bounceClick
@@ -79,6 +79,7 @@ import com.ladecentro.presentation.theme.light_gray
 import com.ladecentro.presentation.theme.primary_orange
 import com.ladecentro.presentation.ui.order.details.OrderDetailsActivity
 import com.ladecentro.presentation.ui.order.orders.OrdersViewModel
+import com.ladecentro.presentation.ui.stores.details.StoreActivity
 
 @Composable
 fun SampleMyOrder(order: Orders, vm: OrdersViewModel = hiltViewModel()) {
@@ -89,35 +90,40 @@ fun SampleMyOrder(order: Orders, vm: OrdersViewModel = hiltViewModel()) {
         elevation = CardDefaults.cardElevation(0.dp),
         border = BorderStroke(1.dp, card_border),
         shape = RoundedCornerShape(12.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .bounceClick(true) {
-                context.startActivity(
-                    Intent(context, OrderDetailsActivity::class.java).putExtra(
-                        Intents.ORDER_ID.name,
-                        order.id
-                    )
-                )
-            },
+        modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Color.White, contentColor = Color.Black),
     ) {
         Column(modifier = Modifier.background(card_background)) {
-            StoreDetails(order.store)
+            StoreDetails(order.store) {
+                context.startActivity(
+                    Intent(context, StoreActivity::class.java).putExtra(
+                        Intents.STORE_ID.name, order.store.id
+                    )
+                )
+            }
         }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .bounceClick {
+                    context.startActivity(
+                        Intent(context, OrderDetailsActivity::class.java).putExtra(
+                            Intents.ORDER_ID.name,
+                            order.id
+                        )
+                    )
+                },
         ) {
             order.items.forEach {
                 ItemDetails(it)
             }
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 HorizontalDivider(thickness = 1.dp, color = card_border)
-                Card(
-                    border = BorderStroke(1.dp, card_border), colors = CardDefaults.cardColors(
-                        contentColor = Color.Black, containerColor = Color.White
-                    )
+                Surface(
+                    shape = MaterialTheme.shapes.medium,
+                    border = BorderStroke(1.dp, card_border),
+                    color = Color.White
                 ) {
                     Text(
                         text = "Ordered ID : #${order.displayOrderId}",
@@ -146,23 +152,21 @@ fun SampleMyOrder(order: Orders, vm: OrdersViewModel = hiltViewModel()) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun StoreDetails(store: Store) {
+fun StoreDetails(store: Store, onStoreClick: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(12.dp),
+        modifier = Modifier
+            .padding(12.dp)
+            .bounceClick(onClick = onStoreClick),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Card(
-            shape = RoundedCornerShape(12.dp),
+        Surface(
+            shape = MaterialTheme.shapes.medium,
             border = BorderStroke(1.dp, card_border),
-            elevation = CardDefaults.cardElevation(0.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = Color.White,
-                contentColor = Color.Black
-            )
+            color = Color.White
         ) {
-            AsyncImage(
-                model = store.image,
+            LoadImage(
+                image = store.image,
                 contentDescription = "store logo",
                 modifier = Modifier.size(48.dp),
                 contentScale = ContentScale.Inside
@@ -178,7 +182,7 @@ fun StoreDetails(store: Store) {
                 overflow = TextOverflow.Ellipsis,
                 color = MaterialTheme.colorScheme.primary,
             )
-            Spacer(modifier = Modifier.height(2.dp))
+            Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = store.shortAddress ?: "",
                 fontWeight = FontWeight.Normal,
@@ -202,10 +206,9 @@ fun StoreDetails(store: Store) {
 fun ItemDetails(item: Item) {
     Column {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Card(
+            Surface(
                 shape = RoundedCornerShape(24.dp),
-                elevation = CardDefaults.cardElevation(0.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White)
+                color = Color.White
             ) {
                 LoadImage(
                     image = item.image,
@@ -240,7 +243,7 @@ fun PaymentsAndStatus(paymentAndStatus: PaymentAndStatus) {
                 fontFamily = fontFamilyHind,
                 color = light_gray
             )
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
                     painter = painterResource(id = paymentAndStatus.statusIcon),
@@ -265,7 +268,7 @@ fun PaymentsAndStatus(paymentAndStatus: PaymentAndStatus) {
                 fontFamily = fontFamilyHind,
                 color = light_gray
             )
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "₹${paymentAndStatus.totalPrice}",
                 fontWeight = FontWeight.Bold,

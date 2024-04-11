@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -48,6 +49,7 @@ import com.ladecentro.data.remote.dto.orders.OrderStatus
 import com.ladecentro.domain.model.OrderDetails
 import com.ladecentro.presentation.common.HorizontalDashDivider
 import com.ladecentro.presentation.theme.Montserrat
+import com.ladecentro.presentation.theme.Typography
 import com.ladecentro.presentation.theme.border_light_gray
 import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.fontFamilyHind
@@ -140,7 +142,7 @@ fun Tracking(track: OrderStatus, isCurrent: Boolean = false, isLast: Boolean = f
             Column(modifier = Modifier.padding(12.dp)) {
                 AnimatedVisibility(visible = descState) {
                     Column(
-                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
                         modifier = Modifier.offset(y = (-6).dp)
                     ) {
                         track.activities?.forEach {
@@ -152,6 +154,7 @@ fun Tracking(track: OrderStatus, isCurrent: Boolean = false, isLast: Boolean = f
                                     fontFamily = fontFamilyHind,
                                     color = light_text
                                 )
+                                Spacer(modifier = Modifier.height(4.dp))
                                 Text(
                                     text = getFormattedDateTime(it.orderTime),
                                     fontWeight = FontWeight.SemiBold,
@@ -215,7 +218,7 @@ fun OrderDeliveredStatus(order: OrderDetails, vm: OrderDetailsViewModel = hiltVi
                         fontFamily = fontFamilyHind,
                         color = MaterialTheme.colorScheme.primary
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "Delivered on ${order.lastUpdateOrderTrack}",
                         fontWeight = FontWeight.SemiBold,
@@ -245,13 +248,10 @@ fun OrderDeliveredStatus(order: OrderDetails, vm: OrderDetailsViewModel = hiltVi
 @Composable
 fun OrderCancelCompose(order: OrderDetails) {
 
-    Card(
-        colors = CardDefaults.cardColors(
-            contentColor = Color.Black,
-            containerColor = Color(0xFFFFEFEF)
-        ),
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(0.dp),
+    Surface(
+        color = Color.White,
+        shape = MaterialTheme.shapes.medium,
+        border = BorderStroke(1.dp, card_border),
         modifier = Modifier
             .fillMaxWidth()
             .animateContentSize(
@@ -261,23 +261,21 @@ fun OrderCancelCompose(order: OrderDetails) {
                 )
             )
     ) {
-        Row(modifier = Modifier.padding(20.dp)) {
-            Image(
+        Row(modifier = Modifier.padding(16.dp)) {
+            Icon(
                 painter = painterResource(id = R.drawable.order_cancel),
                 contentDescription = "Order Complete",
                 modifier = Modifier
-                    .padding(top = 4.dp)
-                    .height(16.dp)
-                    .width(16.dp)
+                    .padding(top = 3.dp)
+                    .size(16.dp),
+                tint = Color(0xFFFF5555)
             )
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(10.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = "Your Order has been Cancelled",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    fontFamily = fontFamilyHind,
-                    color = Color.Red
+                    style = Typography.titleSmall.copy(fontWeight = FontWeight.ExtraBold),
+                    color = Color(0xFFFF5555)
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(

@@ -48,20 +48,26 @@ fun OrderDetailsLayout(vm: OrderDetailsViewModel = hiltViewModel()) {
                 orderState.content?.let {
                     swipeRefreshState.isRefreshing = false
                     Column(
-                        modifier = Modifier.padding(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                        modifier = Modifier.padding(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        DeliveryDetails(it.deliveryDetails)
-                        OrderDetails(it.orderDetails, it.displayOrderId)
-                        if (it.status == OrderStatus.COMPLETED.name) {
-                            OrderDeliveredStatus(it)
-                        }
                         if (it.status == OrderStatus.CANCELLED.name) {
                             OrderCancelCompose(it)
                         }
+                        DeliveryDetails(it.deliveryDetails)
+                        OrderDetails(it.orderDetails, it.displayOrderId)
+                        CanceledItems("Cancel Item(s)", it.cancels)
+                        CanceledItems(heading = "Return Item(s)", it.returns)
+                        if (it.status == OrderStatus.COMPLETED.name) {
+                            OrderDeliveredStatus(it)
+                        }
                         OrderTrackDetails(it.lastUpdateOrderTrack)
-                        PaymentDetails(it.paymentDetails)
+                        PaymentDetails("Payment Details", it.paymentDetails)
+                        it.refunds?.forEach { refund ->
+                            PaymentDetails("Refund Details", refund)
+                        }
                         RaiseCancelReturn()
+                        CancelItemLayout(it.orderDetails)
                     }
                 }
             }

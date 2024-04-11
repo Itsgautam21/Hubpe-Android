@@ -29,7 +29,7 @@ data class Store(
     @SerializedName("locations") val locations: List<StoreLocation>,
     @SerializedName("is_promoted") val isPromoted: Boolean,
     @SerializedName("promoted_value") val promotedValue: Int?,
-    @SerializedName("rating") val rating: Double,
+    @SerializedName("rating") val rating: String?,
     @SerializedName("review_count") val reviewCount: Int,
     @SerializedName("home_images") val homeImage: List<String>?,
     @SerializedName("promo_products") val promoProducts: List<String>?,
@@ -73,6 +73,7 @@ data class StoreDescriptor(
 )
 
 data class StoreLocation(
+    @SerializedName("id") val id: String,
     @SerializedName("descriptor") val descriptor: LocationDescriptor,
     @SerializedName("primary") val primary: Boolean,
     @SerializedName("gps") val gps: String,
@@ -142,6 +143,7 @@ data class SearchRequest(
 
 fun Store.toStoreDetail(): com.ladecentro.domain.model.Store =
     com.ladecentro.domain.model.Store(
+        id = id,
         image = descriptor.images.getOrNull(index = 0),
         name = descriptor.name,
         shortAddress = locations[0].descriptor.shortDesc
@@ -157,5 +159,7 @@ fun Product.toProductDetail(): ItemDetails =
         description = descriptor.shortDesc,
         price = price.value,
         mrp = price.maximumValue,
-        categoryId = categoryId
+        categoryId = categoryId,
+        cancellable = if (cancellable) "Cancellable" else "Non-Cancellable",
+        returnable = if (returnable) "Returnable" else "Non-Returnable"
     )

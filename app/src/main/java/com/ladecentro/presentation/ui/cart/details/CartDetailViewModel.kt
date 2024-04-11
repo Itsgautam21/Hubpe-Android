@@ -20,6 +20,7 @@ import com.ladecentro.data.remote.dto.FulfillmentEndRequest
 import com.ladecentro.data.remote.dto.FulfillmentRequest
 import com.ladecentro.data.remote.dto.Person
 import com.ladecentro.data.remote.dto.Product
+import com.ladecentro.data.remote.dto.changeLatLong
 import com.ladecentro.data.remote.dto.orders.Order
 import com.ladecentro.domain.model.Address
 import com.ladecentro.domain.model.LocationRequest
@@ -160,7 +161,7 @@ class CartDetailViewModel @Inject constructor(
                     FulfillmentRequest(
                         end = FulfillmentEndRequest(
                             location = LocationRequest(
-                                gps = userLocation.gps,
+                                gps = userLocation.gps?.changeLatLong(),
                                 address = Address(areaCode = userLocation.address?.areaCode)
                             )
                         )
@@ -229,7 +230,8 @@ class CartDetailViewModel @Inject constructor(
                                 id = null,
                                 descriptor = null,
                                 city = null,
-                                country = null
+                                country = null,
+                                gps = userLocation.gps?.changeLatLong()
                             ),
                             contact = Contact(phone),
                             person = Person(name)

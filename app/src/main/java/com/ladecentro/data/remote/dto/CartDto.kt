@@ -4,8 +4,8 @@ import com.google.gson.annotations.SerializedName
 import com.ladecentro.data.remote.dto.orders.Payment
 import com.ladecentro.data.remote.dto.orders.Quote
 import com.ladecentro.domain.model.Address
+import com.ladecentro.domain.model.Descriptor
 import com.ladecentro.domain.model.LocationRequest
-import java.util.Objects
 
 data class CartDto(
     @SerializedName("id") val id: String? = null,
@@ -31,7 +31,7 @@ data class FulfillmentRequest(
     @SerializedName("@ondc/org/category") val category: String? = null,
     @SerializedName("@ondc/org/TAT") val tat: String? = null,
     @SerializedName("@ondc/org/provider_name") val providerName: String? = null,
-    @SerializedName("state") val state: Objects? = null,
+    @SerializedName("state") val state: State? = null,
     @SerializedName("end") val end: FulfillmentEndRequest? = null,
 )
 
@@ -67,4 +67,8 @@ data class CartError(
     @SerializedName("type") val type: String,
     @SerializedName("code") val code: String,
     @SerializedName("message") val message: String,
+)
+
+data class State(
+    @SerializedName("descriptor") val descriptor: Descriptor
 )

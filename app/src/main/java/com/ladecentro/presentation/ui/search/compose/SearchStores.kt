@@ -145,7 +145,7 @@ fun SampleSearchStore(store: Store) {
                                 tint = light_gray
                             )
                             Text(
-                                text = "3.7",
+                                text = store.rating ?: "",
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 11.sp,
                                 fontFamily = fontFamilyHind,
@@ -173,7 +173,7 @@ fun SampleSearchStore(store: Store) {
                                 tint = light_gray
                             )
                             Text(
-                                text = "20 min",
+                                text = store.fulfillments.getOrNull(0)?.deliveryTime ?: "",
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 11.sp,
                                 fontFamily = fontFamilyHind,

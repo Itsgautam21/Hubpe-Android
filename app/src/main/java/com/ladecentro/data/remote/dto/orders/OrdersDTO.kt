@@ -27,6 +27,7 @@ fun OrdersDTO.toOrders(): List<Orders> {
             id = order.id,
             displayOrderId = order.displayOrderId,
             store = Store(
+                id = order.store.id,
                 image = order.store.descriptor.images.getOrNull(0),
                 name = order.store.descriptor.name,
                 shortAddress = order.store.locations[0].descriptor.shortDesc

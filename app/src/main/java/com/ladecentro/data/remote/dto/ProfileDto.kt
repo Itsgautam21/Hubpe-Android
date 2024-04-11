@@ -95,13 +95,11 @@ data class ProfileDto(
 
 fun Location.mapToLocationRequest(): LocationRequest {
 
-    val array = gps.split(",")
-    val changeGps = "${array[1]},${array[0]}"
     return LocationRequest(
         id = id,
         mobileNumber = mobileNumber,
         primary = primary,
-        gps = changeGps,
+        gps = gps.changeLatLong(),
         descriptor = com.ladecentro.domain.model.Descriptor(
             name = descriptor.name,
             longDesc = descriptor.longDesc
@@ -118,6 +116,12 @@ fun Location.mapToLocationRequest(): LocationRequest {
         city = com.ladecentro.domain.model.City(name = city.name),
         country = com.ladecentro.domain.model.Country(name = country.name, code = country.code)
     )
+}
+
+fun String.changeLatLong(): String {
+
+    val array = split(",")
+    return "${array[1]},${array[0]}"
 }
 
 fun Favourite.toFavouriteStore() =

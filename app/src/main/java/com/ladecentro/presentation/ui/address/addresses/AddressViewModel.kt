@@ -33,21 +33,18 @@ class AddressViewModel @Inject constructor(
     private var _userLocation by mutableStateOf(UIStates<List<Location>>())
     val userLocation: UIStates<List<Location>> get() = _userLocation
 
-    val location: LocationRequest = gson.fromJson(
-        myPreference.getStoresTag(SharedPreference.LOCATION.name),
-        LocationRequest::class.java
-    )
-
-    private val profileData by lazy { myPreference.getProfileFromLocal() }
+    val location: LocationRequest = myPreference.getLocationFromLocal()!!
 
     init {
         getUserProfile()
     }
 
+    private fun getProfileData() = myPreference.getProfileFromLocal()
+
     fun getUserProfile() {
 
         viewModelScope.launch {
-            profileData?.let { data ->
+            getProfileData()?.let { data ->
                 _userLocation = UIStates(content = data.locations)
                 return@launch
             }

@@ -1,5 +1,6 @@
 package com.ladecentro.presentation.ui.cart.carts.compose
 
+import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -50,6 +52,7 @@ import com.ladecentro.presentation.ui.order.orders.compose.ShimmerContent
 fun CartsLayout(vm: CartViewModel = hiltViewModel()) {
 
     var dialogState by rememberSaveable { mutableStateOf(false) }
+    val context = LocalContext.current as Activity
 
     Scaffold(
         topBar = {
@@ -71,7 +74,9 @@ fun CartsLayout(vm: CartViewModel = hiltViewModel()) {
             }
             vm.userCart.content?.let { carts ->
                 if (carts.isEmpty()) {
-                    EmptyCartAnimation()
+                    EmptyCartAnimation {
+                        context.finish()
+                    }
                 } else {
                     CartItemsList(carts)
                 }
@@ -105,7 +110,7 @@ fun CartsLayout(vm: CartViewModel = hiltViewModel()) {
 }
 
 @Composable
-fun EmptyCartAnimation() {
+fun EmptyCartAnimation(onClick: () -> Unit) {
 
     val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.empty_cart))
     val progress by animateLottieCompositionAsState(
@@ -147,7 +152,7 @@ fun EmptyCartAnimation() {
         )
         Spacer(modifier = Modifier.height(20.dp))
         Button(
-            onClick = { },
+            onClick = onClick,
             colors = ButtonDefaults.buttonColors(
                 containerColor = primary_orange,
                 contentColor = Color.White

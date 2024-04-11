@@ -23,6 +23,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -34,6 +35,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -55,6 +58,7 @@ import com.ladecentro.presentation.theme.fontFamilyHindBold
 import com.ladecentro.presentation.theme.light_text
 import com.ladecentro.presentation.theme.primary_orange
 import com.ladecentro.presentation.ui.cart.details.CartDetailViewModel
+import kotlin.time.Duration
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -69,29 +73,32 @@ fun CartDeliveryOptions(vm: CartDetailViewModel = hiltViewModel()) {
             sheetState = sheetState,
             containerColor = background,
             contentColor = Color.Black,
+            properties = ModalBottomSheetDefaults.properties(shouldDismissOnBackPress = false),
             dragHandle = {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Companion.White)
-                        .padding(top = 24.dp, bottom = 12.dp, start = 16.dp, end = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Choose delivery / pickup",
-                        style = Typography.titleMedium.copy(fontFamily = fontFamilyHindBold)
-                    )
-                    Icon(
-                        painter = painterResource(id = drawable.order_cancel),
-                        contentDescription = "close dialog",
-                        tint = border_light_gray,
+                if (!vm.userOrder.isLoading) {
+                    Row(
                         modifier = Modifier
-                            .size(24.dp)
-                            .bounceClick {
-                                vm.deliveryOptionsSheet = false
-                            }
-                    )
+                            .fillMaxWidth()
+                            .background(Companion.White)
+                            .padding(top = 24.dp, bottom = 12.dp, start = 16.dp, end = 16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Choose delivery / pickup",
+                            style = Typography.titleMedium.copy(fontFamily = fontFamilyHindBold)
+                        )
+                        Icon(
+                            painter = painterResource(id = drawable.order_cancel),
+                            contentDescription = "close dialog",
+                            tint = border_light_gray,
+                            modifier = Modifier
+                                .size(24.dp)
+                                .bounceClick {
+                                    vm.deliveryOptionsSheet = false
+                                }
+                        )
+                    }
                 }
             }
         ) {
@@ -158,8 +165,10 @@ fun DeliveryOptionContent(
             }
         }
         cart.quote?.let { quote ->
+            val breakup = getQuoteBreakUp(quote, selected?.id!!)
+            val grandTotal = getTotalPriceByFulfillment(breakup)
             item {
-                PriceBreakDown(quote, selected?.id!!)
+                PriceBreakDown(breakup, grandTotal)
             }
             item {
                 Button(
@@ -175,10 +184,19 @@ fun DeliveryOptionContent(
                     )
                 ) {
                     Text(
-                        text = "Proceed to Pay ${quote.price.value}",
-                        style = Typography.titleSmall.copy(
-                            color = Companion.White
-                        )
+                        buildAnnotatedString {
+                            pushStyle(
+                                Typography.titleSmall.copy(color = Companion.White).toSpanStyle()
+                            )
+                            append("Proceed to Pay ")
+                            pushStyle(
+                                SpanStyle(
+                                    fontWeight = FontWeight.Bold,
+                                    fontFamily = fontFamilyHindBold
+                                )
+                            )
+                            append("₹${grandTotal}/-")
+                        }
                     )
                 }
             }
@@ -220,7 +238,7 @@ fun SampleDeliveryOption(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = fulfillment.tat ?: "",
+                    text = fulfillment.tat?.let { Duration.parse(it).toString() } ?: "",
                     style = Typography.titleSmall.copy(fontFamily = fontFamilyHindBold)
                 )
             }

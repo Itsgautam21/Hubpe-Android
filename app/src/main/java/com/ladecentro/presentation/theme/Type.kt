@@ -1,37 +1,32 @@
 package com.ladecentro.presentation.theme
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 val Typography = Typography(
     displayLarge = TextStyle(
-        fontFamily = FontFamily.SansSerif,
+        fontFamily = fontFamilyHind,
         fontWeight = FontWeight.ExtraBold,
         fontSize = 30.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp,
         color = darkBlue,
+        letterSpacing = 0.5.sp,
         platformStyle = PlatformTextStyle(includeFontPadding = false)
     ),
     displayMedium = TextStyle(
         fontFamily = fontFamilyHind,
         fontWeight = FontWeight.Bold,
         fontSize = 28.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp,
         color = darkBlue,
+        letterSpacing = 0.5.sp,
         platformStyle = PlatformTextStyle(includeFontPadding = false)
     ),
     displaySmall = TextStyle(
         fontFamily = fontFamilyHind,
         fontWeight = FontWeight.Bold,
         fontSize = 26.sp,
-        lineHeight = 24.sp,
         letterSpacing = 0.5.sp,
         color = darkBlue,
         platformStyle = PlatformTextStyle(includeFontPadding = false)
@@ -40,7 +35,6 @@ val Typography = Typography(
         fontFamily = fontFamilyHind,
         fontWeight = FontWeight.ExtraBold,
         fontSize = 24.sp,
-        lineHeight = 24.sp,
         letterSpacing = 0.5.sp,
         color = darkBlue,
         platformStyle = PlatformTextStyle(includeFontPadding = false)
@@ -49,7 +43,6 @@ val Typography = Typography(
         fontFamily = fontFamilyHind,
         fontWeight = FontWeight.Bold,
         fontSize = 22.sp,
-        lineHeight = 24.sp,
         letterSpacing = 0.5.sp,
         color = darkBlue,
         platformStyle = PlatformTextStyle(includeFontPadding = false)
@@ -58,8 +51,6 @@ val Typography = Typography(
         fontFamily = fontFamilyHind,
         fontWeight = FontWeight.SemiBold,
         fontSize = 20.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp,
         color = darkBlue,
         platformStyle = PlatformTextStyle(includeFontPadding = false)
     ),
@@ -67,81 +58,72 @@ val Typography = Typography(
         fontFamily = fontFamilyHind,
         fontWeight = FontWeight.Bold,
         fontSize = 18.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp,
         color = darkBlue,
+        letterSpacing = 0.5.sp,
         platformStyle = PlatformTextStyle(includeFontPadding = false)
     ),
     titleMedium = TextStyle(
         fontFamily = fontFamilyHind,
         fontWeight = FontWeight.SemiBold,
         fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp,
         color = darkBlue,
+        letterSpacing = 0.5.sp,
         platformStyle = PlatformTextStyle(includeFontPadding = false)
     ),
     titleSmall = TextStyle(
         fontFamily = fontFamilyHind,
         fontWeight = FontWeight.SemiBold,
         fontSize = 15.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp,
         color = darkBlue,
+        letterSpacing = 0.5.sp,
         platformStyle = PlatformTextStyle(includeFontPadding = false)
     ),
     bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = fontFamilyHind,
         fontWeight = FontWeight.Bold,
         fontSize = 14.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp,
         color = darkBlue,
+        letterSpacing = 0.5.sp,
         platformStyle = PlatformTextStyle(includeFontPadding = false)
     ),
     bodyMedium = TextStyle(
         fontFamily = fontFamilyHind,
         fontWeight = FontWeight.SemiBold,
         fontSize = 13.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp,
         color = darkBlue,
+        letterSpacing = 0.5.sp,
         platformStyle = PlatformTextStyle(includeFontPadding = false)
     ),
     bodySmall = TextStyle(
         fontFamily = fontFamilyHind,
         fontWeight = FontWeight.Medium,
         fontSize = 12.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp,
         color = darkBlue,
+        letterSpacing = 0.5.sp,
         platformStyle = PlatformTextStyle(includeFontPadding = false)
     ),
     labelLarge = TextStyle(
         fontFamily = fontFamilyHind,
         fontWeight = FontWeight.SemiBold,
         fontSize = 11.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp,
         color = darkBlue,
+        letterSpacing = 0.5.sp,
         platformStyle = PlatformTextStyle(includeFontPadding = false)
     ),
     labelMedium = TextStyle(
         fontFamily = fontFamilyHind,
         fontWeight = FontWeight.Medium,
         fontSize = 10.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp,
         color = darkBlue,
+        letterSpacing = 0.5.sp,
         platformStyle = PlatformTextStyle(includeFontPadding = false)
     ),
     labelSmall = TextStyle(
         fontFamily = fontFamilyHind,
         fontWeight = FontWeight.Normal,
         fontSize = 8.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp,
         color = darkBlue,
+        letterSpacing = 0.5.sp,
         platformStyle = PlatformTextStyle(includeFontPadding = false)
     )
 )

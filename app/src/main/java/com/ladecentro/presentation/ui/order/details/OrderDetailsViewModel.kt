@@ -1,5 +1,8 @@
 package com.ladecentro.presentation.ui.order.details
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -34,6 +37,8 @@ class OrderDetailsViewModel @Inject constructor(
 
     private val _orderTrack = MutableStateFlow<UIStates<List<OrderStatus>>>(UIStates())
     val orderTrack: StateFlow<UIStates<List<OrderStatus>>> get() = _orderTrack
+
+    var cancelSheet by mutableStateOf(false)
 
     init {
         getOrder()

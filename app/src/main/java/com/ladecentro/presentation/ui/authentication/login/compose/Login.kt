@@ -21,14 +21,19 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -51,7 +56,17 @@ fun Login(viewModel: LoginViewModel) {
 
     var isError by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
+    val focusRequest = remember { FocusRequester() }
 
+    LaunchedEffect(key1 = Unit) {
+        focusRequest.requestFocus()
+    }
+    LaunchedEffect(key1 = viewModel.phoneState) {
+        if (viewModel.phoneState.length == 10) {
+            focusManager.clearFocus()
+        }
+    }
     Column(modifier = Modifier.padding(20.dp)) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
@@ -81,6 +96,7 @@ fun Login(viewModel: LoginViewModel) {
 //            Spacer(modifier = Modifier.height(12.dp))
             OutlinedTextField(value = viewModel.phoneState,
                 singleLine = true,
+                modifier = Modifier.focusRequester(focusRequest),
                 leadingIcon = {
                     Icon(
                         imageVector = Rounded.Phone, contentDescription = "call icon",
@@ -110,6 +126,7 @@ fun Login(viewModel: LoginViewModel) {
                     disabledContainerColor = white,
                     unfocusedBorderColor = border_light_gray,
                     unfocusedLabelColor = light_gray,
+                    errorLabelColor = MaterialTheme.colorScheme.error
                 ),
                 textStyle = TextStyle(
                     fontSize = 16.sp, fontFamily = fontFamilyFredoka, fontWeight = FontWeight.Medium

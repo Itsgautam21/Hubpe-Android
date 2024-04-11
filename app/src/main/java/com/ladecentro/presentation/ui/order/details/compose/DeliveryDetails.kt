@@ -62,7 +62,7 @@ fun DeliveryDetails(delivery: DeliveryDetails) {
                 )
                 Surface(
                     color = primary_orange,
-                    shape = RoundedCornerShape(12.dp)
+                    shape = MaterialTheme.shapes.medium
                 ) {
                     Text(
                         text = delivery.type,
@@ -70,7 +70,7 @@ fun DeliveryDetails(delivery: DeliveryDetails) {
                         fontSize = 10.sp,
                         fontFamily = fontFamilyHind,
                         color = Color.White,
-                        modifier = Modifier.padding(horizontal = 10.dp)
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
                     )
                 }
             }
@@ -123,6 +123,7 @@ fun StoreDetails(store: Store) {
                 overflow = TextOverflow.Ellipsis,
                 color = MaterialTheme.colorScheme.primary,
             )
+            Spacer(modifier = Modifier.height(2.dp))
             Text(
                 text = store.shortAddress ?: "",
                 fontWeight = FontWeight.Normal,

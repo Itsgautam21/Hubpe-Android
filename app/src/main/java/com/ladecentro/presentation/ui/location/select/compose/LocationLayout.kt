@@ -6,10 +6,7 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.activity.result.contract.ActivityResultContracts.StartIntentSenderForResult
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -63,19 +60,14 @@ fun LocationLayout(vm: LocationViewModel = hiltViewModel()) {
                 .padding(it)
                 .background(card_background)
         ) {
-            AnimatedVisibility(
-                visible = vm.searchState.isNotEmpty(),
-                enter = fadeIn(animationSpec = tween(1000)),
-                exit = fadeOut(animationSpec = tween(1000))
-            ) {
-                PlacesUI()
-            }
-            AnimatedVisibility(
-                visible = vm.searchState.isEmpty(),
-                enter = fadeIn(animationSpec = tween(1000)),
-                exit = fadeOut(animationSpec = tween(1000))
-            ) {
-                LocationOption()
+            AnimatedContent(
+                targetState = vm.searchState.isEmpty(),
+                label = "Animated location UI"
+            ) { state ->
+                when (state) {
+                    true -> LocationOption()
+                    false -> PlacesUI()
+                }
             }
         }
     }

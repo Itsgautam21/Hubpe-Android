@@ -2,12 +2,14 @@ package com.ladecentro.data.remote.dto.orders
 
 import com.google.gson.annotations.SerializedName
 import com.ladecentro.common.getFormattedDateTime
+import com.ladecentro.common.getQuoteBreakupTitle
 import com.ladecentro.domain.model.DeliveryDetails
 import com.ladecentro.domain.model.ItemDetails
 import com.ladecentro.domain.model.OrderDetail
 import com.ladecentro.domain.model.OrderDetails
 import com.ladecentro.domain.model.PaymentDetails
 import com.ladecentro.domain.model.PriceBreakUp
+import com.ladecentro.domain.model.ReturnDetail
 
 data class Order(
     @SerializedName("id") val id: String,
@@ -23,8 +25,8 @@ data class Order(
     @SerializedName("payment") val payment: List<Payment>,
     @SerializedName("paymnet_settlement") val paymentSettlement: PaymentSettlement,
     @SerializedName("order_track") val orderTrack: OrderTrack,
-    @SerializedName("returns") val returns: List<Return>,
-    @SerializedName("cancels") val cancels: List<Cancel>,
+    @SerializedName("returns") val returns: List<Return>? = null,
+    @SerializedName("cancels") val cancels: List<Return>? = null,
     @SerializedName("rating") val rating: String,
     @SerializedName("created_at") val createdAt: String,
     @SerializedName("updated_at") val updatedAt: String
@@ -220,6 +222,7 @@ data class PaymentTransaction(
     @SerializedName("payment_methodType") val paymentMethodType: String,
     @SerializedName("ref_transaction_id") val refTransactionId: String,
     @SerializedName("amount") val amount: String,
+    @SerializedName("type") val type: String,
     @SerializedName("currency") val currency: String,
     @SerializedName("status") val status: String,
     @SerializedName("bank_rrn") val bankRrn: String,
@@ -230,7 +233,7 @@ data class PaymentTransaction(
     @SerializedName("bank_error_code") val bankErrorCode: String,
     @SerializedName("bank_error_message") val bankErrorMessage: String,
     @SerializedName("payer_vpa") val payerVpa: String,
-    @SerializedName("txnRequest_object") val txnRequestObject: String,
+    @SerializedName("txn_request_object") val txnRequestObject: String,
     @SerializedName("created_at") val createdAt: String,
     @SerializedName("updated_at") val updatedAt: String
 )
@@ -268,22 +271,7 @@ data class Return(
     @SerializedName("type") val type: String,
     @SerializedName("request_id") val requestId: String,
     @SerializedName("item_id") val itemId: String,
-    @SerializedName("quantity") val quantity: Int,
-    @SerializedName("descriptor") val descriptor: Descriptor,
-    @SerializedName("price") val price: Price,
-    @SerializedName("reason_code") val reasonCode: String,
-    @SerializedName("reason_desc") val reasonDesc: String,
-    @SerializedName("ttl_approval") val ttlApproval: String,
-    @SerializedName("ttl_reverse_qc") val ttlReverseQc: String,
-    @SerializedName("created_at") val createdAt: String,
-    @SerializedName("updated_at") val updatedAt: String
-)
-
-data class Cancel(
-    @SerializedName("type") val type: String,
-    @SerializedName("request_id") val requestId: String,
-    @SerializedName("item_id") val itemId: String,
-    @SerializedName("quantity") val quantity: Int,
+    @SerializedName("quantity") val quantity: Int? = null,
     @SerializedName("descriptor") val descriptor: Descriptor,
     @SerializedName("price") val price: Price,
     @SerializedName("reason_code") val reasonCode: String,
@@ -310,11 +298,13 @@ fun Order.toOrderDetails(): OrderDetails =
         rating = rating,
         deliveryDetails = DeliveryDetails(
             store = com.ladecentro.domain.model.Store(
+                id = store.id,
                 image = store.descriptor.images.getOrNull(index = 0),
                 name = store.descriptor.name,
                 shortAddress = store.locations[0].descriptor.shortDesc
             ),
             person = com.ladecentro.domain.model.Store(
+                id = "",
                 image = "",
                 name = billing.name,
                 shortAddress = billing.address.building
@@ -334,26 +324,55 @@ fun Order.toOrderDetails(): OrderDetails =
             },
             priceBreakUp = quote.toPriceBreakup()
         ),
-        paymentDetails = PaymentDetails(
-            date = payment[0].timestamp,
-            price = payment[0].amount,
-            mode = payment[0].paymentTransaction[0].paymentMethod ?: "COD",
-            info = payment[0].paymentTransaction[0].payerVpa ?: "",
-            refNo = payment[0].pgOrderId
-        ),
-        lastUpdateOrderTrack = getFormattedDateTime(orderTrack.lastUpdatedAt)
+        paymentDetails = payment[0].paymentTransaction
+            .filter { it.type == "PAYMENT" }
+            .map { it.toPaymentDetails() }[0],
+        refunds = payment[0].paymentTransaction
+            .filter { it.type == "REFUND" }
+            .map { it.toPaymentDetails() },
+        lastUpdateOrderTrack = getFormattedDateTime(orderTrack.lastUpdatedAt),
+        returns = returns?.map {
+            ReturnDetail(
+                ItemDetails(
+                    image = it.descriptor.images.getOrNull(0),
+                    quantity = it.quantity ?: 0,
+                    name = it.descriptor.name,
+                    price = it.price.value,
+                    mrp = it.price.value
+                ),
+                it.track
+            )
+        },
+        cancels = cancels?.map {
+            ReturnDetail(
+                ItemDetails(
+                    image = it.descriptor.images.getOrNull(0),
+                    quantity = it.quantity ?: 0,
+                    name = it.descriptor.name,
+                    price = it.price.value,
+                    mrp = it.price.value
+                ),
+                it.track
+            )
+        }
     )
 
 fun Quote.toPriceBreakup(): List<PriceBreakUp> {
 
     return breakup.groupBy { br -> br.titleType }
         .mapValues { br ->
-            br.value.map { it.price.value.toDouble() }.sumOf { it }.toString()
-        }.map {
             PriceBreakUp(
-                name = it.key,
+                name = getQuoteBreakupTitle(br.value[0]),
                 mrp = "",
-                price = it.value
+                price = br.value.map { it.price.value.toDouble() }.sumOf { it }.toString()
             )
-        }
+        }.map { it.value }
 }
+
+fun PaymentTransaction.toPaymentDetails() = PaymentDetails(
+    date = createdAt,
+    price = amount,
+    mode = paymentMethod ?: "COD",
+    info = payerVpa ?: "",
+    refNo = txnRequestObject
+)

@@ -35,9 +35,9 @@ import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ladecentro.data.remote.dto.toFavouriteStore
 import com.ladecentro.presentation.theme.darkBlue
-import com.ladecentro.presentation.ui.authentication.login.LoginActivity
 import com.ladecentro.presentation.ui.home.HomeViewModel
 import com.ladecentro.presentation.ui.order.orders.compose.ShimmerContent
+import com.ladecentro.presentation.ui.spalsh.OnboardingActivity
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,7 +57,7 @@ fun MainLayout(vm: HomeViewModel = hiltViewModel()) {
             ) {
                 DrawerContent(drawerState = drawerState) {
                     vm.userLogout {
-                        context.startActivity(Intent(context, LoginActivity::class.java))
+                        context.startActivity(Intent(context, OnboardingActivity::class.java))
                         context.finish()
                     }
                 }

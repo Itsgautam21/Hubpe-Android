@@ -13,17 +13,18 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.composeuisuite.ohteepee.OhTeePeeInput
 import com.composeuisuite.ohteepee.configuration.OhTeePeeCellConfiguration
 import com.composeuisuite.ohteepee.configuration.OhTeePeeConfigurations
+import com.ladecentro.presentation.common.OtpTextField
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_gray
 import com.ladecentro.presentation.theme.primary_orange
@@ -51,10 +52,11 @@ fun VerifyCompose(viewModel: VerifyViewModel) {
                 fontWeight = FontWeight.Normal,
                 color = light_gray
             )
-            Spacer(modifier = Modifier.height(48.dp))
-            //OtpInput(mViewModel = viewModel)
-            TextField(value = viewModel.otpState, onValueChange = { viewModel.otpState = it })
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(24.dp))
+            OtpTextField(otpText = viewModel.otpState) { value, _ ->
+                viewModel.otpState = value
+            }
+            Spacer(modifier = Modifier.height(20.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text(
                     text = "Didn't receive OTP yet?",
@@ -68,7 +70,8 @@ fun VerifyCompose(viewModel: VerifyViewModel) {
                     fontSize = 13.sp,
                     fontFamily = fontFamilyHind,
                     fontWeight = FontWeight.Normal,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
+                    textDecoration = TextDecoration.Underline
                 )
             }
 

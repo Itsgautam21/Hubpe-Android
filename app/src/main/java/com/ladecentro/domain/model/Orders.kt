@@ -11,6 +11,7 @@ data class Orders(
 )
 
 data class Store(
+    val id: String?,
     val image: String?,
     val name: String,
     val shortAddress: String?

@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
@@ -41,13 +42,11 @@ import com.ladecentro.R.drawable
 import com.ladecentro.common.bounceClick
 import com.ladecentro.data.remote.dto.Location
 import com.ladecentro.domain.model.DropdownMenu
+import com.ladecentro.presentation.theme.Typography
 import com.ladecentro.presentation.theme.card_border
 import com.ladecentro.presentation.theme.fontFamilyHind
 import com.ladecentro.presentation.theme.light_gray
-import com.ladecentro.presentation.theme.light_green
 import com.ladecentro.presentation.theme.light_orange
-import com.ladecentro.presentation.theme.light_text
-import com.ladecentro.presentation.theme.primary_green
 import com.ladecentro.presentation.theme.primary_orange
 
 @Composable
@@ -86,33 +85,37 @@ fun SampleSavedAddress(
             Column(Modifier.weight(1f)) {
                 Text(
                     text = location.descriptor.name,
-                    fontSize = 15.sp,
-                    fontFamily = fontFamilyHind,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = MaterialTheme.colorScheme.primary,
+                    style = Typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black,
+                        letterSpacing = 1.sp
+                    ),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = location.descriptor.longDesc ?: "",
-                    fontSize = 12.sp,
-                    fontFamily = fontFamilyHind,
-                    fontWeight = FontWeight.SemiBold,
-                    color = light_text,
+                    style = Typography.bodySmall.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        color = light_gray,
+                        lineHeight = 18.sp
+                    ),
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    lineHeight = 20.sp
-                )
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = "${location.address.name}, +91${location.mobileNumber}",
-                    fontSize = 13.sp,
-                    fontFamily = fontFamilyHind,
-                    fontWeight = FontWeight.SemiBold,
-                    color = light_gray,
-                    maxLines = 1,
                     overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    buildAnnotatedString {
+                        pushStyle(
+                            style = Typography.bodySmall.copy(
+                                fontWeight = FontWeight.SemiBold, letterSpacing = 0.8.sp
+                            ).toSpanStyle()
+                        )
+                        append(location.address.name)
+                        append(" : +91${location.mobileNumber}")
+                    }
                 )
             }
             dropDownList?.let { d ->

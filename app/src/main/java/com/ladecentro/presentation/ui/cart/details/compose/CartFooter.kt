@@ -20,8 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.PlatformTextStyle
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -32,7 +30,7 @@ import com.ladecentro.common.bounceClick
 import com.ladecentro.domain.model.LocationRequest
 import com.ladecentro.presentation.common.HorizontalDashDivider
 import com.ladecentro.presentation.theme.Typography
-import com.ladecentro.presentation.theme.fontFamilyHind
+import com.ladecentro.presentation.theme.fontFamilyFredoka
 import com.ladecentro.presentation.theme.fontFamilyHindBold
 import com.ladecentro.presentation.theme.light_orange
 import com.ladecentro.presentation.theme.light_text
@@ -49,27 +47,32 @@ fun CartFooter(vm: CartDetailViewModel = hiltViewModel()) {
                 color = light_orange,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .offset(y = 0.dp),
-                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-                shadowElevation = 8.dp
+                    .offset(y = 8.dp),
+                shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+                shadowElevation = 16.dp,
+                tonalElevation = 16.dp
             ) {
-                Text(
-                    text = "Delivery In ${it.store.fulfillments[0].deliveryTime}",
-                    fontFamily = fontFamilyHindBold,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = primary_orange,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    textAlign = TextAlign.Center
-                )
+                Column {
+                    Text(
+                        text = "Delivery In ${it.store.fulfillments[0].deliveryTime}",
+                        style = Typography.bodySmall.copy(
+                            color = primary_orange,
+                            textAlign = TextAlign.Center,
+                            fontFamily = fontFamilyHindBold
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp),
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
             }
             Surface(
-                shape = MaterialTheme.shapes.medium,
+                shape = MaterialTheme.shapes.large,
                 modifier = Modifier.padding(0.dp),
                 color = Color.White,
-                shadowElevation = 4.dp
+                shadowElevation = 24.dp,
+                tonalElevation = 24.dp
             ) {
                 AnimatedVisibility(visible = !vm.userLocation.mobileNumber.isNullOrBlank()) {
                     Column {
@@ -115,13 +118,13 @@ fun CartDelivery(location: LocationRequest, onChangeClick: () -> Unit) {
                 text = location.descriptor?.longDesc ?: "",
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = Typography.bodySmall.copy(fontWeight = FontWeight.Normal)
+                style = Typography.labelLarge.copy(fontWeight = FontWeight.Normal)
             )
             Text(
                 text = "${location.address?.name} (${location.mobileNumber})",
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = Typography.bodySmall.copy(
+                style = Typography.labelLarge.copy(
                     color = light_text,
                     fontWeight = FontWeight.Normal
                 )
@@ -129,7 +132,7 @@ fun CartDelivery(location: LocationRequest, onChangeClick: () -> Unit) {
         }
         Text(
             text = "Change",
-            style = Typography.bodySmall.copy(color = primary_orange),
+            style = Typography.labelLarge.copy(color = primary_orange),
             modifier = Modifier
                 .padding(top = 8.dp)
                 .border(
@@ -156,28 +159,12 @@ fun ViewDeliveryOptions(price: String, buttonText: String, onButtonClick: () -> 
         Column {
             Text(
                 text = "₹$price",
-                fontSize = 20.sp,
-                fontFamily = fontFamilyHindBold,
-                fontWeight = FontWeight.ExtraBold,
-                color = MaterialTheme.colorScheme.primary,
-                style = TextStyle(
-                    platformStyle = PlatformTextStyle(
-                        includeFontPadding = true
-                    )
-                )
+                style = Typography.titleLarge.copy(fontFamily = fontFamilyFredoka)
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = "Total payable",
-                fontSize = 12.sp,
-                fontFamily = fontFamilyHind,
-                color = light_text,
-                fontWeight = FontWeight.SemiBold,
-                style = TextStyle(
-                    platformStyle = PlatformTextStyle(
-                        includeFontPadding = true
-                    )
-                )
+                style = Typography.labelLarge.copy(color = light_text)
             )
         }
         Button(
@@ -192,14 +179,11 @@ fun ViewDeliveryOptions(price: String, buttonText: String, onButtonClick: () -> 
         ) {
             Text(
                 text = buttonText,
-                fontSize = 14.sp,
-                fontFamily = fontFamilyHindBold,
-                fontWeight = FontWeight.ExtraBold,
-                color = Color.White,
-                style = TextStyle(
-                    platformStyle = PlatformTextStyle(
-                        includeFontPadding = true
-                    )
+                style = Typography.bodyLarge.copy(
+                    letterSpacing = 0.sp,
+                    color = Color.White,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontFamily = fontFamilyHindBold
                 )
             )
         }

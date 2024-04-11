@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.ladecentro.common.getQuoteBreakupTitle
 import com.ladecentro.data.remote.dto.orders.Quote
 import com.ladecentro.domain.model.PriceBreakUp
 import com.ladecentro.presentation.common.HorizontalDashDivider
@@ -19,7 +20,7 @@ import com.ladecentro.presentation.ui.order.details.compose.GrandTotal
 import com.ladecentro.presentation.ui.order.details.compose.PriceBreakup
 
 @Composable
-fun PriceBreakDown(quote: Quote, id: String) {
+fun PriceBreakDown(breakUp: List<PriceBreakUp>, total: String) {
 
     Surface(
         color = Color.White,
@@ -28,13 +29,12 @@ fun PriceBreakDown(quote: Quote, id: String) {
         border = BorderStroke(1.dp, card_border)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            val breakup = getQuoteBreakUp(quote, id)
-            breakup.forEach {
+            breakUp.forEach {
                 PriceBreakup(breakUp = it)
             }
             HorizontalDashDivider()
             Spacer(modifier = Modifier.height(12.dp))
-            GrandTotal(getTotalPriceByFulfillment(breakup))
+            GrandTotal(total)
         }
     }
 }
@@ -47,11 +47,9 @@ fun getQuoteBreakUp(quote: Quote, id: String) =
         .mapValues { map ->
             val v = if (map.value.find { br -> br.itemId == id } == null) map.value
             else map.value.filter { br -> br.itemId == id }
-            v.map { it.price.value.toDouble() }.sumOf { it }.toString()
-        }.map { map ->
             PriceBreakUp(
-                name = map.key,
+                name = getQuoteBreakupTitle(map.value[0]),
                 mrp = "",
-                price = map.value
+                price = v.map { it.price.value.toDouble() }.sumOf { it }.toString()
             )
-        }
+        }.map { it.value }

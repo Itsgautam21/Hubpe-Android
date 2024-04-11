@@ -135,7 +135,7 @@ fun SampleStores(store: Store, fav: Boolean, onFavIconClick: () -> Unit) {
                                 tint = light_gray
                             )
                             Text(
-                                text = "3.7",
+                                text = store.rating ?: "",
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 11.sp,
                                 fontFamily = fontFamilyHind,
