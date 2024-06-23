@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -67,13 +68,13 @@ import com.ladecentro.presentation.ui.stores.details.StoreActivity
 import com.ladecentro.presentation.ui.stores.details.compose.getItemTotal
 
 @Composable
-fun SampleCart(cartDto: CartDto, onDeleteClick: () -> Unit) {
+fun SampleCart(cartDto: CartDto, modifier: Modifier, onDeleteClick: () -> Unit) {
 
     val context = LocalContext.current
 
     Card(
         shape = MaterialTheme.shapes.medium,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = Color.White, contentColor = Color.Black
         ),
@@ -256,15 +257,19 @@ fun CartsGrandTotal(price: String, onViewCart: () -> Unit) {
 }
 
 @Composable
+@OptIn(ExperimentalFoundationApi::class)
 fun CartItemsList(carts: List<CartDto>, vm: CartViewModel = hiltViewModel()) {
 
     var dialogState: CartDto? by rememberSaveable { mutableStateOf(null) }
     LazyColumn(
         contentPadding = PaddingValues(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.fillMaxSize()
     ) {
-        items(carts.reversed()) {
-            SampleCart(it) { dialogState = it }
+        items(carts.reversed(), key = { it.store.id }) {
+            SampleCart(
+                it, Modifier.animateItemPlacement()
+            ) { dialogState = it }
         }
         item {
             Spacer(modifier = Modifier.height(100.dp))

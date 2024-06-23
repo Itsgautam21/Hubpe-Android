@@ -26,6 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.ladecentro.common.Intents.CAMERA
+import com.ladecentro.common.LocationResource
 import com.ladecentro.common.LocationResource.Error
 import com.ladecentro.common.LocationResource.Loading
 import com.ladecentro.common.LocationResource.Success
@@ -102,6 +103,8 @@ fun LocationLayout(vm: LocationViewModel = hiltViewModel()) {
             is Error -> {
                 launcher.launch(state.intent)
             }
+
+            is LocationResource.HasLocation -> {}
         }
     }
 

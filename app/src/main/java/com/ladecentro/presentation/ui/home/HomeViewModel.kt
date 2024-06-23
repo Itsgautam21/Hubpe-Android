@@ -96,6 +96,10 @@ class HomeViewModel @Inject constructor(
                     is LocationResource.Error -> {
                         _location.emit(LocationResource.Error(it.intent))
                     }
+
+                    is LocationResource.HasLocation -> {
+                        _location.emit(LocationResource.HasLocation(it.hasLocation))
+                    }
                 }
             }
         }

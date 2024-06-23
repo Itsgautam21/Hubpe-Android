@@ -85,6 +85,7 @@ fun CartDetails(vm: CartDetailViewModel = hiltViewModel()) {
                 cart.items.forEach { p ->
                     CartItems(
                         p.toProductDetail(),
+                        !vm.userCart.isLoading,
                         onMinusClick = { vm.updateCart(p, operation = "-") },
                         onPlusClick = { vm.updateCart(p, operation = "+") }
                     )
@@ -168,7 +169,7 @@ fun CartStore(store: Store) {
 }
 
 @Composable
-fun CartItems(product: ItemDetails, onPlusClick: () -> Unit, onMinusClick: () -> Unit) {
+fun CartItems(product: ItemDetails, isEnable: Boolean = true, onPlusClick: () -> Unit, onMinusClick: () -> Unit) {
 
     Row(
         verticalAlignment = Alignment.Top,
@@ -253,7 +254,7 @@ fun CartItems(product: ItemDetails, onPlusClick: () -> Unit, onMinusClick: () ->
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 if (product.quantity > 0) {
-                    IconButton(onClick = { onMinusClick() }, modifier = Modifier.size(32.dp)) {
+                    IconButton(onClick = onMinusClick, modifier = Modifier.size(32.dp), enabled = isEnable) {
                         Icon(
                             painter = painterResource(id = drawable.icons_minus),
                             contentDescription = null,
@@ -268,7 +269,7 @@ fun CartItems(product: ItemDetails, onPlusClick: () -> Unit, onMinusClick: () ->
                         fontFamily = fontFamilyHindBold,
                         color = MaterialTheme.colorScheme.primary
                     )
-                    IconButton(onClick = { onPlusClick() }, modifier = Modifier.size(32.dp)) {
+                    IconButton(onClick = onPlusClick, modifier = Modifier.size(32.dp), enabled = isEnable) {
                         Icon(
                             imageVector = Rounded.Add,
                             contentDescription = null,

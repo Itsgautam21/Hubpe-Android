@@ -1,5 +1,6 @@
 package com.ladecentro.presentation.ui.cart.details.compose
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -31,7 +32,7 @@ fun CartLayout(vm: CartDetailViewModel = hiltViewModel()) {
             color = background
         ) {
             Column {
-                if (vm.userCart.isLoading) {
+                AnimatedVisibility(visible = vm.userCart.isLoading) {
                     CartLoading()
                 }
                 LazyColumn(

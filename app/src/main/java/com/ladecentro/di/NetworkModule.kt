@@ -15,7 +15,6 @@ import com.ladecentro.data.remote.api.AuthAPI
 import com.ladecentro.data.remote.api.CartAPI
 import com.ladecentro.data.remote.api.LookupAPI
 import com.ladecentro.data.remote.api.OrderAPI
-import com.ladecentro.data.remote.api.UserAPI
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,7 +24,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.*
+import java.util.Locale
 import javax.inject.Singleton
 
 @Module
@@ -40,12 +39,6 @@ class NetworkModule {
             .addConverterFactory(NullOnEmptyConverterFactory())
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
             .build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideUserAPI(retrofit: Retrofit): UserAPI {
-        return retrofit.create(UserAPI::class.java)
     }
 
     @Provides

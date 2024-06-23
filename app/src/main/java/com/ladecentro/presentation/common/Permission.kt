@@ -28,7 +28,7 @@ fun LocationPermissions(permissionState: PermissionState, onPermissionGranted: (
             }
 
             !permissionState.status.isGranted && !permissionState.status.shouldShowRationale -> {
-                dialog = true
+                //dialog = true
             }
         }
     }

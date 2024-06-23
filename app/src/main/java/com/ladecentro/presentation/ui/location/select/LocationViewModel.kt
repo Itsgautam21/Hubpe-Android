@@ -99,6 +99,10 @@ class LocationViewModel @Inject constructor(
                     is LocationResource.Error -> {
                         _location.emit(LocationResource.Error(it.intent))
                     }
+
+                    is LocationResource.HasLocation -> {
+
+                    }
                 }
             }
         }

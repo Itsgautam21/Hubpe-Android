@@ -31,6 +31,7 @@ import com.ladecentro.common.hasLocationPermission
 import com.ladecentro.common.isGPSEnable
 import com.ladecentro.presentation.common.LocationPermissions
 import com.ladecentro.presentation.ui.home.HomeViewModel
+import com.orhanobut.logger.Logger
 
 @Composable
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
@@ -46,20 +47,24 @@ fun LocationPermission(vm: HomeViewModel = hiltViewModel()) {
             vm.getUserLocation()
         }
     }
-    LocationPermissions(permissionState = permissionState) {
+    if (!context.hasLocationPermission()) {
+        LocationPermissions(permissionState = permissionState) {
+            Logger.d("Permission Granted callback")
+            vm.getUserLocation()
+        }
     }
-
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(key1 = lifecycleOwner, effect = {
         val observer = LifecycleEventObserver { _, event ->
             if (event == ON_CREATE) {
-                if (!context.isGPSEnable()) {
+                if (!confirmStateChange || !context.isGPSEnable()) {
                     vm.openBottomSheet = true
                 } else {
-                    vm.getUserLocation()
+                    //vm.getUserLocation()
                 }
             }
             if (event == ON_START) {
+                permissionState.launchPermissionRequest()
                 vm.setUserProfileFromPreference()
                 vm.getCartFromLocal()
             }
@@ -71,6 +76,7 @@ fun LocationPermission(vm: HomeViewModel = hiltViewModel()) {
     })
 
     LaunchedEffect(key1 = state) {
+
         when (state) {
             is LocationResource.Loading -> {
                 Log.d(">>>> Location", "Location Loading")
@@ -85,6 +91,14 @@ fun LocationPermission(vm: HomeViewModel = hiltViewModel()) {
             is LocationResource.Error -> {
                 launcher.launch(state.intent)
             }
+
+            is LocationResource.HasLocation -> {
+                state.hasLocation?.let {
+                    if (!it) {
+                        permissionState.launchPermissionRequest()
+                    }
+                }
+            }
         }
     }
 
@@ -98,10 +112,7 @@ fun LocationPermission(vm: HomeViewModel = hiltViewModel()) {
         ) {
             LocationBottomSheet(
                 onEnableLocation = {
-                    permissionState.launchPermissionRequest()
-                    if (context.hasLocationPermission()) {
-                        vm.getUserLocation()
-                    }
+                    vm.getUserLocation()
                 }
             )
         }

@@ -1,7 +1,6 @@
 package com.ladecentro.presentation.ui.home.compose
 
 import android.content.Intent
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.compose.foundation.Image
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons.AutoMirrored.Filled
@@ -66,21 +64,16 @@ fun DrawerContent(
     drawerState: DrawerState,
     logout: () -> Unit
 ) {
-    val scope = rememberCoroutineScope()
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val state = vm.profileState.collectAsState().value
     var dialog by remember { mutableStateOf(false) }
-    val result = rememberLauncherForActivityResult(StartActivityForResult()) {
-        if (it.resultCode == ComponentActivity.RESULT_OK) {
-            //vm.setUserProfileFromPreference()
-        }
-    }
+    val result = rememberLauncherForActivityResult(StartActivityForResult()) {}
 
     LazyColumn(modifier = Modifier.fillMaxWidth()) {
         item {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Box(
                     modifier = Modifier
@@ -92,7 +85,6 @@ fun DrawerContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(20.dp)
-
                     ) {
                         Icon(
                             imageVector = Filled.ArrowBack,
@@ -105,62 +97,16 @@ fun DrawerContent(
                             }
                         )
                         Spacer(modifier = Modifier.height(12.dp))
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.bounceClick {
-                                result.launch(
-                                    Intent(
-                                        context,
-                                        ProfileActivity::class.java
-                                    ).putExtra(Intents.USER_NAME.name, state.content?.name)
-                                        .putExtra(Intents.Phone.name, state.content?.phone)
-                                        .putExtra(Intents.USER_PHOTO.name, state.content?.photo)
-                                )
-                            }) {
-                            Card(
-                                shape = RoundedCornerShape(12.dp),
-                                elevation = CardDefaults.cardElevation(0.dp),
-                                colors = CardDefaults.cardColors(containerColor = Color.White)
-                            ) {
-                                LoadImage(
-                                    image = state.content?.photo ?: "",
-                                    modifier = Modifier.size(50.dp),
-                                    contentScale = ContentScale.Crop
-                                )
-                            }
-                            Column(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(12.dp)
-                            ) {
-                                Text(
-                                    text = state.content?.name ?: "",
-                                    fontSize = 18.sp,
-                                    fontFamily = fontFamilyHind,
-                                    color = Color.White,
-                                    fontWeight = FontWeight.Bold,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = state.content?.phone ?: "",
-                                    fontSize = 12.sp,
-                                    fontFamily = fontFamilyHind,
-                                    color = Color.White,
-                                    fontWeight = FontWeight.Normal,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-
-                            }
-                            Icon(
-                                painter = painterResource(id = drawable.forward_arrow),
-                                contentDescription = "arrow",
-                                modifier = Modifier
-                                    .height(40.dp)
-                                    .width(40.dp),
-                                tint = Color.White
+                        DrawerProfileInfo(
+                            state.content?.photo ?: "",
+                            state.content?.name ?: "Set your Name",
+                            state.content?.phone ?: ""
+                        ) {
+                            result.launch(
+                                Intent(context, ProfileActivity::class.java)
+                                    .putExtra(Intents.USER_NAME.name, state.content?.name)
+                                    .putExtra(Intents.Phone.name, state.content?.phone)
+                                    .putExtra(Intents.USER_PHOTO.name, state.content?.photo)
                             )
                         }
                     }
@@ -174,206 +120,27 @@ fun DrawerContent(
                     colors = CardDefaults.cardColors(containerColor = Color.White),
                     elevation = CardDefaults.cardElevation(4.dp)
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .padding(14.dp)
-                            .bounceClick {
-                                context.startActivity(Intent(context, MyOrdersActivity::class.java))
-                            }
-                    ) {
-                        Image(
-                            painter = painterResource(id = drawable.my_orders),
-                            contentDescription = "",
-                            modifier = Modifier
-                                .height(30.dp)
-                                .width(30.dp)
-                        )
-                        Text(
-                            text = "My Orders",
-                            fontSize = 15.sp,
-                            fontFamily = fontFamilyHind,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(horizontal = 12.dp)
-                        )
-                        Icon(
-                            painter = painterResource(id = drawable.forward_arrow),
-                            contentDescription = "",
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier
-                                .height(24.dp)
-                                .width(24.dp)
+                    DrawerMenuItem(title = "My Orders", image = drawable.my_orders) {
+                        context.startActivity(Intent(context, MyOrdersActivity::class.java))
+                    }
+                    DrawerMenuDivider()
+                    DrawerMenuItem(title = "Saved Addresses", image = drawable.saved_address) {
+                        context.startActivity(Intent(context, AddressesActivity::class.java))
+                    }
+                    DrawerMenuDivider()
+                    DrawerMenuItem(title = "Favourite Store", image = drawable.fav_store) {
+                        context.startActivity(
+                            Intent(context, FavouriteActivity::class.java)
+                                .putExtra(Intents.TYPE_FAV.name, MY_FAVOURITES)
                         )
                     }
-                    HorizontalDivider(
-                        color = card_border,
-                        thickness = 1.dp,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 50.dp)
-                    )
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .padding(14.dp)
-                            .bounceClick {
-                                context.startActivity(
-                                    Intent(
-                                        context,
-                                        AddressesActivity::class.java
-                                    )
-                                )
-                            }
-                    ) {
-                        Image(
-                            painter = painterResource(id = drawable.saved_address),
-                            contentDescription = "",
-                            modifier = Modifier
-                                .height(30.dp)
-                                .width(30.dp)
-                        )
-                        Text(
-                            text = "Saved Addresses",
-                            fontSize = 15.sp,
-                            fontFamily = fontFamilyHind,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(horizontal = 12.dp)
-                        )
-                        Icon(
-                            painter = painterResource(id = drawable.forward_arrow),
-                            contentDescription = "",
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier
-                                .height(24.dp)
-                                .width(24.dp)
-                        )
+                    DrawerMenuDivider()
+                    DrawerMenuItem(title = "My Rewards", image = drawable.my_rewards) {
+
                     }
-                    HorizontalDivider(
-                        color = card_border,
-                        thickness = 1.dp,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 50.dp)
-                    )
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .padding(14.dp)
-                            .bounceClick {
-                                context.startActivity(
-                                    Intent(
-                                        context, FavouriteActivity::class.java
-                                    ).putExtra(Intents.TYPE_FAV.name, MY_FAVOURITES)
-                                )
-                            }
-                    ) {
-                        Image(
-                            painter = painterResource(id = drawable.fav_store),
-                            contentDescription = "",
-                            modifier = Modifier
-                                .height(30.dp)
-                                .width(30.dp)
-                        )
-                        Text(
-                            text = "Favourite Store",
-                            fontSize = 15.sp,
-                            fontFamily = fontFamilyHind,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(horizontal = 12.dp)
-                        )
-                        Icon(
-                            painter = painterResource(id = drawable.forward_arrow),
-                            contentDescription = "",
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier
-                                .height(24.dp)
-                                .width(24.dp)
-                        )
-                    }
-                    HorizontalDivider(
-                        color = card_border,
-                        thickness = 1.dp,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 50.dp)
-                    )
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(14.dp)
-                    ) {
-                        Image(
-                            painter = painterResource(id = drawable.my_rewards),
-                            contentDescription = "",
-                            modifier = Modifier
-                                .height(30.dp)
-                                .width(30.dp)
-                        )
-                        Text(
-                            text = "My Rewards",
-                            fontSize = 15.sp,
-                            fontFamily = fontFamilyHind,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(horizontal = 12.dp)
-                        )
-                        Icon(
-                            painter = painterResource(id = drawable.forward_arrow),
-                            contentDescription = "",
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier
-                                .height(24.dp)
-                                .width(24.dp)
-                        )
-                    }
-                    HorizontalDivider(
-                        color = card_border,
-                        thickness = 1.dp,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 50.dp)
-                    )
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .padding(14.dp)
-                            .clickable { dialog = true }
-                    ) {
-                        Image(
-                            painter = painterResource(id = drawable.my_orders),
-                            contentDescription = "",
-                            modifier = Modifier
-                                .height(30.dp)
-                                .width(30.dp)
-                        )
-                        Text(
-                            text = "Logout",
-                            fontSize = 15.sp,
-                            fontFamily = fontFamilyHind,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(horizontal = 12.dp)
-                        )
-                        Icon(
-                            painter = painterResource(id = drawable.forward_arrow),
-                            contentDescription = "",
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier
-                                .height(24.dp)
-                                .width(24.dp)
-                        )
+                    DrawerMenuDivider()
+                    DrawerMenuItem(title = "Logout", image = drawable.my_orders) {
+                        dialog = true
                     }
                 }
             }
@@ -384,7 +151,104 @@ fun DrawerContent(
             dismissRequest = { dialog = false },
             negativeClick = { dialog = false },
             body = "Are you sure want to logout?",
-            positiveClick = { logout() }
+            positiveClick = logout
+        )
+    }
+}
+
+@Composable
+fun DrawerMenuItem(title: String, image: Int, onItemClick: () -> Unit) {
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .padding(14.dp)
+            .bounceClick(onClick = onItemClick)
+    ) {
+        Image(
+            painter = painterResource(id = image),
+            contentDescription = "",
+            modifier = Modifier.size(30.dp)
+        )
+        Text(
+            text = title,
+            fontSize = 15.sp,
+            fontFamily = fontFamilyHind,
+            color = MaterialTheme.colorScheme.primary,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 12.dp)
+        )
+        Icon(
+            painter = painterResource(id = drawable.forward_arrow),
+            contentDescription = "",
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(24.dp)
+        )
+    }
+}
+
+@Composable
+fun DrawerMenuDivider() {
+
+    HorizontalDivider(
+        color = card_border,
+        thickness = 1.dp,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 50.dp)
+    )
+}
+
+@Composable
+fun DrawerProfileInfo(image: String, name: String, phone: String, onClick: () -> Unit) {
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.bounceClick(onClick = onClick)
+    ) {
+        Card(
+            shape = RoundedCornerShape(12.dp),
+            elevation = CardDefaults.cardElevation(0.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White)
+        ) {
+            LoadImage(
+                image = image,
+                modifier = Modifier.size(50.dp),
+                contentScale = ContentScale.Crop
+            )
+        }
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(12.dp)
+        ) {
+            Text(
+                text = name,
+                fontSize = 18.sp,
+                fontFamily = fontFamilyHind,
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = phone,
+                fontSize = 12.sp,
+                fontFamily = fontFamilyHind,
+                color = Color.White,
+                fontWeight = FontWeight.Normal,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+        Icon(
+            painter = painterResource(id = drawable.forward_arrow),
+            contentDescription = "arrow",
+            modifier = Modifier.size(40.dp),
+            tint = Color.White
         )
     }
 }

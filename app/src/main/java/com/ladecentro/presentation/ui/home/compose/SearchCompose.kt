@@ -31,7 +31,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -60,11 +59,10 @@ import com.ladecentro.presentation.ui.stores.details.StoreActivity
 import com.ladecentro.presentation.ui.stores.stores.StoresActivity
 
 @Composable
-fun YourFavourite(favourites: List<FavouriteStore>, histories: List<FavouriteStore>) {
+fun YourFavourite(favourites: List<FavouriteStore>) {
 
     val context = LocalContext.current
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-        Spacer(modifier = Modifier.height(0.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = "Your Favourite",
@@ -118,103 +116,113 @@ fun YourFavourite(favourites: List<FavouriteStore>, histories: List<FavouriteSto
                 }
             }
         }
-        Spacer(modifier = Modifier.height(30.dp))
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(10.dp))
-                .height(50.dp)
-                .bounceClick {
-                    context.startActivity(
-                        Intent(
-                            context, FavouriteActivity::class.java
-                        ).putExtra(Intents.TYPE_FAV.name, RECENTLY_VIEWED)
-                    )
-                },
-            elevation = CardDefaults.cardElevation(0.dp),
-            colors = CardDefaults.cardColors(containerColor = card_background),
-            border = BorderStroke(1.dp, card_border)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 15.dp)
-            ) {
-                Text(
-                    text = "Recently Viewed",
-                    color = darkBlue,
-                    fontSize = 16.sp,
-                    fontFamily = fontFamilyHind,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier.weight(1f)
+    }
+}
+
+@Composable
+fun RecentlyViewed(histories: List<FavouriteStore>) {
+
+    val context = LocalContext.current
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .height(50.dp)
+            .bounceClick {
+                context.startActivity(
+                    Intent(
+                        context, FavouriteActivity::class.java
+                    ).putExtra(Intents.TYPE_FAV.name, RECENTLY_VIEWED)
                 )
-                val size = 30.dp
-                Box(modifier = Modifier) {
-                    for (index in 0..3) {
-                        val history = histories.getOrNull(index)
-                        history?.let { his ->
-                            Surface(
-                                shape = MaterialTheme.shapes.small,
-                                color = Color.White,
-                                shadowElevation = 8.dp,
-                                tonalElevation = 8.dp,
-                                modifier = Modifier.padding(start = ((size / 2) * index + 8.dp))
-                            ) {
-                                LoadImage(
-                                    image = his.image,
-                                    contentDescription = "history store image",
-                                    contentScale = ContentScale.Inside,
-                                    modifier = Modifier.height(30.dp).width(size),
-                                )
-                            }
+            },
+        shape = MaterialTheme.shapes.medium,
+        elevation = CardDefaults.cardElevation(0.dp),
+        colors = CardDefaults.cardColors(containerColor = card_background),
+        border = BorderStroke(1.dp, card_border)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 15.dp)
+        ) {
+            Text(
+                text = "Recently Viewed",
+                color = darkBlue,
+                fontSize = 16.sp,
+                fontFamily = fontFamilyHind,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.weight(1f)
+            )
+            val size = 30.dp
+            Box(modifier = Modifier) {
+                for (index in 0..3) {
+                    val history = histories.getOrNull(index)
+                    history?.let { his ->
+                        Surface(
+                            shape = MaterialTheme.shapes.small,
+                            color = Color.White,
+                            shadowElevation = 8.dp,
+                            tonalElevation = 8.dp,
+                            modifier = Modifier.padding(start = ((size / 2) * index + 8.dp))
+                        ) {
+                            LoadImage(
+                                image = his.image,
+                                contentDescription = "history store image",
+                                contentScale = ContentScale.Inside,
+                                modifier = Modifier
+                                    .height(30.dp)
+                                    .width(size),
+                            )
                         }
                     }
                 }
-                Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
-                    contentDescription = ""
-                )
             }
+            Icon(
+                imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
+                contentDescription = ""
+            )
         }
+    }
 
-        Spacer(modifier = Modifier.height(20.dp))
+}
 
-        Card(
+@Composable
+fun HomeBanner() {
+
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        color = Color.White,
+        shape = MaterialTheme.shapes.medium,
+        border = BorderStroke(width = 1.dp, color = card_border)
+    ) {
+        Image(
+            painter = painterResource(id = drawable.banner),
+            contentScale = ContentScale.Crop,
+            contentDescription = "banner",
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(15.dp)),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
-            elevation = CardDefaults.cardElevation(0.dp),
-            border = BorderStroke(width = 1.dp, color = card_border)
-        ) {
-            Image(
-                painter = painterResource(id = drawable.banner),
-                contentScale = ContentScale.Crop,
-                contentDescription = "banner",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(190.dp)
-            )
-
-        }
-
-        Spacer(modifier = Modifier.height(40.dp))
-
-        Text(
-            text = "In the spotlight",
-            fontSize = 18.sp,
-            color = darkBlue,
-            fontWeight = FontWeight.SemiBold,
-            fontFamily = fontFamilyHind
+                .height(190.dp)
         )
-        Spacer(modifier = Modifier.height(14.dp))
     }
 }
 
 @Composable
 fun Spotlight() {
+
+    Text(
+        text = "In the spotlight",
+        fontSize = 18.sp,
+        color = darkBlue,
+        fontWeight = FontWeight.SemiBold,
+        fontFamily = fontFamilyHind,
+        modifier = Modifier.padding(horizontal = 16.dp)
+    )
+    Spacer(modifier = Modifier.height(14.dp))
 
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(20.dp),

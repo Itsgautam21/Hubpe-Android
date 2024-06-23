@@ -15,7 +15,10 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest.Builder
 import com.google.android.gms.location.Priority
 import com.ladecentro.common.LocationResource
+import com.ladecentro.common.hasLocationPermission
 import com.ladecentro.domain.location.LocationTracker
+import com.ladecentro.exception.LocationException
+import com.orhanobut.logger.Logger
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -33,7 +36,12 @@ class CurrentLocationTracker @Inject constructor(
 
         return callbackFlow {
 
-            launch { send(LocationResource.Loading(true)) }
+            send(LocationResource.Loading(true))
+            if (!application.hasLocationPermission()) {
+                send(LocationResource.HasLocation(false))
+                Logger.e(">>>> LocationTracker :: Permission not granted!")
+                throw LocationException("Permission not granted!")
+            }
             val locationRequest = LocationRequest
                 .Builder(Priority.PRIORITY_HIGH_ACCURACY, 500)
                 .setGranularity(Granularity.GRANULARITY_PERMISSION_LEVEL)

@@ -27,6 +27,6 @@ class FavouriteViewModel @Inject constructor(
             if (type == MY_FAVOURITES) myPreference.getProfileFromLocal()!!.favourites
             else {
                 myPreference.getProfileFromLocal()!!.history
-            }.map { it.toFavouriteStore() }
+            }?.map { it.toFavouriteStore() } ?: listOf()
     }
 }

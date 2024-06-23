@@ -1,6 +1,9 @@
 package com.ladecentro.presentation.ui.cart.details.compose
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -211,6 +214,12 @@ fun SampleDeliveryOption(
     price: String,
     onFulfillmentClick: (request: FulfillmentRequest) -> Unit
 ) {
+    val transition = updateTransition(selected, label = "update border color")
+    val update = transition.animateColor(label = "animate color",
+        transitionSpec = { tween(durationMillis = 300) }) { state ->
+        if (state == null || selected != fulfillment) card_border
+        else primary_orange
+    }
     Surface(
         color = Color.White,
         shape = MaterialTheme.shapes.medium,
@@ -219,10 +228,7 @@ fun SampleDeliveryOption(
             .bounceClick {
                 onFulfillmentClick(fulfillment)
             },
-        border = BorderStroke(
-            1.dp,
-            if (selected == null || selected != fulfillment) card_border else primary_orange
-        )
+        border = BorderStroke(1.5.dp, update.value)
     ) {
         Row(
             verticalAlignment = Alignment.Top,

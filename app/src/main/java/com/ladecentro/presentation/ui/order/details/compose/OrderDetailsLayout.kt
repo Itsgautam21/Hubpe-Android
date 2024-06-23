@@ -51,11 +51,11 @@ fun OrderDetailsLayout(vm: OrderDetailsViewModel = hiltViewModel()) {
                         modifier = Modifier.padding(8.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
+                        DeliveryDetails(it.deliveryDetails)
+                        OrderDetails(it.orderDetails, it.displayOrderId)
                         if (it.status == OrderStatus.CANCELLED.name) {
                             OrderCancelCompose(it)
                         }
-                        DeliveryDetails(it.deliveryDetails)
-                        OrderDetails(it.orderDetails, it.displayOrderId)
                         CanceledItems("Cancel Item(s)", it.cancels)
                         CanceledItems(heading = "Return Item(s)", it.returns)
                         if (it.status == OrderStatus.COMPLETED.name) {

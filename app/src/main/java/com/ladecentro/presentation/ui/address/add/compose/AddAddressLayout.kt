@@ -61,7 +61,7 @@ fun AddAddressLayout(vm: AddAddressViewModel = hiltViewModel()) {
                 .background(card_background)
         ) {
             LazyColumn(
-                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 16.dp),
+                contentPadding = PaddingValues(12.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.weight(1f)
             ) {

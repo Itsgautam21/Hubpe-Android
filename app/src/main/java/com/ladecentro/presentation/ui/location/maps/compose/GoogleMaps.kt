@@ -26,6 +26,7 @@ import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.ladecentro.R.drawable
+import com.ladecentro.common.LocationResource
 import com.ladecentro.common.LocationResource.Error
 import com.ladecentro.common.LocationResource.Loading
 import com.ladecentro.common.LocationResource.Success
@@ -84,6 +85,10 @@ fun GoogleMaps(cameraPositionState: CameraPositionState, vm: MapsViewModel = hil
 
             is Error -> {
                 locationLauncher.launch(currentLocationState.intent)
+            }
+
+            is LocationResource.HasLocation -> {
+
             }
         }
     }

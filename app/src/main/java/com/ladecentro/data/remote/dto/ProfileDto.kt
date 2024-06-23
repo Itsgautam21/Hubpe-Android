@@ -89,8 +89,8 @@ data class ProfileDto(
     @SerializedName("phone") val phone: String,
     @SerializedName("photo") val photo: String,
     @SerializedName("locations") val locations: List<Location>,
-    @SerializedName("favourites") val favourites: List<Favourite>,
-    @SerializedName("history") val history: List<Favourite>
+    @SerializedName("favourites") val favourites: List<Favourite>?,
+    @SerializedName("history") val history: List<Favourite>?
 )
 
 fun Location.mapToLocationRequest(): LocationRequest {

@@ -36,10 +36,3 @@ fun getQuoteBreakupTitle(breakup: Breakup): String {
         else -> breakup.title
     }
 }
-
-fun getReadableDuration(value: String?) {
-
-    value?.let {
-        val duration = Duration.parse(it).toString()
-    }
-}

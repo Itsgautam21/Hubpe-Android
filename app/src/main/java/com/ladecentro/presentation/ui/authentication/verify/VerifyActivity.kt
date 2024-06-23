@@ -16,7 +16,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.ladecentro.presentation.theme.LadecentroTheme
@@ -24,7 +23,6 @@ import com.ladecentro.presentation.ui.authentication.login.compose.TopAppBarLogi
 import com.ladecentro.presentation.ui.authentication.verify.compose.VerifyCompose
 import com.ladecentro.presentation.ui.home.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class VerifyActivity : ComponentActivity() {
@@ -40,7 +38,6 @@ class VerifyActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
                 ) {
                     val snackBarHostState = remember { SnackbarHostState() }
-                    val coroutineScope = rememberCoroutineScope()
 
                     Scaffold(topBar = { TopAppBarLogin() },
                         snackbarHost = { SnackbarHost(snackBarHostState) }) {
@@ -54,9 +51,7 @@ class VerifyActivity : ComponentActivity() {
 
                             viewModel.state.value.error?.let {
                                 LaunchedEffect(snackBarHostState) {
-                                    coroutineScope.launch {
-                                        snackBarHostState.showSnackbar(it, "Ok")
-                                    }
+                                    snackBarHostState.showSnackbar(it, "Ok")
                                 }
                             }
                             viewModel.state.value.content?.let {

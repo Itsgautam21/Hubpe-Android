@@ -51,6 +51,7 @@ import com.ladecentro.presentation.theme.primary_orange
 
 @Composable
 fun SampleSavedAddress(
+    modifier: Modifier = Modifier,
     location: Location,
     dropDownList: List<DropdownMenu>? = null,
     onLocationClick: (location: Location) -> Unit
@@ -61,10 +62,10 @@ fun SampleSavedAddress(
         colors = CardDefaults.cardColors(if (location.selected) light_orange else Companion.White),
         elevation = CardDefaults.cardElevation(0.dp),
         shape = RoundedCornerShape(12.dp),
-        modifier = Modifier.bounceClick {
+        modifier = modifier.bounceClick {
             onLocationClick(location)
         },
-        border = BorderStroke(1.dp, if (location.selected) primary_orange else Companion.White)
+        border = BorderStroke(1.5.dp, if (location.selected) primary_orange else Companion.White)
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),

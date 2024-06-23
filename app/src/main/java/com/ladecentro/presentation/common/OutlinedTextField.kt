@@ -1,5 +1,6 @@
 package com.ladecentro.presentation.common
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -113,7 +114,7 @@ fun OutlinedTextFieldCompose(
             colors = colours,
             isError = isError,
             supportingText = {
-                if (isError) {
+                AnimatedVisibility(visible = isError) {
                     Text(
                         text = supportingText,
                         fontSize = 12.sp,

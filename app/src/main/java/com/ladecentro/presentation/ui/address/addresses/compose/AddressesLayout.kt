@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -44,6 +45,7 @@ import com.ladecentro.presentation.ui.location.maps.MapsActivity
 import com.ladecentro.presentation.ui.location.select.compose.SampleSavedAddress
 import com.ladecentro.presentation.ui.order.orders.compose.ShimmerContent
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AddressesLayout(vm: AddressViewModel = hiltViewModel()) {
 
@@ -96,7 +98,7 @@ fun AddressesLayout(vm: AddressViewModel = hiltViewModel()) {
                         bottom = 100.dp
                     )
                 ) {
-                    items(locations) { location ->
+                    items(locations, key = { key -> key.id }) { location ->
                         val dropdownList = listOf(
                             DropdownMenu("Edit", Rounded.Edit) { loc ->
                                 activityLauncher.launch(
@@ -113,8 +115,9 @@ fun AddressesLayout(vm: AddressViewModel = hiltViewModel()) {
                                 dialogState = loc
                             }
                         )
-                        SampleSavedAddress(location, dropdownList) {
-
+                        SampleSavedAddress(
+                            modifier = Modifier.animateItemPlacement(),
+                            location = location, dropDownList = dropdownList) {
                         }
                     }
                 }

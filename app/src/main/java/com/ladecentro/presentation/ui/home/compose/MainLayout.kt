@@ -18,7 +18,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -43,12 +42,14 @@ import com.ladecentro.presentation.ui.spalsh.OnboardingActivity
 @OptIn(ExperimentalMaterial3Api::class)
 fun MainLayout(vm: HomeViewModel = hiltViewModel()) {
 
-    val drawerState = rememberDrawerState(initialValue = Closed)
     val context = LocalContext.current as Activity
+    val profileState = vm.profileState.collectAsState()
+    val drawerState = rememberDrawerState(initialValue = Closed)
+    val scrollBehaviour = TopAppBarDefaults.pinnedScrollBehavior()
+    val scrollBehaviourTop = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
-    LocationPermission()
-    ChangeStatusBar(drawerState)
     ModalNavigationDrawer(
+        drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet(
                 modifier = Modifier.fillMaxWidth(),
@@ -62,52 +63,58 @@ fun MainLayout(vm: HomeViewModel = hiltViewModel()) {
                     }
                 }
             }
-        },
-        drawerState = drawerState
+        }
     ) {
-        Surface(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            val scrollBehaviour = TopAppBarDefaults.pinnedScrollBehavior()
-            val scrollBehaviourTop =
-                TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-            val state = vm.profileState.collectAsState()
+        // Loading state...
+        if (profileState.value.isLoading) {
+            ShimmerContent()
+        }
 
-            if (state.value.isLoading) {
-                ShimmerContent()
-            }
-            state.value.content?.let { profile ->
+        // Success state...
+        profileState.value.content?.let { profile ->
 
-                Scaffold(modifier = Modifier
-                    .fillMaxSize()
-                    .nestedScroll(scrollBehaviour.nestedScrollConnection)
-                    .nestedScroll(scrollBehaviourTop.nestedScrollConnection),
-                    topBar = {
-                        TopAppBarHome(scrollBehaviour, scrollBehaviourTop, drawerState)
-                    }
+            Scaffold(modifier = Modifier
+                .fillMaxSize()
+                .nestedScroll(scrollBehaviour.nestedScrollConnection)
+                .nestedScroll(scrollBehaviourTop.nestedScrollConnection),
+                topBar = {
+                    TopAppBarHome(scrollBehaviour, scrollBehaviourTop, drawerState)
+                }
+            ) { padding ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding)
+                        .background(color = Color.White)
+                        .verticalScroll(rememberScrollState())
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(it)
-                            .background(color = Color.White)
-                            .verticalScroll(rememberScrollState())
-                    ) {
-                        Column(modifier = Modifier.padding(vertical = 20.dp)) {
-                            YourFavourite(
-                                profile.favourites.map { fav -> fav.toFavouriteStore() },
-                                profile.history.map { his -> his.toFavouriteStore() }
-                            )
-                            Spotlight()
-                            ShopCategory()
-                            FooterCompose()
-                            Spacer(modifier = Modifier.height(100.dp))
+                    Column(modifier = Modifier.padding(vertical = 8.dp)) {
+                        HomeBanner()
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Spotlight()
+                        Spacer(modifier = Modifier.height(30.dp))
+                        profile.favourites?.let { favourites ->
+                            YourFavourite(favourites.map { fav -> fav.toFavouriteStore() })
                         }
+                        Spacer(modifier = Modifier.height(30.dp))
+                        profile.history?.let { histories ->
+                            RecentlyViewed(histories.map { his -> his.toFavouriteStore() })
+                        }
+                        Spacer(modifier = Modifier.height(0.dp))
+                        ShopCategory()
+                        FooterCompose()
+                        Spacer(modifier = Modifier.height(100.dp))
                     }
                 }
             }
         }
+
+        // Error state...
+        profileState.value.error?.let {
+            // TODO
+        }
     }
+    ChangeStatusBar(drawerState)
 }
 
 @Composable

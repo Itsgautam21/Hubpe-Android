@@ -114,8 +114,8 @@ class StoreViewModel @Inject constructor(
     }
 
     private fun getFavouriteFromLocal() {
-        _favourite = myPreference.getProfileFromLocal()!!.favourites.stream()
-            .anyMatch { f -> f.id == storeId }
+        _favourite = myPreference.getProfileFromLocal()!!.favourites?.stream()
+            ?.anyMatch { f -> f.id == storeId } ?: false
     }
 
     private fun deleteCartById(cartId: String) {
